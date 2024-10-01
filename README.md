@@ -10,13 +10,9 @@ Desenvolvedores, arquitetos de software, analistas de sistemas e profissionais d
 
 ## Pré-requisitos
 
-- Conhecimento Básicos em:
-  - Programação
-  - Sistemas operacionais
-  - Redes de computadores
-  - Sistemas distribuídos
+Conhecimento básico em desenvolvimento de software, infraestrutura e Kubernetes.
 
-## Ferramentas
+### Ferramentas
 
 - [Docker](https://docs.docker.com/get-docker/) 🐳
 - [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) ☸️
