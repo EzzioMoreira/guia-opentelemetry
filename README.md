@@ -32,4 +32,6 @@ O treinamento será dividido em módulos teóricos e práticos para garantir uma
 
 - [Monitoramento e Observabilidade](./docs/Module-1%20-%20Conceitos%20Básicos/README.md#monitoramento-e-observabilidade)
 - [Telemetria](./docs/Module-1%20-%20Conceitos%20Básicos/README.md#telemetria)
-- [Cardinalidade](./docs/Module-1%20-%20Conceitos%20Básicos/README.md#cardinalidade)
+  - [Métricas](./docs/Module-1%20-%20Conceitos%20Básicos/README.md#métricas)
+  - [Cardinalidade](./docs/Module-1%20-%20Conceitos%20Básicos/README.md#cardinalidade)
+  - [Traces](./docs/Module-1%20-%20Conceitos%20Básicos/README.md#traces)
