@@ -1,4 +1,4 @@
-# Monitoramento e Observabilidade
+# Monitoramento e Observabilidade {#monitoramento-e-observabilidade}
 
 O monitoramento é utilizado há décadas por equipes de TI para obter insights sobre a disponibilidade e performance de sistemas. A observabilidade é uma evolução do monitoramento, que busca entender o comportamento de sistemas complexos.
 
@@ -71,9 +71,11 @@ A maioria das bibliotecas de métricas suportam os seguintes tipos de métricas:
 
 - **Histogram**: Um contador que fornece a distribuição de valores em um intervalo. São muito utilizadas para medir a distribuição de valores: tempo de resposta de uma requisição entre 0-100ms, 100-200ms, tamanho de arquivos.
 
-#### Cardinalidade de uma métrica
+## Cardinalidade {#cardinalidade}
 
 Cardinalidade se refere ao número de valores possíveis que uma métrica pode assumir. Métricas com alta cardinalidade podem ser mais difíceis de armazenar e processar.
+
+Muitos sistemas de banco de dados não conseguem lidar com eficiência com o volume de dados gerado por métricas de alta cardinalidade. Por isso, é importante entender a cardinalidade dos dados que você está gerando, coletando e armazenando.
 
 **Alta Cardinalidade**: "Monitorar os números de placa de cada carro no estacionamento." (Muitos valores únicos, um para cada carro).
 
@@ -84,3 +86,4 @@ Cardinalidade se refere ao número de valores possíveis que uma métrica pode a
 - [Prometheus - Types of metrics](https://prometheus.io/docs/concepts/metric_types/)
 - [Prometheus - Metric and label naming](https://prometheus.io/docs/practices/naming/)
 - [OpenTelemetry - Metrics](https://opentelemetry.io/pt/docs/concepts/signals/metrics/)
+- [Honeycom - Understanding High Cardinality and Its Role in Observability](https://www.honeycomb.io/getting-started/understanding-high-cardinality-role-observability)
