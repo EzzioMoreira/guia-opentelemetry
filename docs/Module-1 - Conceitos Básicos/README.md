@@ -39,6 +39,7 @@ Os engenheiros que praticam a observabilidade conseguem questionar o sistema faz
 
 ## Saiba mais
 
+- [Ezzio Moreira - Observabilidade e Monitoramento](https://dev.to/ezziomoreira/observabilidade-e-monitoramento-1p1a)
 - [Qual é a diferença entre um sistema centralizado e um distribuído?](https://www.atlassian.com/br/microservices/microservices-architecture/distributed-architecture)
 - [eBook Free - Monitoring - Google SRE Book](https://sre.google/workbook/monitoring/)
 - [eBook Free - Distributed Systems Observability](https://unlimited.humio.com/rs/756-LMY-106/images/Distributed-Systems-Observability-eBook.pdf)
@@ -71,7 +72,7 @@ A maioria das bibliotecas de métricas suportam os seguintes tipos de métricas:
 
 - **Histogram**: Um contador que fornece a distribuição de valores em um intervalo. São muito utilizadas para medir a distribuição de valores: tempo de resposta de uma requisição entre 0-100ms, 100-200ms, tamanho de arquivos.
 
-## Cardinalidade
+### Cardinalidade
 
 Cardinalidade se refere ao número de valores possíveis que uma métrica pode assumir. Métricas com alta cardinalidade podem ser mais difíceis de armazenar e processar.
 
@@ -81,9 +82,43 @@ Muitos sistemas de banco de dados não conseguem lidar com eficiência com o vol
 
 **Baixa Cardinalidade**: "Contar quantos carros são de cada cor no estacionamento." (Poucos valores únicos, como vermelho, azul, preto).
 
+## Traces
+
+Também conhecido como rastreamento, trace ou tracing, possibilita acompanhar o fluxo e a condição de uma transação. O trace conta a história de uma transação e fornecendo informações sobre o tempo gasto em cada parte do sistema.
+
+![trace](./images/trace.jpeg)
+
+A imagem acima representa um trace (rastro), e cada interação nessa requisição é chamada de span (trecho), cada trace e cada span possui um identificador único, são conhecidos como `traceid` e `spanid`, esses valores serve para identificar as interações na transação.
+
+### Propagação de contexto
+
+Para que um trace seja efetivo, é necessário que o contexto seja propagado entre os serviços. A propagação de contexto é o mecanismo que move o `traceid` e `spanid` entre os serviços.
+
+```mermaid
+sequenceDiagram
+    participant A as Serviço A
+    participant B as Serviço B
+    participant C as Serviço C
+
+    A->>B: Chamada de Serviço
+    A->>A: Gera traceid e spanid
+    A->>B: Propaga traceid e spanid para B
+    B->>B: Recebe traceid, gera novo spanid
+    B->>C: Chamada de Serviço
+    B->>C: Propaga traceid e spanid (com parentid)
+    C->>C: Recebe traceid, usa spanid de B como parentid, gera novo spanid
+    C->>B: Resposta
+    B->>A: Resposta
+```
+
+Por exemplo, quando o serviço A chama o serviço B, o `traceid` e `spanid` são propagados para o serviço B. Quando o serviço B chama o serviço C, o `traceid` e o `spanid` de B (com `parentid`) são propagados para o serviço C. Dessa forma, é possível correlacionar as interações entre os serviços.
+
 ## Saiba mais
 
+- [Ezzio Moreira - Três Pilares da Observabilidade](https://dev.to/ezziomoreira/tres-pilares-da-observabilidade-1p6d)
 - [Prometheus - Types of metrics](https://prometheus.io/docs/concepts/metric_types/)
-- [Prometheus - Metric and label naming](https://prometheus.io/docs/practices/naming/)
 - [OpenTelemetry - Metrics](https://opentelemetry.io/pt/docs/concepts/signals/metrics/)
 - [Honeycom - Understanding High Cardinality and Its Role in Observability](https://www.honeycomb.io/getting-started/understanding-high-cardinality-role-observability)
+- [OpenTelemetry - Tracing](https://opentelemetry.io/pt/docs/concepts/signals/traces/)
+- [Honeycom - Ask Miss O11y: Logs vs. Traces](https://www.honeycomb.io/blog/ask-miss-o11y-trace-vs-log)
+- [W3C Context Propagation](https://www.w3.org/TR/trace-context/)
