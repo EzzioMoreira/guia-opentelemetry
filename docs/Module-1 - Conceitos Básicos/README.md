@@ -113,6 +113,50 @@ sequenceDiagram
 
 Por exemplo, quando o serviço A chama o serviço B, o `traceid` e `spanid` são propagados para o serviço B. Quando o serviço B chama o serviço C, o `traceid` e o `spanid` de B (com `parentid`) são propagados para o serviço C. Dessa forma, é possível correlacionar as interações entre os serviços.
 
+### Amostragem
+
+A amostragem é uma técnica que permite coletar uma fração dos traces gerados por um sistema. A amostragem é importante para reduzir a quantidade de dados gerados e armazenados, sem perder a capacidade de identificar problemas.
+
+Por exemplo, a grande maioria das requisições de um sistema são bem-sucedidas e terminam com latências baixa, você não precisa armazenar todos os traces, apenas uma fração deles.
+
+![amostragem](./images/amostragem.png)
+
+Na imagem acima, a amostragem é utilizada para coletar apenas uma fração dos traces gerados pelo sistema. Para sistemas de alto volume é comum utilizar uma taxa de amostragem de 1% ou menos.
+
+A maioria dos sistemas de tracing suportam duas estratégias de amostragem:
+
+- **Head-based sampling**: A decisão de amostragem é tomada no início do trace, e é propagada para todos os spans filhos. Nesse tipo de estratégia não é possível garantir que todos os spans de um trace sejam amostrados.
+- **Tail-based sampling**: A decisão de amostragem é tomada no final do trace, e é propagada para todos os spans pais. Nesse tipo de estratégia é possível garantir que todos os spans de um trace sejam amostrados.
+
+## Logs
+
+Log é um registro de evento relevante e imutável gerado por um sistema ao longo do tempo. Os logs são considerados dos elementos fundamentais para qualquer sistema, e todos os registos de log possuem no mínimo 3 características, uma marcação de data e hora do momento que o evento foi gerado, uma mensagem que descreve o acontecimento e uma severidade (INFO, WARN, ERROR, EMERGENCY) que classifica o tipo de evento.
+
+Log são recomendados para registrar eventos de exceção, auditoria, segurança ou para gerar contextos adicionais que não são capturados por outros tipos de telemetria.
+
+```json
+{
+    "timestamp": "2024-10-06T14:35:00Z",
+    "level": "INFO",
+    "event": "USER_LOGIN",
+    "userId": "12345",
+    "username": "ezziomoreira",
+    "ipAddress": "192.168.1.10",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36",
+    "action": "LOGIN_SUCCESS",
+    "details": {
+        "location": "Fortaleza, Brazil",
+        "sessionId": "abc123xyz456"
+    },
+    "context": {
+        "traceId": "5B8EFFF798038103D269B633813FC60C",
+        "spanId": "EEE19B7EC3C1B174"
+    }
+}
+```
+
+O exemplo acima é um log de um evento de login de usuário, que contém informações sobre o usuário, evento, IP, navegador, localização, sessão, `traceid` e `spanid`.
+
 ## Saiba mais
 
 - [Ezzio Moreira - Três Pilares da Observabilidade](https://dev.to/ezziomoreira/tres-pilares-da-observabilidade-1p6d)
@@ -122,3 +166,7 @@ Por exemplo, quando o serviço A chama o serviço B, o `traceid` e `spanid` são
 - [OpenTelemetry - Tracing](https://opentelemetry.io/pt/docs/concepts/signals/traces/)
 - [Honeycom - Ask Miss O11y: Logs vs. Traces](https://www.honeycomb.io/blog/ask-miss-o11y-trace-vs-log)
 - [W3C Context Propagation](https://www.w3.org/TR/trace-context/)
+- [OpenTelemetry - Context Propagation](https://opentelemetry.io/pt/docs/concepts/context-propagation/)
+- [OpenTelemetry - Sampling](https://opentelemetry.io/pt/docs/concepts/sampling/)
+- [Logz - The Complete Guide to Sampling in Distributed Tracing](https://logz.io/learn/sampling-in-distributed-tracing-guide/)
+- [OpenTelemetry - Logs](https://opentelemetry.io/pt/docs/concepts/signals/logs/)

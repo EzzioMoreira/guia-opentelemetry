@@ -35,3 +35,4 @@ O treinamento será dividido em módulos teóricos e práticos para garantir uma
   - [Métricas](./docs/Module-1%20-%20Conceitos%20Básicos/README.md#métricas)
   - [Cardinalidade](./docs/Module-1%20-%20Conceitos%20Básicos/README.md#cardinalidade)
   - [Traces](./docs/Module-1%20-%20Conceitos%20Básicos/README.md#traces)
+  - [Logs](./docs/Module-1%20-%20Conceitos%20Básicos/README.md#logs)
