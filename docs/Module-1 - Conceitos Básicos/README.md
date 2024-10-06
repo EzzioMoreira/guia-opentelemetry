@@ -1,4 +1,4 @@
-# Monitoramento e Observabilidade {#monitoramento-e-observabilidade}
+# Monitoramento e Observabilidade
 
 O monitoramento é utilizado há décadas por equipes de TI para obter insights sobre a disponibilidade e performance de sistemas. A observabilidade é uma evolução do monitoramento, que busca entender o comportamento de sistemas complexos.
 
@@ -71,7 +71,7 @@ A maioria das bibliotecas de métricas suportam os seguintes tipos de métricas:
 
 - **Histogram**: Um contador que fornece a distribuição de valores em um intervalo. São muito utilizadas para medir a distribuição de valores: tempo de resposta de uma requisição entre 0-100ms, 100-200ms, tamanho de arquivos.
 
-## Cardinalidade {#cardinalidade}
+## Cardinalidade
 
 Cardinalidade se refere ao número de valores possíveis que uma métrica pode assumir. Métricas com alta cardinalidade podem ser mais difíceis de armazenar e processar.
 
