@@ -55,5 +55,6 @@ O treinamento será dividido em módulos teóricos e práticos para garantir uma
     - [OpenTelemetry Collector](./docs/Modulo-2%20-%20OpenTelemetry/README.md#opentelemetry-collector)
   - [Instrumentação](./docs/Modulo-2%20-%20OpenTelemetry/README.md#instrumentação)
     - [Instrumentação Manual](./docs/Modulo-2%20-%20OpenTelemetry/README.md#instrumentação-manual)
-    - [Instrumentação Automática](./docs/Modulo-2%20-%20OpenTelemetry/README.md#instrumentação-automática)
+    - [Instrumentação Sem Código](./docs/Modulo-2%20-%20OpenTelemetry/README.md#instrumentação-sem-código)
   - [Saiba mais](./docs/Modulo-2%20-%20OpenTelemetry/README.md#saiba-mais)
+  

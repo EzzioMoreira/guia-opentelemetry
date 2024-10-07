@@ -36,13 +36,22 @@ Instrumentação é o processo de adicionar código em aplicações para gerar d
 
 ### Instrumentação Manual
 
-### Instrumentação Automática
+A instrumentação manual é o processo de adicionar código em aplicações para gerar dados de telemetria. A instrumentação manual é feita utilizando APIs e SDKs do OpenTelemetry.
+
+### Instrumentação Sem Código
+
+A instrumentação sem código adiciona os recursos da API e SDK do OpenTelemetry em aplicações sem a necessidade de alterar o código fonte. A implantação da instrumentação podem variar de acordo com a linguagem de programação.
 
 ## Saiba mais
 
+- [Ezzio Moreira - Conceitos OpenTelemetry](https://dev.to/ezziomoreira/conceitos-opentelemetry-9k0)
 - [OpenTelemetry - What is OpenTelemetry?](https://opentelemetry.io/pt/docs/what-is-opentelemetry/)
 - [OpenTelemetry - Specification](https://opentelemetry.io/docs/specification/)
 - [OpenTelemetry - Components](https://opentelemetry.io/pt/docs/concepts/components/)
 - [OpenTelemetry - Semantic Conventions](https://opentelemetry.io/pt/docs/concepts/semantic-conventions/)
 - [OpenTelemetry - Collector](https://opentelemetry.io/pt/docs/collector/)
 - [OpenTelemetry - Collector Contrib GitHub](https://github.com/open-telemetry/opentelemetry-collector-contrib)
+- [OpenTelemetry - Instrumentação Manual](https://opentelemetry.io/pt/docs/concepts/instrumentation/code-based/)
+- [Wikipédia - Bytecode](https://pt.wikipedia.org/wiki/Bytecode)
+- [Wikipédia - Monkey patch](https://pt.wikipedia.org/wiki/Monkey_patch)
+- [Wikipédia - eBPF](https://pt.wikipedia.org/wiki/EBPF)
