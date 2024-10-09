@@ -15,6 +15,7 @@ Conhecimento básico em desenvolvimento de software, infraestrutura e Kubernetes
 ### Ferramentas
 
 - [Docker](https://docs.docker.com/get-docker/) 🐳
+- [Docker Compose](https://docs.docker.com/compose/install/) 🐳
 - [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) ☸️
 - [Helm](https://helm.sh/docs/intro/install/) ⛵
 - [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/) 📦
@@ -56,5 +57,11 @@ O treinamento será dividido em módulos teóricos e práticos para garantir uma
   - [Instrumentação](./docs/Modulo-2%20-%20OpenTelemetry/README.md#instrumentação)
     - [Instrumentação Manual](./docs/Modulo-2%20-%20OpenTelemetry/README.md#instrumentação-manual)
     - [Instrumentação Sem Código](./docs/Modulo-2%20-%20OpenTelemetry/README.md#instrumentação-sem-código)
+  - [Prática Módulo 2 - OpenTelemetry](./docs/Modulo-2%20-%20OpenTelemetry/module-2.md#prática-módulo-2---opentelemetry)
+    - [Requisitos](./docs/Modulo-2%20-%20OpenTelemetry/module-2.md#requisitos)
+    - [Instrumentação Sem Código](./docs/Modulo-2%20-%20OpenTelemetry/module-2.md#instrumentação-sem-código)
+    - [Estrutura do Exemplo](./docs/Modulo-2%20-%20OpenTelemetry/module-2.md#estrutura-do-exemplo)
+      - [Dockerfile](./docs/Modulo-2%20-%20OpenTelemetry/module-2.md#dockerfile)
+    - [Executando o Exemplo](./docs/Modulo-2%20-%20OpenTelemetry/module-2.md#executando-o-exemplo)
   - [Saiba mais](./docs/Modulo-2%20-%20OpenTelemetry/README.md#saiba-mais)
   
