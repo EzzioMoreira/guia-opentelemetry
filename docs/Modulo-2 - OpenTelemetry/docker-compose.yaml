@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  # Aplicação Python com OpenTelemetry
+  app:
+    build: .
+    container_name: app
+    depends_on:
+      - jaeger
+    ports:
+      - "8080:8080"
+
+  # Jaeger como backend para visualização dos traces
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger
+    ports:
+      - "16686:16686"  # UI do Jaeger
+      - "14268:14268"  # Porta para envio de dados trace (HTTP)
+      - "4317:4317"   # Porta para envio de dados trace (gRPC)
+      - "4318:4318"   # Porta para envio de dados trace (http)
