@@ -85,7 +85,6 @@ A instrumentação manual é o processo de adicionar código em aplicações par
    ```txt
    opentelemetry-api
    opentelemetry-sdk
-   opentelemetry-exporter-otlp
    ```
 
 2. Para iniciar a instrumentação é necessário iniciar o `TracerProvider` responsável por criar os `Spans`. Um `Span` representa uma unidade ou operação gerada pela aplicação, vários Spans podem ser agrupados em uma `Trace`. A inicialização do `TracerProvider` inclui o `Resources` e `Exporter`.  
@@ -93,27 +92,40 @@ A instrumentação manual é o processo de adicionar código em aplicações par
     ```python
     from opentelemetry import trace
     from opentelemetry.sdk.trace import TracerProvider
-    from opentelemetry.sdk.trace.export import BatchSpanProcessor
-    from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+    from opentelemetry.sdk.trace.export import (
+        BatchSpanProcessor,
+        ConsoleSpanExporter,
+    )
+    app = Flask(__name__)
+    latency = random.randint(1, 5)
 
-    # Configurar o tracer provider e o exporter
-    trace.set_tracer_provider(TracerProvider())
+    provider = TracerProvider()
+    processor = BatchSpanProcessor(ConsoleSpanExporter())
+    provider.add_span_processor(processor)
+
+    trace.set_tracer_provider(provider)
     tracer = trace.get_tracer(__name__)
-
-    # Configurar o exportador OTLP (para Jaeger, Grafana, etc.)
-    otlp_exporter = OTLPSpanExporter(endpoint="http://jaeger:4317")
-    span_processor = BatchSpanProcessor(otlp_exporter)
-    trace.get_tracer_provider().add_span_processor(span_processor)
     ```
 
 3. Agora, podemos adicionar spans nas funções onde desejamos rastrear o fluxo de execução. Use o trecho de código a seguir para adicionar spans na função `fetch_data_from_external_service`.
 
     ```python
     def fetch_data_from_external_service():
-    with tracer.start_as_current_span("fetch_data_from_external_service") as span:
-        # Simular uma solicitação HTTP GET para um serviço externo
-        response = requests.get("http://httpbin.org/get")
-        span.set_attribute("http.status_code", response.status_code)
-        sleep(latency)
-        return f"GET request to httpbin.org returned {response.status_code}"
+        with tracer.start_as_current_span("fetch_data_from_external_service") as span:
+            # Simula uma solicitação HTTP GET para um serviço externo
+            response = requests.get("http://httpbin.org/get")
+            span.set_attribute("http.status_code", response.status_code)
+            span.set_attribute("http.url", "http://httpbin.org/get")
+            span.set_attribute("http.method", "GET")
+            span.add_event("Buscando dados do servico externo", {"http.status_code": response.status_code})
+            sleep(latency)
+            return f"GET request to httpbin.org returned {response.status_code}"
     ```
+
+4. Adicione spans nas outras funções `submit_data_to_external_service` e `simulate_error_response`.
+
+    ```python
+    
+    ```
+
+
