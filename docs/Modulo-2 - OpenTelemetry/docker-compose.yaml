@@ -5,16 +5,59 @@ services:
     build: .
     container_name: app
     depends_on:
-      - jaeger
+      - grafana
     ports:
       - "8080:8080"
-
-  # Jaeger como backend para visualização dos traces
-  jaeger:
-    image: jaegertracing/all-in-one:latest
-    container_name: jaeger
+    networks:
+      - opentelemetry
+  # OpenTelemetry Collector
+  otelcollector:
+    image: otel/opentelemetry-collector-contrib
+    container_name: otelcollector
+    volumes:
+      - ../../config/collector/otelcol-config.yml:/etc/otel-collector-config.yml
+    command:
+      - "--config=/etc/otel-collector-config.yml"
+      - "--set=service.telemetry.logs.level=INFO"
     ports:
-      - "16686:16686"  # UI do Jaeger
-      - "14268:14268"  # Porta para envio de dados trace (HTTP)
-      - "4317:4317"   # Porta para envio de dados trace (gRPC)
-      - "4318:4318"   # Porta para envio de dados trace (http)
+      - "4317:4317" # Porta de recebimento de traces gRPC
+      - "4318:4318" # Porta de recebimento de métricas http
+    depends_on:
+      - clickhouse
+    networks:
+      - opentelemetry
+  # Grafana para visualização de métricas, logs e traces
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - 3000:3000
+    volumes:
+      - ../../config/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ../../config/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+    environment:
+      - GF_INSTALL_PLUGINS: grafana-clickhouse-datasource,vertamedia-clickhouse-datasource
+      - GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: vertamedia-clickhouse-datasource
+    networks:
+      - opentelemetry
+  # ClickHouse para armazenamento de métricas, logs e traces
+  clickhouse:
+    image: clickhouse/clickhouse-server
+    container_name: clickhouse
+    ports:
+      - 8123:8123
+      - 9000:9000
+    volumes:
+      # - ./run/clickhouse/users.xml:/etc/clickhouse-server/users.xml
+      - clickhouse-storage:/var/lib/clickhouse/
+      - clickhouse-logs:/var/log/clickhouse-server
+    environment:
+      - CLICKHOUSE_USER: admn
+      - CLICKHOUSE_PASSWORD: admin
+    networks:
+      - opentelemetry
+
+networks:
+  opentelemetry:
+    name: opentelemetry
+    driver: bridge
