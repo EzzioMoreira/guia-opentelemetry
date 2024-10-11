@@ -11,15 +11,15 @@ Foco principal deste módulo é explorar a instrumentação sem código e a manu
 
 ## Instrumentação Sem Código
 
-Muito conhecido como Auto-Instrumentação, é processo em que o OpenTelemetry modifica o comportamento da aplicação (como o Flask e Requests) em tempo de execução, adicionando código para coletar telemetria. Isso é possível graças a uma técnica chamada de [Monkey Patching](https://en.wikipedia.org/wiki/Monkey_patch).
+Muito conhecido como Auto-Instrumentação, é processo em que o OpenTelemetry modifica o comportamento da aplicação em tempo de execução, adicionando código para gerar, processar e enviar telemetria. Isso é possível graças a uma técnica chamada de [Monkey Patching](https://en.wikipedia.org/wiki/Monkey_patch).
 
 > O método de aplicar instrumentação sem código pode variar de acordo com a linguagem da aplicação.
 
-Com isso, toda vez que uma requisição é feita na aplicação de exemplo, o OpenTelemetry captura e envia essas informações para Jaeger.
+Com isso, toda vez que uma requisição é feita na aplicação de exemplo o OpenTelemetry captura e envia essas informações para Jaeger.
 
 ## Estrutura do Exemplo
 
-A [aplicação Python](app.py) de exemplo é composta por 3 funções que fazem requisições HTTP para um serviço externo (httpbin.org), com latência variável entre 1 e 5 segundos.
+A [aplicação Python](app.py) de exemplo é composta por 3 funções que fazem requisições HTTP para um serviço externo [httpbin.org](httpbin.org), implementando uma latência variável entre 1 e 5 segundos.
 
 - Arquivos do Exemplo:
   - `app.py`: Aplicação Python de exemplo.
@@ -28,12 +28,16 @@ A [aplicação Python](app.py) de exemplo é composta por 3 funções que fazem 
 
 ### Dockerfile
 
-No Dockerfile, instalamos as dependências da aplicação, copiamos o código fonte `app.py` e configuramos para que, ao iniciar o container, a auto instrumentação seja ativada.
+No Dockerfile, instalamos as dependências da aplicação, copiamos o código fonte `app.py` e configuramos para que, ao iniciar o container, a auto instrumentação seja carregada.
 
 Neste [Dockerfile](./Dockerfile):
 
+- O comando `pip install opentelemetry-distro opentelemetry-exporter-otlp` instala as dependências do OpenTelemetry.
 - O comando `opentelemetry-bootstrap -a install` configura a auto instrumentação.
-- As variáveis de ambiente configuram o OpenTelemetry para exportar os traces para o Jaeger.
+- As variáveis de ambiente configuram o OpenTelemetry para exportar os traces para o Jaeger e defininem atributos de contexto.
+  - `OTEL_SERVICE_NAME="app-python"`
+  - `OTEL_RESOURCE_ATTRIBUTES="service.version=1.0.0, env=dev"`
+  - `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT="http://jaeger:4317"`
 
 ## Executando o Exemplo
 
@@ -71,4 +75,7 @@ Quando você acessar o Jaeger, verá os traces das requisições HTTP, junto com
 ## Instrumentação Manual
 
 A instrumentação manual é o processo de adicionar código em aplicações para gerar dados de telemetria. A instrumentação manual é feita utilizando APIs e SDKs do OpenTelemetry.
+
+> A instrumentação manual é recomendada para cenários em que a instrumentação sem código não é suficiente. A instrumentação sem código é recomendada quando você não tem acesso ao código da aplicação ou precisa de uma solução rápida. Nada te impede de usar os dois métodos juntos.
+
 

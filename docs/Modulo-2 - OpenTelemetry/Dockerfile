@@ -17,7 +17,7 @@ COPY app.py .
 
 # Configura as variáveis de ambiente
 ENV OTEL_SERVICE_NAME="app-python"
-ENV OTEL_RESOURCE_ATTRIBUTES="service.name=app-python, service.version=1.0.0, env=dev"
+ENV OTEL_RESOURCE_ATTRIBUTES="service.version=1.0.0, env=dev"
 ENV OTEL_EXPORTER_OTLP_TRACES_ENDPOINT="http://jaeger:4317"
 
 # Expõe a porta 8080
