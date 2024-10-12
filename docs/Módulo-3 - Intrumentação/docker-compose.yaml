@@ -8,15 +8,12 @@ services:
       - "8080:8080"
     depends_on:
       - otelcollector
-    environment:
-      - OTEL_SERVICE_NAME=app-python
-      - OTEL_RESOURCE_ATTRIBUTES=service.version=1.0.0, env=dev
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otelcollector:4318
-      - OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=http://otelcollector:4318
-  
+    ############################################################
+    # Adicionando variáveis de ambiente para o OpenTelemetry ###
+    ############################################################
   # OpenTelemetry Collector
   otelcollector:
-    image: otel/opentelemetry-collector-contrib:latest
+    image: otel/opentelemetry-collector-contrib:0.110.0
     container_name: otelcollector
     volumes:
       - ../../config/collector/otelcol-config.yml:/etc/otel-collector-config.yml
@@ -25,7 +22,7 @@ services:
       - "--set=service.telemetry.logs.level=INFO"
     ports:
       - "4317:4317" # Porta de recebimento de traces gRPC
-      - "4318:4318" # Porta de recebimento de métricas http
+      - "4318:4318" # Porta de recebimento de métricas HTTP
   
   # Grafana para visualização de métricas, logs e traces
   grafana:
@@ -36,9 +33,8 @@ services:
     volumes:
       - ../../config/grafana/grafana.ini:/etc/grafana/grafana.ini
       - ../../config/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
-    environment:
-      - GF_INSTALL_PLUGINS= grafana-clickhouse-datasource,vertamedia-clickhouse-datasource
-      - GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS= vertamedia-clickhouse-datasource
+      - ../../config/grafana/dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
+      - ../../config/grafana/dashboards:/var/lib/grafana/dashboards
   
   # Grafana Tempo para armaazenamento de traces
   tempo:
@@ -66,7 +62,7 @@ services:
   
   # Grafana Loki para armazenamento de logs
   loki: 
-    image: grafana/loki:2.9.2
+    image: grafana/loki:latest
     container_name: loki
     command: [ "-config.file=/etc/loki/loki.yaml" ]
     volumes:
@@ -76,25 +72,6 @@ services:
       - '7946:7946'
     depends_on:
       - grafana
-  
-  # Minio simulando um storage S3 para o Loki
-  minio:
-    image: minio/minio
-    container_name: minio
-    entrypoint:
-      - sh
-      - -euc
-      - |
-        mkdir -p /data/loki-data && \
-        mkdir -p /data/loki-ruler && \
-        minio server /data
-    environment:
-      - MINIO_ROOT_USER=loki
-      - MINIO_ROOT_PASSWORD=supersecret
-      - MINIO_PROMETHEUS_AUTH_TYPE=public
-      - MINIO_UPDATE=off
-    ports:
-      - 9000
 
 x-default-logging: &logging
   driver: "json-file"

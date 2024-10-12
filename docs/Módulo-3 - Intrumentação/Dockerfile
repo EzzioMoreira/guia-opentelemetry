@@ -13,8 +13,13 @@ COPY app.py .
 # Instala as dependências, incluindo OpenTelemetry e a instrumentação para Flask
 RUN pip install --no-cache-dir -r requirements.txt
 
+####################################################################
+#### Adicione aqui o comando RUN para instalar o OpenTelemetry #####
+####################################################################
+
 # Expõe a porta 8080
 EXPOSE 8080
-
-# Configura a autoinstrumentação e executa o app.py
-CMD ["python", "app.py"]
+######################################################################
+# Altere o entrypoint para executar o OpenTelemetry Instrumentation ##
+ENTRYPOINT ["python", "app.py"]
+######################################################################

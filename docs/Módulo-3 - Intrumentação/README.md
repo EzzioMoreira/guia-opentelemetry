@@ -1,7 +1,5 @@
 # Instrumentação Sem Código e Manual
 
-Este módulo aborda a instrumentação de aplicações utilizando o OpenTelemetry. 
-
 O OpenTelemetry oferece duas maneiras de instrumentar aplicações: manualmente e sem código. A instrumentação manual é o processo de adicionar código em aplicações para gerar dados de telemetria. A instrumentação sem código adiciona os recursos da API e SDK do OpenTelemetry em aplicações sem a necessidade de alterar o código fonte.
 
 ## Requisitos
@@ -22,7 +20,8 @@ A [aplicação Python](app.py) de exemplo é composta por 3 funções que fazem 
     - `Grafana Tempo`: Banco de dados para armazenamento de traces.
     - `Grafana Loki`: Banco de dados para armazenamento de logs.
     - `OpenTelemetry Collector`: Coleta, processa e exporta dados de telemetria.
-    - `Minio`: Simula um serviço de armazenamento de objetos, similar ao Amazon S3.
+
+## Diagrama de Arquitetura
 
 ```mermaid
 graph LR
