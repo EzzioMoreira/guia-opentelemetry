@@ -1,0 +1,104 @@
+version: '3.8'
+services:
+  # Aplicação Python com OpenTelemetry
+  app:
+    build: .
+    container_name: app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - otelcollector
+    environment:
+      - OTEL_SERVICE_NAME=app-python
+      - OTEL_RESOURCE_ATTRIBUTES=service.version=1.0.0, env=dev
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otelcollector:4318
+      - OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=http://otelcollector:4318
+  
+  # OpenTelemetry Collector
+  otelcollector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otelcollector
+    volumes:
+      - ../../config/collector/otelcol-config.yml:/etc/otel-collector-config.yml
+    command:
+      - "--config=/etc/otel-collector-config.yml"
+      - "--set=service.telemetry.logs.level=INFO"
+    ports:
+      - "4317:4317" # Porta de recebimento de traces gRPC
+      - "4318:4318" # Porta de recebimento de métricas http
+  
+  # Grafana para visualização de métricas, logs e traces
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - 3000:3000
+    volumes:
+      - ../../config/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ../../config/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+    environment:
+      - GF_INSTALL_PLUGINS= grafana-clickhouse-datasource,vertamedia-clickhouse-datasource
+      - GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS= vertamedia-clickhouse-datasource
+  
+  # Grafana Tempo para armaazenamento de traces
+  tempo:
+    image: grafana/tempo:latest
+    container_name: tempo
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ../../config/grafana/tempo.yaml:/etc/tempo.yaml
+    ports:
+      - "3200:3200"
+    depends_on:
+      - grafana
+  
+  # Grafana Mimir para armazenamento de métricas
+  mimir:
+    image: grafana/mimir:latest
+    container_name: mimir
+    command: [ "-config.file=/etc/mimir.yaml" ]
+    volumes:
+      - ../../config/grafana/mimir.yaml:/etc/mimir.yaml
+    ports:
+      - "9009:9009"
+    depends_on:
+      - grafana
+  
+  # Grafana Loki para armazenamento de logs
+  loki: 
+    image: grafana/loki:2.9.2
+    container_name: loki
+    command: [ "-config.file=/etc/loki/loki.yaml" ]
+    volumes:
+      - ../../config/grafana/loki.yaml:/etc/loki/loki.yaml
+    ports:
+      - "3100:3100"
+      - '7946:7946'
+    depends_on:
+      - grafana
+  
+  # Minio simulando um storage S3 para o Loki
+  minio:
+    image: minio/minio
+    container_name: minio
+    entrypoint:
+      - sh
+      - -euc
+      - |
+        mkdir -p /data/loki-data && \
+        mkdir -p /data/loki-ruler && \
+        minio server /data
+    environment:
+      - MINIO_ROOT_USER=loki
+      - MINIO_ROOT_PASSWORD=supersecret
+      - MINIO_PROMETHEUS_AUTH_TYPE=public
+      - MINIO_UPDATE=off
+    ports:
+      - 9000
+
+x-default-logging: &logging
+  driver: "json-file"
+  options:
+    max-size: "5m"
+    max-file: "2"
+    tag: "{{.Name}}"
