@@ -46,8 +46,6 @@ Agora, siga estes passos para implementar a instrumentação sem código na apli
     Como alternativa, vamos utilizar variáveis de ambiente para configurar o `opentelemetry-instrument`. Para isso, adicione o seguinte trecho de código ao arquivo `docker-compose.yaml`:
 
     ```yaml
-
-    ```docker-compose
     environment:
       - OTEL_SERVICE_NAME=app-python
       - OTEL_RESOURCE_ATTRIBUTES=service.name=app-python, service.version=1.0.0, service.env=dev
