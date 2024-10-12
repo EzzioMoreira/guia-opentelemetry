@@ -60,7 +60,7 @@ Agora, siga estes passos para implementar a instrumentação sem código na apli
     docker-compose up
     ```
 
-1. Acesse os endpoints da aplicação para gerar traces:
+1. Acesse os endpoints da aplicação para gerar métricas e traces:
 
    - [http://localhost:8080/fetch-data](http://localhost:8080/fetch-data)
    - [http://localhost:8080/submit-data](http://localhost:8080/submit-data)
@@ -68,13 +68,11 @@ Agora, siga estes passos para implementar a instrumentação sem código na apli
    
 1. Acesse o Grafana para visualizar a telemetria gerada http://localhost:3000.
 
-    Selecione o serviço `python-app` e clique em `Find Traces` para visualizar os traces gerados pelas requisições que você acabou de fazer.
+    No menu `explorer` do Grafana, você pode visualizar as métricas e traces, selecione `service.name` = `app-python` para visualizar as métricas e traces.
 
 ### O Que Esperar?
 
 Quando você acessar os endpoints da aplicação, o OpenTelemetry irá capturar as requisições e enviar para o OpenTelemetry Collector. O OpenTelemetry Collector irá processar e enviar a telemetria para Tempo, Mimir e Loki. Por fim, você poderá visualizar a telemetria no Grafana.
-
-Explore o Grafana para visualizar os dados de telemetria gerados pela aplicação Python.
 
 ## Conclusão
 
