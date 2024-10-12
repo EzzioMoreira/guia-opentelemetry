@@ -59,3 +59,10 @@ O treinamento será dividido em módulos teóricos e práticos para garantir uma
     - [Instrumentação Manual](./docs/Módulo-2%20-%20OpenTelemetry/README)
   - [Saiba mais](./docs/Módulo-2%20-%20OpenTelemetry/README.md#saiba-mais)
   
+## Módulo 3 - Instrumentação
+
+- [Instrumentação Sem Código e Manual](./docs/Módulo-3%20-%20Intrumentação/README.md#instrumentação-sem-código-e-manual)
+  - [Requisitos](./docs/Módulo-3%20-%20Intrumentação/README.md#requisitos)
+  - [Estrutura do Exemplo](./docs/Módulo-3%20-%20Intrumentação/README.md#estrutura-do-exemplo)
+  - [Diagrama de Arquitetura](./docs/Módulo-3%20-%20Intrumentação/README.md#diagrama-de-arquitetura)
+  - [Implementando Instrumentação Sem Código](./docs/Módulo-3%20-%20Intrumentação/instrumentação-sem-código.md#implementando-instrumentação-sem-código)

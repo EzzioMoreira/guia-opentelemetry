@@ -5,39 +5,42 @@ receivers:
         endpoint: 0.0.0.0:4317
       http:
         endpoint: 0.0.0.0:4318
+  
+  prometheus:
+    config:
+      scrape_configs:
+      - job_name: otel-collector-metrics
+        scrape_interval: 30s
+        static_configs:
+        - targets: ['127.0.0.1:8888']
 processors:
   batch:
-    send_batch_size: 100000
+    send_batch_size: 1000
     timeout: 5s
   memory_limiter:
-    check_interval: 2s
+    check_interval: 5s
     limit_mib: 1800
     spike_limit_mib: 500
   resourcedetection/system:
     detectors: [ "system", docker ]
     system:
       hostname_sources: [ "os" ]
-  resource:
-    attributes:
-      - key: service.name
-        value: "serviceName"
-        action: upsert
 exporters:
-  clickhouse:
-    endpoint: tcp://clickhouse:9000?dial_timeout=10s
-    database: otel
-    async_insert: true
-    ttl: 72h
-    compress: lz4
-    create_schema: true
-    logs_table_name: otel_logs
-    traces_table_name: otel_traces
-    timeout: 5s
-    retry_on_failure:
-      enabled: true
-      initial_interval: 5s
-      max_interval: 30s
-      max_elapsed_time: 300s
+  otlp:
+    endpoint: tempo:4317
+    tls:
+      insecure: true
+  
+  prometheusremotewrite:
+    endpoint: http://mimir:9009/api/v1/push
+    resource_to_telemetry_conversion:
+      enabled: true # Convert resource attributes to metric labels
+
+  loki:
+    endpoint: http://loki:3100/loki/api/v1/push
+    tls:
+      insecure: true
+
 extensions:
   health_check:
   pprof:
@@ -48,13 +51,13 @@ service:
   pipelines:
     logs:
       receivers: [ otlp ]
-      processors: [ memory_limiter, resourcedetection/system, resource, batch ]
-      exporters: [ clickhouse ]
+      processors: [ memory_limiter, resourcedetection/system, batch ]
+      exporters: [ loki ]
     traces:
       receivers: [ otlp ]
-      processors: [ memory_limiter, resourcedetection/system, resource, batch ]
-      exporters: [ clickhouse ]
-    # metrics:
-    #   receivers: [ otlp ]
-    #   processors: [ memory_limiter, resourcedetection/system, resource, batch ]
-    #   exporters: [ clickhouse ]
+      processors: [ memory_limiter, resourcedetection/system, batch ]
+      exporters: [ otlp ]
+    metrics:
+      receivers: [ otlp, prometheus ]
+      processors: [ memory_limiter, resourcedetection/system, batch ]
+      exporters: [ prometheusremotewrite ]
