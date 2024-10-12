@@ -15,6 +15,7 @@ Conhecimento básico em desenvolvimento de software, infraestrutura e Kubernetes
 ### Ferramentas
 
 - [Docker](https://docs.docker.com/get-docker/) 🐳
+- [Docker Compose](https://docs.docker.com/compose/install/) 🐳
 - [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) ☸️
 - [Helm](https://helm.sh/docs/intro/install/) ⛵
 - [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/) 📦
@@ -28,33 +29,33 @@ O treinamento será dividido em módulos teóricos e práticos para garantir uma
 - **Configuração do OpenTelemetry Collector**: Implementar e configuração do OpenTelemetry Collector, cobrindo a arquitetura e como configurar pipelines para coletar, processar e exportar dados.
 - **Escalabilidade e Resiliência**: Abordar como tornar a observabilidade escalável e resiliente, utilizando Kafka e OpenTelemetry loadbalance para lidar com grandes volumes de dados.
 
-## Modulo 1 - Conceitos Básicos
+## Módulo 1 - Conceitos Básicos
 
-- [Monitoramento e Observabilidade](./docs/Module-1%20-%20Conceitos%20Básicos/README.md#monitoramento-e-observabilidade)
-  - [O que é Monitoramento?](./docs/Module-1%20-%20Conceitos%20Básicos/README.md#o-que-é-monitoramento)
-  - [O que é Observabilidade?](./docs/Module-1%20-%20Conceitos%20Básicos/README.md#o-que-é-observabilidade)
-  - [Saiba mais](./docs/Module-1%20-%20Conceitos%20Básicos/README.md#saiba-mais)
-- [Telemetria](./docs/Module-1%20-%20Conceitos%20Básicos/README.md#telemetria)
-  - [Métricas](./docs/Module-1%20-%20Conceitos%20Básicos/README.md#métricas)
-    - [Tipos de Métricas](./docs/Module-1%20-%20Conceitos%20Básicos/README.md#tipos-de-métricas)
-  - [Cardinalidade](./docs/Module-1%20-%20Conceitos%20Básicos/README.md#cardinalidade)
-  - [Traces](./docs/Module-1%20-%20Conceitos%20Básicos/README.md#traces)
-    - [Propagação de Contexto](./docs/Module-1%20-%20Conceitos%20Básicos/README.md#propagação-de-contexto)
-    - [Amostragem](./docs/Module-1%20-%20Conceitos%20Básicos/README.md#amostragem)
-  - [Logs](./docs/Module-1%20-%20Conceitos%20Básicos/README.md#logs)
-  - [Saiba mais](./docs/Module-1%20-%20Conceitos%20Básicos/README.md#saiba-mais)
+- [Monitoramento e Observabilidade](./docs/Módulo-1%20-%20Conceitos%20Básicos/README.md#monitoramento-e-observabilidade)
+  - [O que é Monitoramento?](./docs/Módulo-1%20-%20Conceitos%20Básicos/README.md#o-que-é-monitoramento)
+  - [O que é Observabilidade?](./docs/Módulo-1%20-%20Conceitos%20Básicos/README.md#o-que-é-observabilidade)
+  - [Saiba mais](./docs/Módulo-1%20-%20Conceitos%20Básicos/README.md#saiba-mais)
+- [Telemetria](./docs/Módulo-1%20-%20Conceitos%20Básicos/README.md#telemetria)
+  - [Métricas](./docs/Módulo-1%20-%20Conceitos%20Básicos/README.md#métricas)
+    - [Tipos de Métricas](./docs/Módulo-1%20-%20Conceitos%20Básicos/README.md#tipos-de-métricas)
+  - [Cardinalidade](./docs/Módulo-1%20-%20Conceitos%20Básicos/README.md#cardinalidade)
+  - [Traces](./docs/Módulo-1%20-%20Conceitos%20Básicos/README.md#traces)
+    - [Propagação de Contexto](./docs/Módulo-1%20-%20Conceitos%20Básicos/README.md#propagação-de-contexto)
+    - [Amostragem](./docs/Módulo-1%20-%20Conceitos%20Básicos/README.md#amostragem)
+  - [Logs](./docs/Módulo-1%20-%20Conceitos%20Básicos/README.md#logs)
+  - [Saiba mais](./docs/Módulo-1%20-%20Conceitos%20Básicos/README.md#saiba-mais)
 
-## Modulo 2 - OpenTelemetry
+## Módulo 2 - OpenTelemetry
 
-- [OpenTelemetry](./docs/Modulo-2%20-%20OpenTelemetry/README.md#opentelemetry)
-  - [O que é OpenTelemetry?](./docs/Modulo-2%20-%20OpenTelemetry/README.md#o-que-é-opentelemetry)
-  - [Principais Componentes do OpenTelemetry](./docs/Modulo-2%20-%20OpenTelemetry/README.md#principais-componentes-do-opentelemetry)
-    - [Especificação OpenTelemetry](./docs/Modulo-2%20-%20OpenTelemetry/README.md#especificação-opentelemetry)
-    - [API e SDK OpenTelemetry](./docs/Modulo-2%20-%20OpenTelemetry/README.md#api-e-sdk-opentelemetry)
-    - [Convenção Semântica](./docs/Modulo-2%20-%20OpenTelemetry/README.md#convenção-semântica)
-    - [OpenTelemetry Collector](./docs/Modulo-2%20-%20OpenTelemetry/README.md#opentelemetry-collector)
-  - [Instrumentação](./docs/Modulo-2%20-%20OpenTelemetry/README.md#instrumentação)
-    - [Instrumentação Manual](./docs/Modulo-2%20-%20OpenTelemetry/README.md#instrumentação-manual)
-    - [Instrumentação Sem Código](./docs/Modulo-2%20-%20OpenTelemetry/README.md#instrumentação-sem-código)
-  - [Saiba mais](./docs/Modulo-2%20-%20OpenTelemetry/README.md#saiba-mais)
+- [OpenTelemetry](./docs/Módulo-2%20-%20OpenTelemetry/README.md#opentelemetry)
+  - [O que é OpenTelemetry?](./docs/Módulo-2%20-%20OpenTelemetry/README.md#o-que-é-opentelemetry)
+  - [Principais Componentes do OpenTelemetry](./docs/Módulo-2%20-%20OpenTelemetry/README.md#principais-componentes-do-opentelemetry)
+    - [Especificação OpenTelemetry](./docs/Módulo-2%20-%20OpenTelemetry/README.md#especificação-opentelemetry)
+    - [API e SDK OpenTelemetry](./docs/Módulo-2%20-%20OpenTelemetry/README.md#api-e-sdk-opentelemetry)
+    - [Convenção Semântica](./docs/Módulo-2%20-%20OpenTelemetry/README.md#convenção-semântica)
+    - [OpenTelemetry Collector](./docs/Módulo-2%20-%20OpenTelemetry/README.md#opentelemetry-collector)
+  - [Instrumentação](./docs/Módulo-2%20-%20OpenTelemetry/README.md#instrumentação)
+    - [Instrumentação Sem Código](./docs/Módulo-2%20-%20OpenTelemetry/README.md#instrumentação-sem-código)
+    - [Instrumentação Manual](./docs/Módulo-2%20-%20OpenTelemetry/README)
+  - [Saiba mais](./docs/Módulo-2%20-%20OpenTelemetry/README.md#saiba-mais)
   
