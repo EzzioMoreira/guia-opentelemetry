@@ -2,9 +2,11 @@
 
 Também conhecido como Auto-Instrumentação, é processo em que o OpenTelemetry modifica o comportamento da aplicação em tempo de execução, adicionando código para gerar, processar e enviar telemetria. Isso é possível graças a uma técnica chamada de [Monkey Patching](https://en.wikipedia.org/wiki/Monkey_patch).
 
-> O método de aplicar instrumentação sem código pode variar de acordo com a linguagem da aplicação. 
+> O método de aplicar instrumentação sem código varia de acordo com a linguagem de programação. 
 
 Com isso, toda vez que uma requisição é feita na aplicação de exemplo o OpenTelemetry captura e envia a telemetria para OpenTelemetry Collector, que por sua vez, envia para o Grafana.
+
+Instrumentação sem código é um bom começo para iniciar sua jornada com instrumentação de aplicações, mas é importante lembrar que a instrumentação sem código não é suficiente para todos os cenários. Em alguns casos, você precisará adicionar código manualmente para instrumentar corretamente a aplicação.
 
 ## Implementando Instrumentação Sem Código
 
@@ -81,3 +83,4 @@ Neste módulo, você aprendeu como implementar a instrumentação sem código em
 ## Saiba Mais
 
 - [OpenTelemetry Python](https://opentelemetry.io/docs/zero-code/)
+- [Byte Buddy](https://bytebuddy.net/#/)

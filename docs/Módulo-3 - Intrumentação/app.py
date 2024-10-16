@@ -3,16 +3,37 @@ import requests
 from time import sleep
 import random
 import logging
+################################################################################
+### Adicione aqui o código que importa OpenTelemetry e instancia a SDK ########
+################################################################################
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+
+provider = TracerProvider()
+span_exporter = OTLPSpanExporter()
+processor = BatchSpanProcessor(span_exporter)
+provider.add_span_processor(processor)
+
+trace.set_tracer_provider(provider)
+tracer = trace.get_tracer(__name__)
+
 
 app = Flask(__name__)
 latency = random.randint(1, 5)
 
 def fetch_data_from_external_service():
-    # Simula uma solicitação HTTP GET para um serviço externo
-    response = requests.get("http://httpbin.org/get")
-    sleep(latency)
-    logging.info(f"GET request to httpbin.org returned {response.status_code}")
-    return f"GET request to httpbin.org returned {response.status_code}"
+    with tracer.start_as_current_span("fetch_data_from_external_service") as span:
+        # Simula uma solicitação HTTP GET para um serviço externo
+        response = requests.get("http://httpbin.org/get")
+        span.set_attribute(SpanAttributes.HTTP_METHOD, "GET")
+        span.set_attribute(SpanAttributes.HTTP_URL, "http://httpbin.org/get")
+        span.set_attribute(SpanAttributes.HTTP_STATUS_CODE, response.status_code)
+        sleep(latency)
+        logging.info(f"GET request to httpbin.org returned {response.status_code}")
+        span.end()
+        return f"GET request to httpbin.org returned {response.status_code}"
 
 def submit_data_to_external_service():
     # Simula uma solicitação HTTP POST para um serviço externo
