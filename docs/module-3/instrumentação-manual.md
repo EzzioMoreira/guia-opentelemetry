@@ -133,7 +133,7 @@ A instrumentação manual é o processo de adicionar código em aplicações par
 
 1. Eventos são registros que ocorrem durante a execução de um span. São úteis para registrar informações adicionais sobre o span, como logs, exceções, mensagens de depuração, etc. 
 
-Adicione o seguinte trecho de código ao arquivo `app.py`:
+    Adicione o seguinte trecho de código ao arquivo `app.py`:
 
     ```python
     def fetch_data_from_external_service():
@@ -155,7 +155,7 @@ Adicione o seguinte trecho de código ao arquivo `app.py`:
             return f"GET request to httpbin.org returned {response.status_code}"
             span.end()
     ```
-
+    
     O método `add_event` só aceitam valores de tipo string. Considere usar eventos para registrar pontos significativos no ciclo de vida de um span. Por exemplo, você pode registrar eventos para indicar quando uma operação foi iniciada, quando uma operação foi concluída, quando ocorreu um erro.
 
     - Execute novamente a aplicação e acesse o endpoint [http://localhost:8080/fetch-data](http://localhost:8080/fetch-data) para gerar traces.
@@ -166,3 +166,6 @@ Adicione o seguinte trecho de código ao arquivo `app.py`:
 
     ![Trace-Span-Events](./image/trace-span-events.png)
 
+## Adicionando Links ao Span
+
+1. Links são referências a outros spans. Links são úteis para correlacionar spans e rastrear o fluxo de execução. Por exemplo, você pode adicionar links para indicar que um span é filho de outro span, ou que um span é relacionado a outro span.
