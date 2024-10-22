@@ -131,7 +131,9 @@ A instrumentação manual é o processo de adicionar código em aplicações par
 
 ## Adicionando Eventos ao Span
 
-1. Vamos adicionar eventos ao Span. Eventos são registros que ocorrem durante a execução de um span. Eles são úteis para registrar informações adicionais sobre o span, como logs, exceções, mensagens de depuração, etc. Adicione o seguinte trecho de código ao arquivo `app.py`:
+1. Eventos são registros que ocorrem durante a execução de um span. São úteis para registrar informações adicionais sobre o span, como logs, exceções, mensagens de depuração, etc. 
+
+Adicione o seguinte trecho de código ao arquivo `app.py`:
 
     ```python
     def fetch_data_from_external_service():
@@ -154,13 +156,13 @@ A instrumentação manual é o processo de adicionar código em aplicações par
             span.end()
     ```
 
-    O método `add_event` adiciona um evento ao span. O evento pode substituir o registro de logs, pois fornece informações adicionais sobre o span. Um ponto importante deve ser lembrada: eventos só aceitam valores de tipo string.
+    O método `add_event` só aceitam valores de tipo string. Considere usar eventos para registrar pontos significativos no ciclo de vida de um span. Por exemplo, você pode registrar eventos para indicar quando uma operação foi iniciada, quando uma operação foi concluída, quando ocorreu um erro.
 
     - Execute novamente a aplicação e acesse o endpoint [http://localhost:8080/fetch-data](http://localhost:8080/fetch-data) para gerar traces.
 
     - Acesse o Grafana para visualizar a telemetria gerada [http://localhost:3000](http://localhost:3000).
 
     Note que no Trace agora temos informações no Span Events.
-    
+
     ![Trace-Span-Events](./image/trace-span-events.png)
 
