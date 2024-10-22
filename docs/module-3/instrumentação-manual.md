@@ -126,6 +126,7 @@ A instrumentação manual é o processo de adicionar código em aplicações par
     - Acesse o Grafana para visualizar a telemetria gerada [http://localhost:3000](http://localhost:3000).
 
     Note que no Trace agora temos informações no Span Attributes.
+
     ![Trace-Span-Attributes](./image/trace-span-attribut.png)
 
 ## Adicionando Eventos ao Span
@@ -160,5 +161,6 @@ A instrumentação manual é o processo de adicionar código em aplicações par
     - Acesse o Grafana para visualizar a telemetria gerada [http://localhost:3000](http://localhost:3000).
 
     Note que no Trace agora temos informações no Span Events.
+    
     ![Trace-Span-Events](./image/trace-span-events.png)
 
