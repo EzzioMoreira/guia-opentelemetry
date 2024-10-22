@@ -4,7 +4,7 @@ A instrumentação manual é o processo de adicionar código em aplicações par
 
 > A instrumentação manual é recomendada para cenários em que a instrumentação sem código não é suficiente.
 
-### Implementando Instrumentação Manual
+### TracerProvider
 
 1. Clonar o repositório e acessar o diretório do módulo:
 
@@ -39,6 +39,8 @@ A instrumentação manual é o processo de adicionar código em aplicações par
     ```
 
     Com a pipeline de rastreamento configurada, podemos obter um Tracer. A interface do `TraceProvider` define um método `get_tracer` que nos permite obter um `Tracer`. O método requer um nome e opcionalmente uma versão. Isso é útil para identificar a origem e a versão do rastreamento.
+
+## Adicionando Spans
 
 1. Agora, podemos adicionar spans nas funções onde desejamos rastrear o fluxo de execução. Use o trecho de código a seguir para adicionar spans na função `fetch_data_from_external_service`.
 
@@ -80,6 +82,8 @@ A instrumentação manual é o processo de adicionar código em aplicações par
 
     ![Trace](./image/trace3.5.png)
 
+## Adicionando Atributos ao Span
+
 1. Vamos enriquecer o Trace adicionando atributos ao Span. Usaremos [Atributos Semânticos](https://opentelemetry.io/docs/specs/semconv/general/trace/) que permite a normalização dessas informações. Primeiro é necessário instalar o pacote `opentelemetry-semantic-conventions`, adicione o pacote ao arquivo `requirements.txt`:
 
     ```txt
@@ -108,10 +112,11 @@ A instrumentação manual é o processo de adicionar código em aplicações par
             span.set_attribute(SpanAttributes.HTTP_ROUTE, "/get")
             span.set_attribute(SpanAttributes.HTTP_URL, "http://httpbin.org")
             span.set_attribute(SpanAttributes.HTTP_STATUS_CODE, response.status_code)
+            span.add_attribute("I_like", "rapadura")
             sleep(latency)
             logging.info(f"GET request to httpbin.org returned {response.status_code}")
-            span.end()
             return f"GET request to httpbin.org returned {response.status_code}"
+            span.end()
     ```
 
     Atributos são pares de chave-valor que fornecem informações adicionais sobre o span. Eles são úteis para adicionar metadados que podem ser usados para filtrar, pesquisar e analisar spans. Por exemplo, se uma operação da aplicação onde um item é adicionado ao carrinho, você pode capturar os atributo `item_id`, `item_name`, `item_price`, `cliente_id`, etc. Essas informações podem ser usadas para analisar o comportamento do usuário, identificar problemas e muito mais.
@@ -122,4 +127,38 @@ A instrumentação manual é o processo de adicionar código em aplicações par
 
     Note que no Trace agora temos informações no Span Attributes.
     [Trace-Span-Attributes](./image/trace-span-attribut.png)
+
+## Adicionando Eventos ao Span
+
+1. Vamos adicionar eventos ao Span. Eventos são registros que ocorrem durante a execução de um span. Eles são úteis para registrar informações adicionais sobre o span, como logs, exceções, mensagens de depuração, etc. Adicione o seguinte trecho de código ao arquivo `app.py`:
+
+    ```python
+    def fetch_data_from_external_service():
+        with tracer.start_as_current_span("fetch_data_from_external_service") as span:
+            # Simula uma solicitação HTTP GET para um serviço externo
+            response = requests.get("http://httpbin.org/get")
+            span.set_attribute(SpanAttributes.HTTP_METHOD, "GET")
+            span.set_attribute(SpanAttributes.HTTP_FLAVOR, "1.1")
+            span.set_attribute(SpanAttributes.HTTP_ROUTE, "/get")
+            span.set_attribute(SpanAttributes.HTTP_URL, "http://httpbin.org")
+            span.set_attribute(SpanAttributes.HTTP_STATUS_CODE, response.status_code)
+            span.set_attribute("I_like", "rapadura")
+            span.add_event("a operação foi realizada com sucesso com:", {
+                "status_code": str(response.status_code),
+                "request_headers": str(response.request.headers),
+            })
+            sleep(latency)
+            logging.info(f"GET request to httpbin.org returned {response.status_code}")
+            return f"GET request to httpbin.org returned {response.status_code}"
+            span.end()
+    ```
+
+    O método `add_event` adiciona um evento ao span. O evento pode substituir o registro de logs, pois fornece informações adicionais sobre o span. Um ponto importante deve ser lembrada: eventos só aceitam valores de tipo string.
+
+    - Execute novamente a aplicação e acesse o endpoint [http://localhost:8080/fetch-data](http://localhost:8080/fetch-data) para gerar traces.
+
+    - Acesse o Grafana para visualizar a telemetria gerada [http://localhost:3000](http://localhost:3000).
+
+    Note que no Trace agora temos informações no Span Events.
+    [Trace-Span-Events](./image/trace-span-events.png)
 
