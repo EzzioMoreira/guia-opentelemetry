@@ -36,9 +36,9 @@ API para treinamento de OpenTelemetry, com funcionalidades para buscar dados de 
     "weight": "number",
     "base_experience": "number"
   }
-  ```
+    ```
 
-### Delete Pokemon do banco
+### Deletar Pokemon no banco
 
 - **Endpoint**: `/pokemon/<name>`
 - **Método**: `DELETE`
