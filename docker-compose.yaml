@@ -1,4 +1,4 @@
-version: '3.8'
+version: '2.30.1'
 services:
   # Aplicação Python com OpenTelemetry
   app:
@@ -8,27 +8,31 @@ services:
       - "8080:8080"
     depends_on:
       - otelcollector
+    networks:
+      - otel
     ############################################################
     # Adicionando variáveis de ambiente para o OpenTelemetry ###
     ############################################################
     environment:
       - OTEL_SERVICE_NAME=app-python
       - OTEL_RESOURCE_ATTRIBUTES=service.name=app-python, service.version=1.0.0, service.env=dev
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4318
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
       - OTEL_EXPORTER_OTLP_INSECURE=true
       - OTEL_PYTHON_LOG_CORRELATION=true
   # OpenTelemetry Collector
   otelcollector:
-    image: otel/opentelemetry-collector-contrib:latest
+    image: otel/opentelemetry-collector-contrib:0.111.0
     container_name: otelcollector
     volumes:
-      - ../../config/collector/otelcol-config.yml:/etc/otel-collector-config.yml
+      - ./config/collector/otelcol-config.yml:/etc/otel-collector-config.yml
     command:
       - "--config=/etc/otel-collector-config.yml"
       - "--set=service.telemetry.logs.level=INFO"
     ports:
       - "4317:4317" # Porta de recebimento de traces gRPC
       - "4318:4318" # Porta de recebimento de métricas HTTP
+    networks:
+      - otel
   
   # Grafana para visualização de métricas, logs e traces
   grafana:
@@ -37,10 +41,12 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - ../../config/grafana/grafana.ini:/etc/grafana/grafana.ini
-      - ../../config/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
-      - ../../config/grafana/dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
-      - ../../config/grafana/dashboards:/var/lib/grafana/dashboards
+      - ./config/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./config/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+      - ./config/grafana/dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
+      - ./config/grafana/dashboards:/var/lib/grafana/dashboards
+    networks:
+      - otel
   
   # Grafana Tempo para armaazenamento de traces
   tempo:
@@ -48,11 +54,13 @@ services:
     container_name: tempo
     command: [ "-config.file=/etc/tempo.yaml" ]
     volumes:
-      - ../../config/grafana/tempo.yaml:/etc/tempo.yaml
+      - ./config/grafana/tempo.yaml:/etc/tempo.yaml
     ports:
       - "3200:3200"
     depends_on:
       - grafana
+    networks:
+      - otel
   
   # Grafana Mimir para armazenamento de métricas
   mimir:
@@ -60,11 +68,13 @@ services:
     container_name: mimir
     command: [ "-config.file=/etc/mimir.yaml" ]
     volumes:
-      - ../../config/grafana/mimir.yaml:/etc/mimir.yaml
+      - ./config/grafana/mimir.yaml:/etc/mimir.yaml
     ports:
       - "9009:9009"
     depends_on:
       - grafana
+    networks:
+      - otel
   
   # Grafana Loki para armazenamento de logs
   loki: 
@@ -72,12 +82,14 @@ services:
     container_name: loki
     command: [ "-config.file=/etc/loki/loki.yaml" ]
     volumes:
-      - ../../config/grafana/loki.yaml:/etc/loki/loki.yaml
+      - ./config/grafana/loki.yaml:/etc/loki/loki.yaml
     ports:
       - "3100:3100"
       - '7946:7946'
     depends_on:
       - grafana
+    networks:
+      - otel
 
 x-default-logging: &logging
   driver: "json-file"
@@ -85,3 +97,8 @@ x-default-logging: &logging
     max-size: "5m"
     max-file: "2"
     tag: "{{.Name}}"
+
+networks:
+  otel:
+    name: otel
+    driver: bridge
