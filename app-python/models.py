@@ -1,10 +1,14 @@
 """
 Contém as funções de manipulação de dados do banco de dados SQLite
 """
+import sqlite3
 from database import create_connection
 from telemetry import logger
 
 def save_pokemon(data):
+    """
+    Salva um novo Pokémon no banco de dados.
+    """
     try:
         with create_connection() as conn:
             cursor = conn.cursor()
@@ -19,10 +23,21 @@ def save_pokemon(data):
                 ",".join(data.get("types", []))
             ))
             conn.commit()
+            return True
+    except sqlite3.IntegrityError as e:
+        logger.error(f"Integrity error saving Pokemon: {e}")
+        return False
     except sqlite3.Error as e:
-        logger.error(f"Error saving Pokemon: {e}")
+        logger.error(f"Database error saving Pokemon: {e}")
+        return False
+    except Exception as e:
+        logger.error(f"Unexpected error saving Pokemon: {e}")
+        return False
 
 def get_pokemon_by_name(name):
+    """
+    Busca um Pokémon pelo nome.
+    """
     try:
         with create_connection() as conn:
             cursor = conn.cursor()
@@ -30,15 +45,25 @@ def get_pokemon_by_name(name):
             rows = cursor.fetchall()
             if rows:
                 row = rows[0]
-                return {"id": row[0], "name": row[1], "height": row[2], "weight": row[3], "abilities": row[4].split(","), "types": row[5].split(",")}
+                return {
+                    "id": row[0],
+                    "name": row[1],
+                    "height": row[2],
+                    "weight": row[3],
+                    "abilities": row[4].split(","),
+                    "types": row[5].split(",")
+                }
             return None
     except sqlite3.Error as e:
         logger.error(f"Error fetching Pokemon: {e}")
         return None
+    except Exception as e:
+        logger.error(f"Unexpected error fetching Pokemon: {e}")
+        return None
 
 def list_pokemons():
     """
-    Lista todos os pokemons salvos no banco de dados SQLite
+    Lista todos os Pokémons salvos no banco de dados SQLite.
     """
     try:
         with create_connection() as conn:
@@ -46,16 +71,26 @@ def list_pokemons():
             cursor.execute("SELECT * FROM pokemon")
             rows = cursor.fetchall()
             return [
-                {"id": row[0], "name": row[1], "height": row[2], "weight": row[3], "abilities": row[4].split(","), "types": row[5].split(",")}
+                {
+                    "id": row[0],
+                    "name": row[1],
+                    "height": row[2],
+                    "weight": row[3],
+                    "abilities": row[4].split(","),
+                    "types": row[5].split(",")
+                }
                 for row in rows
             ]
     except sqlite3.Error as e:
         logger.error(f"Error listing Pokemons: {e}")
-        return None
+        return []
+    except Exception as e:
+        logger.error(f"Unexpected error listing Pokemons: {e}")
+        return []
 
 def delete_pokemon_by_name(name):
     """
-    Deleta um pokemon pelo nome no banco de dados SQLite
+    Deleta um Pokémon pelo nome.
     """
     try:
         with create_connection() as conn:
@@ -67,4 +102,7 @@ def delete_pokemon_by_name(name):
             return False
     except sqlite3.Error as e:
         logger.error(f"Error deleting Pokemon: {e}")
+        return False
+    except Exception as e:
+        logger.error(f"Unexpected error deleting Pokemon: {e}")
         return False

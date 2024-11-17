@@ -34,7 +34,8 @@ API para treinamento de OpenTelemetry, com funcionalidades para buscar dados de 
     "name": "string",
     "height": "number",
     "weight": "number",
-    "base_experience": "number"
+    "abilities": ["string"],
+    "types": ["string"]
   }
     ```
 
