@@ -4,7 +4,7 @@ from services import fetch_pokemon_data, add_pokemon, list_pokemons, get_pokemon
 
 app = Flask(__name__)
 
-@app.route("/pokemon/fetch/<name>", methods=["GET"])
+@app.get("/pokemon/fetch/<name>")
 def fetch_pokemon(name):
     logger.info(f"Fetching data for Pokemon: {name}")
     response, status_code = fetch_pokemon_data(name)
