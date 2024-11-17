@@ -1,9 +1,10 @@
 # Imagem base
-FROM python:3.9-alpine3.20
+FROM python:3.9-slim
 
 # Instala pacotes necessários
-RUN apk update && \
-    apk add --no-cache sqlite-dev
+RUN apt-get update && apt-get install -y \
+    sqlite3 \
+    libsqlite3-dev
 
 # Configura o diretório de trabalho
 WORKDIR /app
@@ -18,10 +19,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY ./app-python/ .
 
 #####################################################################################
-#### Adicione aqui a instalação do OpenTelemetry e inicialização do bootstrap #######
-#### RUN pip install opentelemetry-distro opentelemetry-exporter-otlp && \    #######
-#### opentelemetry-bootstrap -a install                                       #######
-#####################################################################################
+#### Adicione na linha abaixo o comando para instalar o OpenTelemetry SDK Python ####
 
 # Executa o script para criar o banco de dados SQLite
 RUN python create_db.py
@@ -30,7 +28,5 @@ RUN python create_db.py
 EXPOSE 8080
 
 #####################################################################################
-#### Adicione aqui o ENTRYPOINT para iniciar com o OpenTelemetry Instrumentation ####
-#### ENTRYPOINT ["opentelemetry-instrument", "python", "app.py"]                 ####
-#####################################################################################
+#### Adicione na linha abaixo o comando para iniciar o OpenTelemetry SDK Python ####
 ENTRYPOINT ["python", "app.py"]

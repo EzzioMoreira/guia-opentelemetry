@@ -11,16 +11,10 @@ services:
       - otelcollector
     networks:
       - otel
-    ###################################################################################################
-    #### Adicionando variáveis de ambiente para o OpenTelemetry ###
-    ## environment:
-    ##  - OTEL_SERVICE_NAME=app-python
-    ##  - OTEL_RESOURCE_ATTRIBUTES=service.name=app-python, service.version=1.0.0, service.env=dev
-    ##  - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
-    ##  - OTEL_EXPORTER_OTLP_INSECURE=true
-    ##  - OTEL_PYTHON_LOG_CORRELATION=true 
-    ###################################################################################################
+    #####################################################################################################
+    #### Adicione as variáveis de ambiente abaixo para configurar o envio de traces para o collector ####
     
+
   # OpenTelemetry Collector
   otelcollector:
     image: otel/opentelemetry-collector-contrib:0.111.0
@@ -90,6 +84,19 @@ services:
       - '7946:7946'
     depends_on:
       - grafana
+    networks:
+      - otel
+  
+  # Grafana K6 para gerar carga na aplicação
+  ##########################################
+  #### Adicione abaixo o serviço do K6 #####
+  k6:
+    image: grafana/k6:latest
+    depends_on:
+      - app
+    entrypoint: [ "k6", "run", "/scripts/script.js" ]
+    volumes:
+      - ./config/grafana/k6_generate_traffic.js:/scripts/script.js
     networks:
       - otel
 

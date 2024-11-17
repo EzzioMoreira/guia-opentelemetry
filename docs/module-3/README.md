@@ -2,6 +2,11 @@
 
 O OpenTelemetry oferece duas maneiras de instrumentar aplicações: manualmente e sem código. A instrumentação manual é o processo de adicionar código em aplicações para gerar dados de telemetria. A instrumentação sem código adiciona os recursos da API e SDK do OpenTelemetry em aplicações sem a necessidade de alterar o código fonte.
 
+- 🔗 Link para as instruções de instrumentação: [Instrumentação sem código](instrumentação-sem-código.md)
+
+- 🔗 Link para as instruções de instrumentação: [Instrumentação manual](instrumentação-manual.md)
+
+
 ## Requisitos
 
 - [Docker](https://docs.docker.com/get-docker/) 🐳
@@ -9,17 +14,21 @@ O OpenTelemetry oferece duas maneiras de instrumentar aplicações: manualmente 
 
 ## Estrutura do Exemplo
 
-A [aplicação Python](app.py) de exemplo é composta por 3 funções que fazem requisições HTTP para um serviço externo [httpbin.org](httpbin.org), implementando uma latência variável entre 1 e 5 segundos.
+A estrutura do exemplo é composta por uma aplicação Python que consome uma API externa de Pokemon e salva os dados no banco de dados. No decorrer do treinamento, a aplicação será instrumentada com OpenTelemetry para gerar dados de telemetria. Al'ém disso, existem serviços de Grafana, Grafana Mimir, Grafana Tempo e Grafana Loki para visualização dos dados de telemetria.
 
-- Arquivos do Exemplo:
-  - `app.py`: Aplicação Python de exemplo.
-  - `Dockerfile`: Arquivo de configuração do Docker.
-  - `docker-compose.yaml`: Arquivo de configuração do Docker Compose.
-    - `Grafana`: Painel de visualização de telemetria.
-    - `Grafana Mimir`: Banco de dados para armazenamento de métricas.
-    - `Grafana Tempo`: Banco de dados para armazenamento de traces.
-    - `Grafana Loki`: Banco de dados para armazenamento de logs.
-    - `OpenTelemetry Collector`: Coleta, processa e exporta dados de telemetria.
+A aplicação é composta por:
+
+```plaintext
+.
+├── README.md # Documentação do projeto
+├── app.py # Aplicação Python
+├── create_db.py # Script para criar o banco de dados
+├── database.py # Configuração do banco de dados
+├── models.py # Modelos do banco de dados
+├── requirements.txt # Dependências do projeto
+├── services.py # Serviços da aplicação
+└── telemetry.py # Configuração do OpenTelemetry
+```
 
 ## Diagrama de Arquitetura
 
@@ -57,11 +66,3 @@ graph LR
     linkStyle 6 stroke:red,stroke-width:2px
     linkStyle 7 stroke:red,stroke-width:2px
 ```
-
-## Instrumentação Sem Código
-
-- [Instrumentação sem código](instrumentação-sem-código.md) 
-
-## Instrumentação Manual
-
-- [Instrumentação manual](instrumentação-manual.md)
