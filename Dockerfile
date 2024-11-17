@@ -17,9 +17,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copia o restante dos arquivos da aplicação
 COPY ./app-python/ .
 
-# Instala OpenTelemetry e inicializa bootstrap
-RUN pip install opentelemetry-distro opentelemetry-exporter-otlp && \
-    opentelemetry-bootstrap -a install
+#####################################################################################
+#### Adicione aqui a instalação do OpenTelemetry e inicialização do bootstrap #######
+#### RUN pip install opentelemetry-distro opentelemetry-exporter-otlp && \    #######
+#### opentelemetry-bootstrap -a install                                       #######
+#####################################################################################
 
 # Executa o script para criar o banco de dados SQLite
 RUN python create_db.py
@@ -27,5 +29,8 @@ RUN python create_db.py
 # Expõe a porta 8080
 EXPOSE 8080
 
-# ENTRYPOINT para iniciar com o OpenTelemetry
-ENTRYPOINT ["opentelemetry-instrument", "python", "app.py"]
+#####################################################################################
+#### Adicione aqui o ENTRYPOINT para iniciar com o OpenTelemetry Instrumentation ####
+#### ENTRYPOINT ["opentelemetry-instrument", "python", "app.py"]                 ####
+#####################################################################################
+ENTRYPOINT ["python", "app.py"]
