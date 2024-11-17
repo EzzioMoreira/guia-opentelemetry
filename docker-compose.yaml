@@ -90,15 +90,7 @@ services:
   # Grafana K6 para gerar carga na aplicação
   ##########################################
   #### Adicione abaixo o serviço do K6 #####
-  k6:
-    image: grafana/k6:latest
-    depends_on:
-      - app
-    entrypoint: [ "k6", "run", "/scripts/script.js" ]
-    volumes:
-      - ./config/grafana/k6_generate_traffic.js:/scripts/script.js
-    networks:
-      - otel
+  
 
 x-default-logging: &logging
   driver: "json-file"
