@@ -1,12 +1,12 @@
 ## Instrumentação Sem Código
 
-Também conhecido como Auto-Instrumentação, é processo em que o OpenTelemetry modifica o comportamento da aplicação em tempo de execução, adicionando código para gerar, processar e enviar telemetria. Isso é possível graças a uma técnica chamada de [Monkey Patching](https://en.wikipedia.org/wiki/Monkey_patch).
+Também conhecido como Auto-Instrumentação, é processo em que o OpenTelemetry modifica o comportamento da aplicação em tempo de execução, adicionando código para gerar, processar e enviar telemetria. Isso é possível graças a uma técnica chamada de [Monkey Patching](https://en.wikipedia.org/wiki/Monkey_patch), amplamente utilizada em linguagens como Python, Ruby e JavaScript. 
 
-> O método de aplicar instrumentação sem código varia de acordo com a linguagem de programação. 
+> O método de aplicar instrumentação sem código varia de acordo com a linguagem de programação.
 
 Com isso, toda vez que uma requisição é feita na aplicação de exemplo o OpenTelemetry captura e envia a telemetria para OpenTelemetry Collector, que por sua vez, envia para o Grafana.
 
-Instrumentação sem código é um bom começo para iniciar sua jornada com instrumentação de aplicações, mas é importante lembrar que a instrumentação sem código não é suficiente para todos os cenários. Em alguns casos, você precisará adicionar código manualmente para instrumentar corretamente a aplicação.
+Instrumentação sem código é um bom começo para iniciar sua jornada com instrumentação de aplicações, mas é importante lembrar que a instrumentação sem código não é suficiente para todos os cenários. Em alguns casos, você precisará adicionar código manualmente para instrumentar corretamente a aplicação. 
 
 ## Implementando Instrumentação Sem Código
 
@@ -27,7 +27,11 @@ Agora, siga estes passos para implementar a instrumentação sem código na apli
     opentelemetry-bootstrap
     ```
 
-    Devemos instalar o [pacote distro](https://opentelemetry.io/docs/languages/python/distro/) para que a instrumentação sem código funcione corretamente, o `opentelemetry-distro` contém a distros padrões para configurar automaticamente as opções mais comuns para os usuários. O [opentelemetry-bootstrap](https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/opentelemetry-instrumentation#opentelemetry-bootstrap) faz a leitura dos pacotes instalados na aplicação e instala as bibliotecas necessárias para instrumentar a aplicação. Por exemplo, estamos utilizando o pacote `Flask` na aplicação de exemplo, o `opentelemetry-bootstrap` instalará o pacote `opentelemetry-instrumentation-flask` para nós.
+    Devemos instalar o [pacote distro](https://opentelemetry.io/docs/languages/python/distro/) para que a instrumentação sem código funcione corretamente, o `opentelemetry-distro` contém a distros padrões para configurar automaticamente as opções mais comuns para os usuários, como o SDK TraceProvider, um BatchSpanProcessor e um ConsoleSpanExporter. O `opentelemetry-exporter-otlp` é um exportador que envia os dados de telemetria para o OpenTelemetry Collector. 
+    
+    O [opentelemetry-bootstrap](https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/opentelemetry-instrumentation#opentelemetry-bootstrap) faz a leitura dos pacotes instalados na aplicação e instala as bibliotecas necessárias para instrumentar a aplicação. Por exemplo, estamos utilizando o pacote `Flask` na aplicação de exemplo, o `opentelemetry-bootstrap` instalará o pacote `opentelemetry-instrumentation-flask` para nós.
+
+    A lista completa de pacotes de instrumentação padrão e detectáveis ​estão definidos aqui [aqui](https://github.com/open-telemetry/opentelemetry-python-contrib/blob/main/opentelemetry-instrumentation/src/opentelemetry/instrumentation/bootstrap_gen.py).
 
 1. No `entrypoint` no `Dockerfile` adicione o seguinte comando:
 
@@ -37,7 +41,7 @@ Agora, siga estes passos para implementar a instrumentação sem código na apli
     ENTRYPOINT ["opentelemetry-instrument", "python", "app.py"]
     ```
 
-    O comando `opentelemetry-instrument` tentará detectar automaticamente os pacotes usados na aplicação e quando possível, aplicará a instrumentação. O comando suporta configurações adicionais, como a definição de um `tracer` ou `exporter` específico, veja o exemplo.
+    O comando [opentelemetry-instrument](https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/opentelemetry-instrumentation#opentelemetry-instrument) tentará detectar automaticamente os pacotes usados na aplicação e quando possível, aplicará a instrumentação. O comando suporta configurações adicionais, como a definição de um `tracer` ou `exporter` específico, veja o exemplo.
 
     ```shell
     opentelemetry-instrument \
@@ -64,7 +68,7 @@ Agora, siga estes passos para implementar a instrumentação sem código na apli
 1. Pronto! Agora, basta executar o comando `docker-compose up` para iniciar a aplicação.
 
     ```shell
-    docker-compose up
+    docker-compose up -d
     ```
 
 1. Acesse os endpoints da aplicação para gerar métricas e traces:
