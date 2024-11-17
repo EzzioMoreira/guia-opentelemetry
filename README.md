@@ -62,12 +62,8 @@ O treinamento será dividido em módulos teóricos e práticos para garantir uma
 ## Módulo 3 - Instrumentação
 
 - [Instrumentação Sem Código e Manual](./docs/module-3/README.md#instrumentação-sem-código-e-manual)
-  - [Requisitos](./docs/module-3/README.md#requisitos)
-  - [Estrutura do Exemplo](./docs/module-3/README.md#estrutura-do-exemplo)
-  - [Diagrama de Arquitetura](./docs/module-3/README.md#diagrama-de-arquitetura)
   - [Implementando Instrumentação Sem Código](./docs/module-3/instrumentação-sem-código.md#implementando-instrumentação-sem-código)
-- [Instrumentação Manual](./docs/module-3/README.md#instrumentação-manual)
-  - [TracerProvider](./docs/module-3/instrumentação-manual.md#tracerprovider)
-  - [Adicionando Spans](./docs/module-3/instrumentação-manual.md#adicionando-spans)
-  - [Adicionando Atributos ao Span](./docs/module-3/instrumentação-manual.md#adicionando-atributos-ao-span)
-  - [Adicionando Eventos ao Span](./docs/module-3/instrumentação-manual.md#adicionando-eventos-ao-span)
+  - [O Que Esperar?](./docs/module-3/instrumentação-sem-código.md#o-que-esperar)
+  - [Gerando Trafego na Aplicação](./docs/module-3/instrumentação-sem-código.md#gerando-trafego-na-aplicação)
+  - [Conclusão](./docs/module-3/instrumentação-sem-código.md#conclusão)
+  - [Saiba Mais](./docs/module-3/instrumentação-sem-código.md#saiba-mais)
