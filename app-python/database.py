@@ -1,5 +1,5 @@
 import sqlite3
-import telemetry as logger
+import logs as logger
 
 def create_connection():
     """
