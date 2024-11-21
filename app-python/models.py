@@ -3,7 +3,7 @@ Contém as funções de manipulação de dados do banco de dados SQLite
 """
 import sqlite3
 from database import create_connection
-from telemetry import logger
+from logs import logger
 
 def save_pokemon(data):
     """

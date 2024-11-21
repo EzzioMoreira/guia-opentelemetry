@@ -4,12 +4,13 @@ Contém a lógica de negócio da aplicação incluindo validações e chamadas a
 import requests
 from flask import jsonify, request
 from models import save_pokemon, get_pokemon_by_name, delete_pokemon_by_name, list_pokemons
-from telemetry import logger
+from logs import logger
+import certifi
 
 def fetch_pokemon_data(name):
     url = f"https://pokeapi.co/api/v2/pokemon/{name.lower()}"
     try:
-        response = requests.get(url)
+        response = requests.get(url, verify=certifi.where()) # verificar certificado SSL
         response.raise_for_status()
         data = response.json()
         pokemon_data = {

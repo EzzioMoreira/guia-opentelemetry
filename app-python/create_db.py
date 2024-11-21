@@ -1,5 +1,5 @@
 import sqlite3
-from telemetry import logger
+from logs import logger
 
 def create_database():
     """
