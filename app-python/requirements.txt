@@ -2,3 +2,6 @@ Flask==3.0.3
 requests==2.32.3
 python-json-logger==2.0.7
 certifi
+opentelemetry-api
+opentelemetry-sdk
+opentelemetry-exporter-otlp

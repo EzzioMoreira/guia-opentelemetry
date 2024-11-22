@@ -9,11 +9,10 @@ A instrumentação manual é o processo de adicionar código em aplicações par
 1. Clonar o repositório e acessar o diretório do módulo:
 
    ```bash
-    git clone https://github.com/EzzioMoreira/treinamento-opentelemetry.git
-    cd treinamento-opentelemetry/docs/Modulo-2\ -\ OpenTelemetry
+    git clone https://github.com/EzzioMoreira/treinamento-opentelemetry.git && cd treinamento-opentelemetry
     ```
 
-1. Primeiro, precisamos instalar as bibliotecas necessárias para adicionar instrumentação. Adicione os seguintes pacotes ao arquivo `requirements.txt`:
+1. Primeiro, precisamos instalar as bibliotecas necessárias para adicionar instrumentação. Adicione os seguintes pacotes ao arquivo `app-python/requirements.txt`:
 
    ```txt
    opentelemetry-api
@@ -21,7 +20,11 @@ A instrumentação manual é o processo de adicionar código em aplicações par
    opentelemetry-exporter-otlp
    ```
 
-1. Para iniciar a instrumentação, é necessário instanciar o `TracerProvider`, responsável por gerenciar `Traces` e `Spans`. Diversos Spans agrupados formam um Trace. A configuração inicial também inclui a as classes `OTLPSpanExporter` e `BatchSpanProcessor` para configurar o Trace Provider. Adicione o seguinte trecho de código ao arquivo `app.py`:
+   Os pacotes `opentelemetry-api` e `opentelemetry-sdk` são necessários para adicionar instrumentação na app de exemplo. O pacote `opentelemetry-exporter-otlp` é necessário para exportar os dados de telemetria para o OpenTelemetry Collector. 
+
+1. Para iniciar a instrumentação, é necessário instanciar o `TracerProvider`, responsável por gerenciar `Traces` e `Spans`. Diversos Spans agrupados formam um Trace. A configuração inicial também inclui as classes `OTLPSpanExporter` e `BatchSpanProcessor` para configurar o Trace Provider. 
+
+    Para deixar a estrutura mais organizada, crie um arquivo `traces.py` no diretório `app-python` e adicione o seguinte trecho de código:
 
     ```python
     from opentelemetry import trace
