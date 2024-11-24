@@ -15,9 +15,9 @@ A instrumentação manual é o processo de adicionar código em aplicações par
 1. Primeiro, precisamos instalar as bibliotecas necessárias para adicionar instrumentação. Adicione os seguintes pacotes ao arquivo `app-python/requirements.txt`:
 
    ```txt
-   opentelemetry-api
-   opentelemetry-sdk
-   opentelemetry-exporter-otlp
+   opentelemetry-api==1.28.2
+   opentelemetry-sdk==1.28.2
+   opentelemetry-exporter-otlp==1.28.2
    ```
 
    Os pacotes `opentelemetry-api` e `opentelemetry-sdk` são necessários para adicionar instrumentação na app de exemplo. O pacote `opentelemetry-exporter-otlp` é necessário para exportar os dados de telemetria para o OpenTelemetry Collector. 
@@ -27,35 +27,105 @@ A instrumentação manual é o processo de adicionar código em aplicações par
     Para deixar a estrutura mais organizada, crie um arquivo `traces.py` no diretório `app-python` e adicione o seguinte trecho de código:
 
     ```python
+    """
+    Modulo para configurar o rastreamento de spans com OpenTelemetry.
+    """
+    import os
     from opentelemetry import trace
     from opentelemetry.sdk.trace import TracerProvider
     from opentelemetry.sdk.trace.export import BatchSpanProcessor
-    from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+    from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+    from opentelemetry.sdk.resources import Resource
 
-    provider = TracerProvider()
-    span_exporter = OTLPSpanExporter()
-    processor = BatchSpanProcessor(span_exporter)
-    provider.add_span_processor(processor)
 
-    trace.set_tracer_provider(provider)
-    tracer = trace.get_tracer(__name__)
+    def setup_tracing():
+        """
+        Configura e retorna o TracerProvider para rastreamento.
+        """
+        # Obtém atributos de recurso da variável de ambiente ou define padrões
+        resource_attributes = os.environ.get("OTEL_RESOURCE_ATTRIBUTES") or "service.name=app-python,service.version=0.1.0,service.env=dev"
+        key_value_pairs = resource_attributes.split(',')
+        result_dict = {}
+
+        # Converte atributos no formato chave=valor para um dicionário
+        for pair in key_value_pairs:
+            key, value = pair.split('=')
+            result_dict[key.strip()] = value.strip()
+
+        # Define atributos de recurso
+        resource_attributes = {
+            "service.name": result_dict.get("service.name", "app-python"),
+            "service.version": result_dict.get("service.version", "0.1.0"),
+            "service.env": result_dict.get("service.env", "dev")
+        }
+
+        resource = Resource.create(resource_attributes)
+
+        # Configura o exportador OTLP
+        provider = TracerProvider(resource=resource)
+        processor = BatchSpanProcessor(OTLPSpanExporter(insecure=True))
+        provider.add_span_processor(processor)
+
+        # Registra o TracerProvider como padrão
+        trace.set_tracer_provider(provider)
+
+        # Retorna um tracer configurado
+        return trace.get_tracer(__name__)
+
+
+    # Configura e cria o tracer ao importar o módulo
+    tracer = setup_tracing()
     ```
+    
+    Iniciamos definindo uma lógica para obter os atributos de recurso da variável de ambiente `OTEL_RESOURCE_ATTRIBUTES`. Em seguida, convertemos os atributos em um dicionário para facilitar o acesso. Caso a variável de ambiente não seja definida, usamos valores padrão para os atributos de recurso.
 
-    Com a pipeline de rastreamento configurada, podemos obter um Tracer. A interface do `TraceProvider` define um método `get_tracer` que nos permite obter um `Tracer`. O método requer um nome e opcionalmente uma versão. Isso é útil para identificar a origem e a versão do rastreamento.
+    Em seguida, instanciamos um `TracerProvider` e um `BatchSpanProcessor` para configurar o exportador OTLP. O exportador OTLP é responsável por enviar os dados de telemetria para o OpenTelemetry Collector. Por fim, registramos o `TracerProvider` como padrão e retornamos um `Tracer` configurado.
+
+    Com a pipeline de rastreamento configurada, podemos obter um Tracer. A interface do `TraceProvider` define um método `get_tracer` que nos permite obter um `Tracer`.
 
 ## Adicionando Spans
 
-1. Agora, podemos adicionar spans nas funções onde desejamos rastrear o fluxo de execução. Use o trecho de código a seguir para adicionar spans na função `fetch_data_from_external_service`.
+1. Agora, podemos adicionar spans nas funções onde desejamos rastrear o fluxo de execução. Vamos iniciar adicionando spans na rota `/pokemon/fetch/<name>`. O código de exemplo está estruturado em responsabilidades separadas, com a lógica de negócios em `services.py` e a lógica de roteamento em `app.py` por fim a logica de acesso a base de dados em `models.py`.
+
+    Primeiro será necessário importar o `Tracer` do módulo `traces.py`. Adiciona o seguinte trecho de código ao arquivo `app.py`:
 
     ```python
-    def fetch_data_from_external_service():
-        with tracer.start_as_current_span("fetch_data_from_external_service") as span:
-            # Simula uma solicitação HTTP GET para um serviço externo
-            response = requests.get("http://httpbin.org/get")
-            sleep(latency)
-            logging.info(f"GET request to httpbin.org returned {response.status_code}")
-            span.end()
-            return f"GET request to httpbin.org returned {response.status_code}"
+    # app.py
+    from traces import tracer
+    ```
+
+    Em seguida podemos adicionar spans nas funções que desejamos rastrear. Adicione o seguinte trecho de código ao arquivo `app.py`:
+
+    ```python
+    # app.py
+    @app.get("/pokemon/fetch/<name>")
+        with tracer.start_as_current_span("fetch_pokemon") as span:  
+            def fetch_pokemon(name):
+            logger.info(f"Fetching data for Pokemon: {name}")
+            response, status_code = fetch_pokemon_data(name)
+            return jsonify(response), status_code
+    ```
+
+    ```python
+    # services.py
+    def fetch_pokemon_data(name):
+    url = f"https://pokeapi.co/api/v2/pokemon/{name.lower()}"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        data = response.json()
+        pokemon_data = {
+            "name": data.get("name"),
+            "height": data.get("height"),
+            "weight": data.get("weight"),
+            "abilities": [ability["ability"]["name"] for ability in data.get("abilities", [])],
+            "types": [type_data["type"]["name"] for type_data in data.get("types", [])]
+        }
+        save_pokemon(pokemon_data)
+        return pokemon_data, 200
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Error fetching Pokemon data: {e}")
+        return None
     ```
 
     Quando definimos `start_as_current_span`, estamos criando um novo span e definindo-o como o span ativo. Isso significa que qualquer operação que ocorra dentro do bloco `with` será associada a esse span.

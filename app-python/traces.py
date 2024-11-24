@@ -1,10 +1,10 @@
 """
 Modulo para configurar o rastreamento de spans com OpenTelemetry.
 """
+import os
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
-
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.resources import Resource
 
@@ -13,30 +13,36 @@ def setup_tracing():
     """
     Configura e retorna o TracerProvider para rastreamento.
     """
-    resource_attributes = os.environ.get("OTEL_RESOURCE_ATTRIBUTES") or 'service.name=app-python,service.version=0.1.0,service.env=dev'
+    # Obtém atributos de recurso da variável de ambiente ou define padrões
+    resource_attributes = os.environ.get("OTEL_RESOURCE_ATTRIBUTES") or "service.name=app-python,service.version=0.1.0,service.env=dev"
     key_value_pairs = resource_attributes.split(',')
-    result_dict[Key] = value
-    
+    result_dict = {}
+
+    # Converte atributos no formato chave=valor para um dicionário
     for pair in key_value_pairs:
         key, value = pair.split('=')
-        result_dict[key] = value
-    
-    resourceAttributes = {
-        "service.name": otel_service_name,
-        "service.version": result_dict['otel_service_version'],
-        "service.env": result_dict['otel_service_env']
-    }
-    
-    resource = Resource.create(resourceAttributes)
+        result_dict[key.strip()] = value.strip()
 
-    # Configura o exportador OTLP para enviar os spans para o OpenTelemetry Collector
+    # Define atributos de recurso
+    resource_attributes = {
+        "service.name": result_dict.get("service.name", "app-python"),
+        "service.version": result_dict.get("service.version", "0.1.0"),
+        "service.env": result_dict.get("service.env", "dev")
+    }
+
+    resource = Resource.create(resource_attributes)
+
+    # Configura o exportador OTLP
     provider = TracerProvider(resource=resource)
-    processor = BatchSpanProcessor(OTLPSpanExporter())
+    processor = BatchSpanProcessor(OTLPSpanExporter(insecure=True))
     provider.add_span_processor(processor)
-    
-    # Registra o TracerProvider como o provedor de rastreamento padrão
+
+    # Registra o TracerProvider como padrão
     trace.set_tracer_provider(provider)
-    
-    # Cria um tracer com o nome do módulo
-    tracer = trace.get_tracer(otel_service_name)
-    return tracer
+
+    # Retorna um tracer configurado
+    return trace.get_tracer(__name__)
+
+
+# Configura e cria o tracer ao importar o módulo
+tracer = setup_tracing()
