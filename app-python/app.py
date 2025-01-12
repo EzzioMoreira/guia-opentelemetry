@@ -1,16 +1,19 @@
 from logs import logger
 from flask import Flask, jsonify, request
 from services import fetch_pokemon_data, add_pokemon, list_pokemons, get_pokemon, delete_pokemon
+from traces import tracer
 
 app = Flask(__name__)
 
 @app.get("/pokemon/fetch/<name>")
 def fetch_pokemon(name):
-    logger.info(f"Fetching data for Pokemon: {name}")
-    response, status_code = fetch_pokemon_data(name)
-    return jsonify(response), status_code
+    with tracer.start_as_current_span("fetch_pokemon") as span:
+        logger.info(f"Fetching data for Pokemon: {name}")
+        response, status_code = fetch_pokemon_data(name)
+        return jsonify(response), status_code
 
 @app.post("/pokemon")
+
 def create_pokemon():
     if request.content_type != 'application/json':
         return jsonify({"error": "Content-Type must be application/json"}), 400

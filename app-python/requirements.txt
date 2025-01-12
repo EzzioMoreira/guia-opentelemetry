@@ -1,4 +1,7 @@
+# Versão das bibliotecas repo https://pypi.org/project
 Flask==3.0.3
 requests==2.32.3
 python-json-logger==2.0.7
-certifi
+opentelemetry-api==1.28.2
+opentelemetry-sdk==1.28.2
+opentelemetry-exporter-otlp==1.28.2
