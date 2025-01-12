@@ -5,28 +5,26 @@ import requests
 from flask import jsonify, request
 from models import save_pokemon, get_pokemon_by_name, delete_pokemon_by_name, list_pokemons
 from logs import logger
-from traces import tracer
+import certifi
 
 def fetch_pokemon_data(name):
-    with tracer.start_as_current_span("fetch_pokemon_data") as span:
-        span.set_attribute("pokemon.name", name)
-        url = f"https://pokeapi.co/api/v2/pokemon/{name.lower()}"
-        try:
-            response = requests.get(url)
-            response.raise_for_status()
-            data = response.json()
-            pokemon_data = {
-                "name": data.get("name"),
-                "height": data.get("height"),
-                "weight": data.get("weight"),
-                "abilities": [ability["ability"]["name"] for ability in data.get("abilities", [])],
-                "types": [type_data["type"]["name"] for type_data in data.get("types", [])]
-            }
-            save_pokemon(pokemon_data)
-            return pokemon_data, 200
-        except requests.exceptions.RequestException as e:
-            logger.error(f"Error fetching Pokemon data: {e}")
-            return None
+    url = f"https://pokeapi.co/api/v2/pokemon/{name.lower()}"
+    try:
+        response = requests.get(url, verify=certifi.where()) # verificar certificado SSL
+        response.raise_for_status()
+        data = response.json()
+        pokemon_data = {
+            "name": data.get("name"),
+            "height": data.get("height"),
+            "weight": data.get("weight"),
+            "abilities": [ability["ability"]["name"] for ability in data.get("abilities", [])],
+            "types": [type_data["type"]["name"] for type_data in data.get("types", [])]
+        }
+        save_pokemon(pokemon_data)
+        return pokemon_data, 200
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Error fetching Pokemon data: {e}")
+        return None
 
 def add_pokemon():
     if request.content_type != 'application/json':

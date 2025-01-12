@@ -13,7 +13,6 @@ def fetch_pokemon(name):
         return jsonify(response), status_code
 
 @app.post("/pokemon")
-
 def create_pokemon():
     if request.content_type != 'application/json':
         return jsonify({"error": "Content-Type must be application/json"}), 400
