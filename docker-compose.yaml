@@ -1,25 +1,33 @@
 version: '3.8'
 name: treinamento-opentelemetry
 services:
-  # Aplicação Python com OpenTelemetry
-  app:
-    build: .
-    container_name: app
+  # Microserviço de cadastro de livros
+  cadastro_de_livros:
+    build: ./book_store/cadastro_de_livros
+    container_name: cadastro_de_livros
     ports:
       - "8080:8080"
     depends_on:
-      - otelcollector
+      - db
     networks:
       - otel
     #####################################################################################################
     #### Adicione as variáveis de ambiente abaixo para configurar o envio de traces para o collector ####
+  
+  # Banco de dados Postgres
+  db:
+    image: postgres:14
+    container_name: db
     environment:
-      - OTEL_SERVICE_NAME=app-python
-      - OTEL_RESOURCE_ATTRIBUTES=service.name=app-python, service.version=1.0.0, service.env=dev
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
-      - OTEL_EXPORTER_OTLP_INSECURE=true
-      - OTEL_PYTHON_LOG_CORRELATION=true
-    
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: bookstore
+    ports:
+      - "5432:5432"
+    networks:
+      - otel
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
 
   # OpenTelemetry Collector
   otelcollector:
@@ -96,7 +104,7 @@ services:
   # Grafana K6 para gerar carga na aplicação
   ##########################################
   #### Adicione abaixo o serviço do K6 #####
-  
+  ##########################################
 
 x-default-logging: &logging
   driver: "json-file"
@@ -109,3 +117,7 @@ networks:
   otel:
     name: otel
     driver: bridge
+
+volumes:
+  postgres_data:
+    name: postgres_data
