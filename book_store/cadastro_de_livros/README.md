@@ -32,6 +32,7 @@ Resposta:
         "estoque": "number"
     }
     ```
+### Listar livros
 
 GET /livros/
 
@@ -49,6 +50,7 @@ Resposta:
         }
     ]
     ```
+### Buscar livro
 
 GET /livros/{id}
 

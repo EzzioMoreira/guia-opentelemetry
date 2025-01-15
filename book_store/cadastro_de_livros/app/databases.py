@@ -24,7 +24,9 @@ DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
 
 # Função que aguarda até que o banco de dados esteja disponível
 def wait_for_db():
-    while True:
+    DB_MAX_CONNECTION_RETRIES = os.getenv("DB_MAX_CONNECTION_RETRIES", 5)
+   
+    for _ in range(DB_MAX_CONNECTION_RETRIES):
         try:
             # Tentativa de conexão com o banco de dados
             logger.info("Tentando conexão com o banco de dados...")
