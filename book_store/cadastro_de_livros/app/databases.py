@@ -52,7 +52,6 @@ def get_db():
     try:
         yield db
     except Exception as e:
-        logger.error(f"Erro ao acessar o banco de dados: {e}")
         db.rollback()
         raise
     finally:

@@ -13,15 +13,20 @@ services:
       - otel
     #####################################################################################################
     #### Adicione as variáveis de ambiente abaixo para configurar o envio de traces para o collector ####
+    #####################################################################################################
+    environment:
+      - POSTGRES_USER={$POSTGRES_USER}
+      - POSTGRES_PASSWORD={$POSTGRES_PASSWORD}
+      - POSTGRES_DB={$POSTGRES_DB}
   
   # Banco de dados Postgres
   db:
     image: postgres:14
     container_name: db
     environment:
-      POSTGRES_USER: $POSTGRES_USER
-      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
-      POSTGRES_DB: $POSTGRES_DB
+      - POSTGRES_USER={$POSTGRES_USER}
+      - POSTGRES_PASSWORD={$POSTGRES_PASSWORD}
+      - POSTGRES_DB={$POSTGRES_DB}
     ports:
       - "5432:5432"
     networks:
@@ -117,7 +122,3 @@ networks:
   otel:
     name: otel
     driver: bridge
-
-volumes:
-  postgres_data:
-    name: postgres_data
