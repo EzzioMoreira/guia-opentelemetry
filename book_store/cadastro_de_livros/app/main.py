@@ -5,12 +5,8 @@ from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy.orm import Session
 import uvicorn
 from . import models
-import logging
+from . import logger
 from .databases import engine, get_db
-
-# Configura o nível de log
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
 
 # Cria as tabelas no banco de dados
 models.Base.metadata.create_all(bind=engine)
@@ -41,6 +37,8 @@ def busca_livro(id: int, db: Session = Depends(get_db)):
             raise HTTPException(status_code=404, detail="Livro não encontrado")
         logger.info(f"Livro com ID: {id} encontrado com sucesso")
         return livro
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Erro ao buscar livro: {e}")
         raise HTTPException(status_code=500, detail="Erro ao buscar livro")

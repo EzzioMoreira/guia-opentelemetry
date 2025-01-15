@@ -7,11 +7,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import time
 import psycopg2
-import logging
-
-# Configura o nível de log
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
+from . import logger
 
 # Obtem as credenciais do banco de dados das variáveis de ambiente
 DB_USER = os.getenv("DB_USER", "user")

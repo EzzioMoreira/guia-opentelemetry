@@ -5,11 +5,7 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from .databases import Base
-import logging
-
-# Configura o nível de log
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
+from . import logger
 
 # Define a classe Book que representa a tabela de livros no banco de dados
 class Livros(Base):
