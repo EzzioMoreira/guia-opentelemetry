@@ -15,18 +15,39 @@ services:
     #### Adicione as variáveis de ambiente abaixo para configurar o envio de traces para o collector ####
     #####################################################################################################
     environment:
-      - POSTGRES_USER={$POSTGRES_USER}
-      - POSTGRES_PASSWORD={$POSTGRES_PASSWORD}
-      - POSTGRES_DB={$POSTGRES_DB}
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+      - POSTGRES_DB=$POSTGRES_DB
+  
+  # Microserviço Ordem de Compra
+  ordem_de_compra:
+    build: ./book_store/ordem_de_compra
+    container_name: ordem_de_compra
+    ports:
+      - "8081:8080"
+    depends_on:
+      - db
+      - cadastro_de_livros
+    networks:
+      - otel
+    #####################################################################################################
+    #### Adicione as variáveis de ambiente abaixo para configurar o envio de traces para o collector ####
+    #####################################################################################################
+    environment:
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+      - POSTGRES_DB=$POSTGRES_DB
+      - BOOK_URL=$BOOK_URL
+      - PAYMENT_URL=$PAYMENT_URL
   
   # Banco de dados Postgres
   db:
     image: postgres:14
     container_name: db
     environment:
-      - POSTGRES_USER={$POSTGRES_USER}
-      - POSTGRES_PASSWORD={$POSTGRES_PASSWORD}
-      - POSTGRES_DB={$POSTGRES_DB}
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+      - POSTGRES_DB=$POSTGRES_DB
     ports:
       - "5432:5432"
     networks:
