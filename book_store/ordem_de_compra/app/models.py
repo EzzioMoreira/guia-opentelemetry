@@ -5,7 +5,6 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from .databases import Base
-from . import logger
 
 # Define a classe OrdemBase contendo os campos id_livro para serem usados na criação de uma ordem
 class OrdemBase(BaseModel):
@@ -21,7 +20,7 @@ class Ordem(OrdemBase):
     status: str # Status da ordem (ex. Pendente, Aprovado, Cancelado)
     
     class Config:
-        orm_mode = True # Configuração para permitir a leitura de objetos ORM
+        from_attributes = True # Configuração para permitir a leitura de objetos ORM
 
 # Define a classe OrdemDB contendo os campos para criação da tabela no banco de dados
 class OrdemDB(Base):
@@ -34,7 +33,7 @@ class OrdemDB(Base):
 def cria_ordem(db: Session, ordem: OrdemCreate):
     db_ordem = OrdemDB(
         id_livro=ordem.id_livro,
-        status="Pendente",
+        status="Pendente"
     )
     db.add(db_ordem)
     db.commit()

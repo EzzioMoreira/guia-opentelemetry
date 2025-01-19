@@ -4,7 +4,6 @@ services:
   # Microserviço de cadastro de livros
   cadastro_de_livros:
     build: ./book_store/cadastro_de_livros
-    container_name: cadastro_de_livros
     ports:
       - "8080:8080"
     depends_on:
@@ -23,7 +22,6 @@ services:
   # Microserviço Ordem de Compra
   ordem_de_compra:
     build: ./book_store/ordem_de_compra
-    container_name: ordem_de_compra
     ports:
       - "8081:8080"
     depends_on:
@@ -42,10 +40,29 @@ services:
       - BOOK_URL=$BOOK_URL
       - PAYMENT_URL=$PAYMENT_URL
   
+  # Microserviço de Pagamento
+  pagamento:
+    build: ./book_store/pagamento
+    ports:
+      - "8082:8080"
+    depends_on:
+      - db
+      - ordem_de_compra
+    networks:
+      - otel
+    #####################################################################################################
+    #### Adicione as variáveis de ambiente abaixo para configurar o envio de traces para o collector ####
+    #####################################################################################################
+    environment:
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+      - POSTGRES_DB=pagamento
+      - POSTGRES_HOST=$POSTGRES_HOST
+      - ORDER_URL=$ORDER_URL
+  
   # Banco de dados Postgres
   db:
     image: postgres:14
-    container_name: db
     environment:
       - POSTGRES_USER=$POSTGRES_USER
       - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
@@ -66,7 +83,6 @@ services:
   # OpenTelemetry Collector
   otelcollector:
     image: otel/opentelemetry-collector-contrib:0.111.0
-    container_name: otelcollector
     volumes:
       - ./config/collector/otelcol-config.yml:/etc/otel-collector-config.yml
     command:
@@ -81,7 +97,6 @@ services:
   # Grafana para visualização de métricas, logs e traces
   grafana:
     image: grafana/grafana
-    container_name: grafana
     ports:
       - 3000:3000
     volumes:
@@ -95,7 +110,6 @@ services:
   # Grafana Tempo para armaazenamento de traces
   tempo:
     image: grafana/tempo:latest
-    container_name: tempo
     command: [ "-config.file=/etc/tempo.yaml" ]
     volumes:
       - ./config/grafana/tempo.yaml:/etc/tempo.yaml
@@ -109,7 +123,6 @@ services:
   # Grafana Mimir para armazenamento de métricas
   mimir:
     image: grafana/mimir:latest
-    container_name: mimir
     command: [ "-config.file=/etc/mimir.yaml" ]
     volumes:
       - ./config/grafana/mimir.yaml:/etc/mimir.yaml
@@ -123,7 +136,6 @@ services:
   # Grafana Loki para armazenamento de logs
   loki: 
     image: grafana/loki:latest
-    container_name: loki
     command: [ "-config.file=/etc/loki/loki.yaml" ]
     volumes:
       - ./config/grafana/loki.yaml:/etc/loki/loki.yaml

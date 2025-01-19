@@ -20,7 +20,7 @@ class LivroBase(BaseModel):
     estoque: int
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Função que cria um livro no banco de dados
 def cria_livro(db: Session, livro: LivroBase):
