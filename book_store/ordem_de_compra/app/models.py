@@ -35,7 +35,7 @@ class OrdemDB(Base):
 # Função para criar uma ordem
 def cria_ordem(db: Session, ordem: OrdemCreate):
     db_ordem = OrdemDB(
-        livro_id=ordem.livro_id,
+        id_livro=ordem.id_livro,
         status="Pendente",
         pagamento_status="Pendente"
     )
