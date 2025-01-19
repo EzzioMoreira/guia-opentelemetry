@@ -17,7 +17,7 @@ Requisição:
 - Body (JSON):
     ```json
     {
-        "livro_id": "number"
+        "id_livro": "number"
     }
     ```
 
@@ -27,9 +27,8 @@ Resposta:
     ```json
     {
         "id": "number",
-        "livro_id": "number",
-        "status": "string",
-        "pagamento_status": "string"
+        "id_livro": "number",
+        "status": "string"
     }
     ```
 
@@ -49,9 +48,8 @@ Resposta:
     ```json
     {
         "id": "number",
-        "livro_id": "number",
-        "status": "string",
-        "pagamento_status": "string"
+        "id_livro": "number",
+        "status": "string"
     }
     ```
 

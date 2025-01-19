@@ -13,6 +13,7 @@ from . import logger
 ############################################################
 # Var para uso de mock no pagamento. será removida no futuro
 USE_PAYMENT_MOCK = True
+STATUS_PAYMENT_MOCK = "Aprovado"
 
 # Obetem url dos serviços pagamento e cadastro de livros
 PAYMENT_URL = os.getenv("PAYMENT_URL", "http://pagamento:8080")
@@ -29,14 +30,14 @@ app = FastAPI()
 def cria_ordem(ordem: models.OrdemCreate, db: Session = Depends(get_db)):
     try:
         # Valida disponibilidade do livro no serviço de cadastro de livros
-        livro_response = requests.get(f"{BOOK_URL}/livros/{ordem.livro_id}")
+        livro_response = requests.get(f"{BOOK_URL}/livros/{ordem.id_livro}")
         if livro_response.status_code != 200:
             raise HTTPException(status_code=404, detail="Livro não encontrado")
         
         # Valida se o livro está disponível em estoque
         livro = livro_response.json()
         if livro["estoque"] <= 0:
-            raise HTTPException(status_code=400, detail="Livro esgotado")
+            raise HTTPException(status_code=404, detail="Livro esgotado")
         
         # Cria ordem de compra
         db_ordem = models.cria_ordem(db=db, ordem=ordem)
@@ -44,16 +45,20 @@ def cria_ordem(ordem: models.OrdemCreate, db: Session = Depends(get_db)):
         if USE_PAYMENT_MOCK: 
             # Mocking do serviço de Pagamento 
             logger.info("Usando mock do serviço de Pagamento") 
-            pagamento_response = {"status_code": 200} 
+            pagamento_response = {"status_code": 200, "status": "Recusado"} 
         else: 
             # Enviar pagamento para o serviço de Pagamento 
             pagamento_response = requests.post("http://{PAYMENT_URL}/pagamentos", json={"ordem_id": db_ordem.id}) 
             if pagamento_response.status_code != 200: 
                 raise HTTPException(status_code=400, detail="Falha no processamento do pagamento")
+            pagamento_response = pagamento_response.json()
         
         # Atualiza status da ordem
-        db_ordem.status = "Concluído"
-        db_ordem.pagamento_status = "Aprovado"
+        if pagamento_response["status"] == "Aprovado":
+            db_ordem.status = "Concluído"
+        else:
+            db_ordem.status = "Pagamento Recusado"
+    
         db.commit()
         db.refresh(db_ordem)
         
