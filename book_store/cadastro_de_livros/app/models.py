@@ -1,5 +1,5 @@
 """
-Modulo responsavel por manipular os dados do banco de dados
+Modulo responsável por manipular os dados do banco de dados
 """
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import Session
