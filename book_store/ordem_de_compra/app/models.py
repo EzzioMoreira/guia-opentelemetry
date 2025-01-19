@@ -28,7 +28,7 @@ class Ordem(OrdemBase):
 class OrdemDB(Base):
     __tablename__ = "ordens" # Nome da tabela no banco de dados
     id = Column(Integer, primary_key=True, index=True) # Campo de identificação da ordem
-    livro_id = Column(Integer) # Campo de identificação do livro
+    id_livro = Column(Integer) # Campo de identificação do livro
     status = Column(String) # Campo de status da ordem
     pagamento_status = Column(String) # Campo de status do pagamento
 
