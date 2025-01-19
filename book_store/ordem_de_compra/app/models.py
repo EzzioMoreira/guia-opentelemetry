@@ -9,7 +9,7 @@ from . import logger
 
 Define a classe OrdemBase contendo os campos livro_id para serem usados na criação de uma ordem
 class OrdemBase(BaseModel):
-    livro_id: int
+    id_livro: int
     
 # Define a classe OrdemCreate contendo os campos livro_id para serem usados na criação de uma ordem
 class OrdemCreate(OrdemBase):
