@@ -18,7 +18,7 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 # Define a rota para processar pagamento
-@app.post("/pagamento", response_model=models.Pagamento)
+@app.post("/pagamentos", response_model=models.Pagamento)
 def processar_pagamento(pagamento: models.PagamentoCreate, db: Session = Depends(get_db)):
     """
     Processa um pagamento para a ordem especificada.
