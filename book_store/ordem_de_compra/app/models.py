@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from .databases import Base
 from . import logger
 
-# Defini a classe OrdemBase contendo os campos livro_id para serem usados na criação de uma ordem
+Define a classe OrdemBase contendo os campos livro_id para serem usados na criação de uma ordem
 class OrdemBase(BaseModel):
     livro_id: int
     
