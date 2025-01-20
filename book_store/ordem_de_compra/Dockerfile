@@ -14,8 +14,8 @@ COPY . .
 #####################################################################################
 #### Adicione na linha abaixo o comando para instalar o OpenTelemetry SDK Python ####
 
-# Expõe a porta 8080
-EXPOSE 8080
+# Expõe a porta 8081
+EXPOSE 8081
 
 #####################################################################################
 #### Adicione na linha abaixo o comando para iniciar o OpenTelemetry SDK Python ####

@@ -4,12 +4,18 @@ services:
   # Microserviço de cadastro de livros
   cadastro_de_livros:
     build: ./book_store/cadastro_de_livros
+    container_name: cadastro_de_livros
     ports:
       - "8080:8080"
     depends_on:
       - db
     networks:
       - otel
+    deploy: 
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
     #####################################################################################################
     #### Adicione as variáveis de ambiente abaixo para configurar o envio de traces para o collector ####
     #####################################################################################################
@@ -22,13 +28,19 @@ services:
   # Microserviço Ordem de Compra
   ordem_de_compra:
     build: ./book_store/ordem_de_compra
+    container_name: ordem_de_compra
     ports:
-      - "8081:8080"
+      - "8081:8081"
     depends_on:
       - db
       - cadastro_de_livros
     networks:
       - otel
+    deploy: 
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
     #####################################################################################################
     #### Adicione as variáveis de ambiente abaixo para configurar o envio de traces para o collector ####
     #####################################################################################################
@@ -43,13 +55,19 @@ services:
   # Microserviço de Pagamento
   pagamento:
     build: ./book_store/pagamento
+    container_name: pagamento
     ports:
-      - "8082:8080"
+      - "8082:8082"
     depends_on:
       - db
       - ordem_de_compra
     networks:
       - otel
+    deploy: 
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
     #####################################################################################################
     #### Adicione as variáveis de ambiente abaixo para configurar o envio de traces para o collector ####
     #####################################################################################################
@@ -69,14 +87,19 @@ services:
       - POSTGRES_DB=postgres
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
-      interval: 30s
-      timeout: 40s
+      interval: 10s
+      timeout: 7s
       retries: 5
       start_period: 20s
     ports:
       - "5432:5432"
     networks:
       - otel
+    deploy: 
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
 
@@ -93,6 +116,11 @@ services:
       - "4318:4318" # Porta de recebimento de métricas HTTP
     networks:
       - otel
+    deploy: 
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
   
   # Grafana para visualização de métricas, logs e traces
   grafana:
@@ -106,6 +134,11 @@ services:
       - ./config/grafana/dashboards:/var/lib/grafana/dashboards
     networks:
       - otel
+    deploy: 
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
   
   # Grafana Tempo para armaazenamento de traces
   tempo:
@@ -119,6 +152,11 @@ services:
       - grafana
     networks:
       - otel
+    deploy: 
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
   
   # Grafana Mimir para armazenamento de métricas
   mimir:
@@ -132,6 +170,11 @@ services:
       - grafana
     networks:
       - otel
+    deploy: 
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
   
   # Grafana Loki para armazenamento de logs
   loki: 
@@ -146,6 +189,11 @@ services:
       - grafana
     networks:
       - otel
+    deploy: 
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
   
   # Grafana K6 para gerar carga na aplicação
   ##########################################

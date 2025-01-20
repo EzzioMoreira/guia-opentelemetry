@@ -78,5 +78,5 @@ Respostas de erro padrão:
 ## Notas Adicionais
 
 - O status de um pagamento pode ser um dos seguintes valores:
-  - `aprovado`: O pagamento foi processado com sucesso.
-  - `recusado`: O pagamento foi recusado pelo sistema.
+  - `Aprovado`: O pagamento foi processado com sucesso.
+  - `Recusado`: O pagamento foi recusado pelo sistema.

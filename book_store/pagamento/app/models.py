@@ -28,6 +28,9 @@ class PagamentoDB(Base):
 
 # Função que processa o pagamento de uma ordem
 def processar_pagamento(db: Session, pagamento: PagamentoCreate, status: str):
+    """"
+    Função que cria um pagamento no banco de dados
+    """
     db_pagamento = PagamentoDB(
         id_ordem=pagamento.id_ordem,
         status=status
@@ -39,4 +42,11 @@ def processar_pagamento(db: Session, pagamento: PagamentoCreate, status: str):
 
 # Função que lista os pagamento
 def lista_pagamentos(db: Session, id_pagamento: int):
-    return db.query(PagamentoDB).filter(PagamentoDB.id == id_pagamento).first()
+    """"
+    Função que retorna um pagamento do banco de dados
+    """
+    try:
+        return db.query(PagamentoDB).filter(PagamentoDB.id == id_pagamento).first()
+    except Exception as e:
+        logger.error(f"Erro ao buscar pagamento com id {id_pagamento}: {e}")
+        raise
