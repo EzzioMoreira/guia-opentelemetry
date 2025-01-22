@@ -1,10 +1,10 @@
 ## Instrumentação Sem Código
 
-Também conhecido como Auto-Instrumentação, é processo em que o OpenTelemetry modifica o comportamento da aplicação em tempo de execução, adicionando código para gerar, processar e enviar telemetria. Isso é possível graças a uma técnica chamada de [Monkey Patching](https://en.wikipedia.org/wiki/Monkey_patch), amplamente utilizada em linguagens como Python, Ruby e JavaScript. 
+Também conhecido como Auto-Instrumentação, é o processo em que o OpenTelemetry modifica o comportamento da aplicação em tempo de execução, adicionando código para gerar, processar e enviar telemetria. Isso é possível graças a uma técnica chamada de [Monkey Patching](https://en.wikipedia.org/wiki/Monkey_patch), amplamente utilizada em linguagens como Python, Ruby e JavaScript.
 
 > O método de aplicar instrumentação sem código varia de acordo com a linguagem de programação.
 
-Com isso, toda vez que uma requisição é feita na aplicação de exemplo o OpenTelemetry captura e envia a telemetria para OpenTelemetry Collector, que por sua vez, envia para o Grafana.
+Através do processo de instrumentação sem código, toda vez que uma requisição é feita na aplicação de exemplo, o OpenTelemetry captura e envia a telemetria para o OpenTelemetry Collector, que por sua vez, envia para o Grafana.
 
 Instrumentação sem código é um bom começo para iniciar sua jornada com instrumentação de aplicações, mas é importante lembrar que a instrumentação sem código não é suficiente para todos os cenários. Em alguns casos, você precisará adicionar código manualmente para instrumentar corretamente a aplicação. 
 
@@ -18,7 +18,7 @@ Agora, siga estes passos para implementar a instrumentação sem código na apli
     git clone https://github.com/EzzioMoreira/treinamento-opentelemetry.git && cd treinamento-opentelemetry
     ```
 
-1. Para implementar a instrumentação sem código, adicione o seguinte trecho de código ao arquivo `Dockerfile`:
+1. Para implementar a instrumentação sem código, adicione o seguinte trecho de código ao arquivo [Dockerfile](../../book_store/cadastro_de_livros/Dockerfile) do microserviço `Cadastro de Livro`.
 
     > Existe um comentário no arquivo `Dockerfile` que indica onde adicionar o trecho de código.
 
@@ -27,21 +27,21 @@ Agora, siga estes passos para implementar a instrumentação sem código na apli
     opentelemetry-bootstrap
     ```
 
-    Devemos instalar o [pacote distro](https://opentelemetry.io/docs/languages/python/distro/) para que a instrumentação sem código funcione corretamente, o `opentelemetry-distro` contém a distros padrões para configurar automaticamente as opções mais comuns para os usuários, como o SDK TraceProvider, um BatchSpanProcessor e um ConsoleSpanExporter. O `opentelemetry-exporter-otlp` é um exportador que envia os dados de telemetria para o OpenTelemetry Collector. 
+    Devemos instalar o [pacote distro](https://opentelemetry.io/docs/languages/python/distro/) para que a instrumentação sem código funcione corretamente. O `opentelemetry-distro` contém as distros padrões para configurar automaticamente as opções mais comuns para os usuários, como o SDK TraceProvider, um BatchSpanProcessor e um ConsoleSpanExporter. O `opentelemetry-exporter-otlp` é um exportador que envia os dados de telemetria para o OpenTelemetry Collector. 
     
     O [opentelemetry-bootstrap](https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/opentelemetry-instrumentation#opentelemetry-bootstrap) faz a leitura dos pacotes instalados na aplicação e instala as bibliotecas necessárias para instrumentar a aplicação. Por exemplo, estamos utilizando o pacote `Flask` na aplicação de exemplo, o `opentelemetry-bootstrap` instalará o pacote `opentelemetry-instrumentation-flask` para nós.
 
-    A lista completa de pacotes de instrumentação padrão e detectáveis ​estão definidos aqui [aqui](https://github.com/open-telemetry/opentelemetry-python-contrib/blob/main/opentelemetry-instrumentation/src/opentelemetry/instrumentation/bootstrap_gen.py).
+    A lista completa de pacotes de instrumentação padrão e detectáveis está definida [aqui](https://github.com/open-telemetry/opentelemetry-python-contrib/blob/main/opentelemetry-instrumentation/src/opentelemetry/instrumentation/bootstrap_gen.py).
 
-1. No `entrypoint` no `Dockerfile` adicione o seguinte comando:
+1. No `entrypoint` do [Dockerfile](../../book_store/cadastro_de_livros/Dockerfile) do microserviço `Cadastro de Livro`, adicione o prefixo `opentelemetry-instrument` ao comando de execução da aplicação. 
 
     > Existe um comentário no arquivo `Dockerfile` que indica onde adicionar o trecho de código.
 
     ```Dockerfile
-    ENTRYPOINT ["opentelemetry-instrument", "python", "app.py"]
+    ENTRYPOINT ["opentelemetry-instrument", "python", "-m", "app.main"]
     ```
 
-    O comando [opentelemetry-instrument](https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/opentelemetry-instrumentation#opentelemetry-instrument) tentará detectar automaticamente os pacotes usados na aplicação e quando possível, aplicará a instrumentação. O comando suporta configurações adicionais, como a definição de um `tracer` ou `exporter` específico, veja o exemplo.
+    O comando [opentelemetry-instrument](https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/opentelemetry-instrumentation#opentelemetry-instrument) tentará detectar automaticamente os pacotes usados na aplicação e, quando possível, aplicará a instrumentação. O comando suporta configurações adicionais, como a definição de um `tracer_exporter`, `metrics_exporter` entre outros, veja o exemplo.
 
     ```shell
     opentelemetry-instrument \
@@ -52,18 +52,19 @@ Agora, siga estes passos para implementar a instrumentação sem código na apli
     python myapp.py
     ```
 
-    Como alternativa, vamos utilizar variáveis de ambiente para configurar o `opentelemetry-instrument`. Para isso, adicione o seguinte trecho de código ao arquivo `docker-compose.yaml`:
+    Como alternativa, vamos utilizar variáveis de ambiente para configurar o `opentelemetry-instrument`. Para isso, adicione o seguinte trecho de código ao arquivo [docker-compose.yaml](../../docker-compose.yaml) no microserviço `Cadastro de Livro`.
 
     > Existe um comentário no arquivo `docker-compose.yaml` que indica onde adicionar o trecho de código.
 
     ```yaml
-    environment:
-      - OTEL_SERVICE_NAME=app-python
-      - OTEL_RESOURCE_ATTRIBUTES=service.name=app-python, service.version=1.0.0, service.env=dev
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
-      - OTEL_EXPORTER_OTLP_INSECURE=true
-      - OTEL_PYTHON_LOG_CORRELATION=true
+    - OTEL_SERVICE_NAME=cadastro-de-livros
+    - OTEL_RESOURCE_ATTRIBUTES=service.name=cadastro-de-livros,service.version=1.0.0,service.env=dev
+    - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
+    - OTEL_EXPORTER_OTLP_INSECURE=true
+    - OTEL_PYTHON_LOG_CORRELATION=true
     ```
+
+    Estamos configurando o `OTEL_SERVICE_NAME` com o nome do serviço, `OTEL_RESOURCE_ATTRIBUTES` com os atributos do serviço, `OTEL_EXPORTER_OTLP_ENDPOINT` com o endpoint do OpenTelemetry Collector, `OTEL_EXPORTER_OTLP_INSECURE` para permitir conexões inseguras e `OTEL_PYTHON_LOG_CORRELATION` para correlacionar os logs com as traces.
 
 1. Pronto! Agora, basta executar o comando `docker-compose up` para iniciar a aplicação.
 
@@ -71,47 +72,47 @@ Agora, siga estes passos para implementar a instrumentação sem código na apli
     docker-compose up -d
     ```
 
-1. Acesse os endpoints da aplicação para gerar métricas e traces:
+1. Acesse os endpoints da aplicação para gerar dados de telemetria:
+
+    Ao acessar o endpoint, a aplicação irá listar todos os livros cadastrados.
 
     ```shell
-    curl http://localhost:8080/pokemon/fetch/<name>
+    curl http://localhost:8080/livros
     ```
-   
-   Ao acessar o endpoint, a aplicação irá buscar os dados de um Pokemon na API externa e salvar no banco de dados.
+
+    Ao acessar o endpoint, a aplicação irá adicionar um novo livro ao banco de dados.
 
     ```shell
-    curl http://localhost:8080/pokemon/<name>
+    curl -X POST http://localhost:8080/livros -H "Content-Type: application/json" -d '{"titulo": "Livro Exemplo", "autor": "Autor Exemplo", "ano": 2023}'
     ```
 
-    Ao acessar o endpoint, a aplicação irá listar os Pokemon salvos no banco de dados por nome.
+    Ao acessar o endpoint, a aplicação irá buscar os detalhes de um livro específico pelo ID.
 
     ```shell
-    curl http://localhost:8080/pokemon
+    curl http://localhost:8080/livros/<id>
     ```
 
-    Ao acessar o endpoint, a aplicação irá listar todos os Pokemon salvos no banco de dados.
+    Ao acessar o endpoint, a aplicação irá atualizar os detalhes de um livro específico pelo ID.
 
     ```shell
-    curl -X POST http://localhost:8080/pokemon -H "Content-Type: application/json" -d '{"name": "Ezzio", "height": 1.7, "weight": 70, "abilities": ["Correr", "Pular"], "types": ["Humano"]}'
+    curl -X PUT http://localhost:8080/livros/<id> -H "Content-Type: application/json" -d '{"titulo": "Livro Atualizado", "autor": "Autor Atualizado", "ano": 2024}'
     ```
 
-    Ao acessar o endpoint, a aplicação irá adicionar um Pokemon no banco de dados.
+    Ao acessar o endpoint, a aplicação irá deletar um livro específico pelo ID.
 
     ```shell
-    curl -X DELETE http://localhost:8080/pokemon/<name>
+    curl -X DELETE http://localhost:8080/livros/<id>
     ```
 
-    Ao acessar o endpoint, a aplicação irá deletar um Pokemon no banco de dados.
+1. Acesse o Grafana para visualizar a telemetria gerada em http://localhost:3000.
 
-1. Acesse o Grafana para visualizar a telemetria gerada http://localhost:3000.
-
-    No menu `explorer` do Grafana, você pode visualizar as métricas e traces, selecione `service.name` = `app-python` para visualizar as métricas e traces.
+    No menu `explorer` do Grafana, você pode visualizar as métricas e traces. Selecione `service.name` = `cadastro-de-livros` para visualizar as métricas e traces.
 
 ### O Que Esperar?
 
 Quando você acessar os endpoints da aplicação, o OpenTelemetry irá capturar as requisições e enviar para o OpenTelemetry Collector. O OpenTelemetry Collector irá processar e enviar a telemetria para Tempo, Mimir e Loki. Por fim, você poderá visualizar a telemetria no Grafana.
 
-### Gerando Trafego na Aplicação
+### Gerando Tráfego na Aplicação
 
 1. Vamos utilizar o Grafana K6 para gerar tráfego na aplicação. Para isso, siga os passos:
 

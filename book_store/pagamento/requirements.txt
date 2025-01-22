@@ -1,0 +1,6 @@
+fastapi==0.115.6
+uvicorn==0.34.0
+sqlalchemy==2.0.37
+sqlalchemy-utils==0.41.2
+psycopg2-binary==2.9.10
+requests==2.32.3

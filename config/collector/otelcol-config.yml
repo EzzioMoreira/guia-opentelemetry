@@ -15,7 +15,7 @@ receivers:
         - targets: ['127.0.0.1:8888']
 processors:
   batch:
-    send_batch_size: 1000
+    send_batch_size: 512
     timeout: 5s
   memory_limiter:
     check_interval: 5s
@@ -27,7 +27,7 @@ processors:
       hostname_sources: [ "os" ]
 exporters:
   otlp:
-    endpoint: tempo:4317
+    endpoint: tempo:4319
     tls:
       insecure: true
   

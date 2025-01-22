@@ -17,6 +17,9 @@ app = FastAPI()
 # Define a rota para criar um livro
 @app.post("/livros/")
 def cria_livro(livro: models.LivroBase, db: Session = Depends(get_db)):
+    """
+    Rota para criar um livro
+    """
     try:
         logger.info(f"Criando livro: {livro}")
         novo_livro = models.cria_livro(db=db, livro=livro)
@@ -29,6 +32,9 @@ def cria_livro(livro: models.LivroBase, db: Session = Depends(get_db)):
 # Define a rota para listar livros por id
 @app.get("/livros/{id}")
 def busca_livro(id: int, db: Session = Depends(get_db)):
+    """
+    Rota para buscar um livro pelo id
+    """
     try:
         logger.info(f"Buscando livro com id: {id}")
         livro = models.busca_livro(db, id)
@@ -46,6 +52,9 @@ def busca_livro(id: int, db: Session = Depends(get_db)):
 # Define a rota para listar todos os livros
 @app.get("/livros/")
 def lista_livros(db: Session = Depends(get_db)):
+    """
+    Rota para listar todos os livros
+    """
     try:
         logger.info("Listando todos os livros")
         livros = models.lista_livros(db)
@@ -54,7 +63,3 @@ def lista_livros(db: Session = Depends(get_db)):
     except Exception as e:
         logger.error(f"Erro ao listar livros: {e}")
         raise HTTPException(status_code=500, detail="Erro ao listar livros")
-
-# Configuração para rodar o servidor 
-if __name__ == "__main__": 
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8080, reload=True)

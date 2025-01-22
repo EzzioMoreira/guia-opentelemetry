@@ -3,14 +3,16 @@ name: treinamento-opentelemetry
 services:
   # Microserviço de cadastro de livros
   cadastro_de_livros:
-    build: ./book_store/cadastro_de_livros
-    container_name: cadastro_de_livros
+    <<: *shared-config
+    build: 
+      context: ./book_store/cadastro_de_livros
+      args:
+        - BUILD_TAG=${BUILD_TAG}
+    image: cadastro_de_livros:${BUILD_TAG}
     ports:
       - "8080:8080"
     depends_on:
       - db
-    networks:
-      - otel
     #####################################################################################################
     #### Adicione as variáveis de ambiente abaixo para configurar o envio de traces para o collector ####
     #####################################################################################################
@@ -19,21 +21,29 @@ services:
       - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
       - POSTGRES_DB=cadastro-livros
       - POSTGRES_HOST=$POSTGRES_HOST
+      - OTEL_SERVICE_NAME=cadastro-de-livros
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=cadastro-de-livros,service.version=$BUILD_TAG,service.env=dev
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
+      - OTEL_EXPORTER_OTLP_INSECURE=true
+      - OTEL_PYTHON_LOG_CORRELATION=true
   
   # Microserviço Ordem de Compra
   ordem_de_compra:
-    build: ./book_store/ordem_de_compra
+    <<: *shared-config
+    build: 
+      context: ./book_store/ordem_de_compra
+      args:
+        - BUILD_TAG=${BUILD_TAG}
+    image: ordem_de_compra:${BUILD_TAG}
     container_name: ordem_de_compra
     ports:
-      - "8081:8080"
+      - "8081:8081"
     depends_on:
       - db
       - cadastro_de_livros
-    networks:
-      - otel
-    #####################################################################################################
-    #### Adicione as variáveis de ambiente abaixo para configurar o envio de traces para o collector ####
-    #####################################################################################################
+    #######################################################################################################################
+    #### Adicione as variáveis de ambiente abaixo para configurar o envio de telemetria para o OpenTelemetry collector ####
+    #######################################################################################################################
     environment:
       - POSTGRES_USER=$POSTGRES_USER
       - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
@@ -42,46 +52,65 @@ services:
       - BOOK_URL=$BOOK_URL
       - PAYMENT_URL=$PAYMENT_URL
   
+  # Microserviço de Pagamento
+  pagamento:
+    <<: *shared-config
+    build: 
+      context: ./book_store/pagamento
+      args:
+        - BUILD_TAG=${BUILD_TAG}
+    image: pagamento:${BUILD_TAG}
+    container_name: pagamento
+    ports:
+      - "8082:8082"
+    depends_on:
+      - db
+      - ordem_de_compra
+    #####################################################################################################
+    #### Adicione as variáveis de ambiente abaixo para configurar o envio de traces para o collector ####
+    #####################################################################################################
+    environment:
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+      - POSTGRES_DB=pagamento
+      - POSTGRES_HOST=$POSTGRES_HOST
+      - ORDER_URL=$ORDER_URL
+  
   # Banco de dados Postgres
   db:
+    <<: *shared-config
     image: postgres:14
-    container_name: db
     environment:
       - POSTGRES_USER=$POSTGRES_USER
       - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
       - POSTGRES_DB=postgres
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
-      interval: 30s
-      timeout: 40s
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "postgres"]
+      interval: 10s
+      timeout: 5s
       retries: 5
-      start_period: 20s
     ports:
       - "5432:5432"
-    networks:
-      - otel
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
 
   # OpenTelemetry Collector
   otelcollector:
-    image: otel/opentelemetry-collector-contrib:0.111.0
-    container_name: otelcollector
+    <<: *shared-config
+    image: otel/opentelemetry-collector-contrib:0.118.0
     volumes:
       - ./config/collector/otelcol-config.yml:/etc/otel-collector-config.yml
     command:
       - "--config=/etc/otel-collector-config.yml"
       - "--set=service.telemetry.logs.level=INFO"
     ports:
-      - "4317:4317" # Porta de recebimento de traces gRPC
-      - "4318:4318" # Porta de recebimento de métricas HTTP
-    networks:
-      - otel
+      - "4318:4318" # Porta OTLP HTTP
+      - "4317:4317" # Porta OTLP gRPC
   
   # Grafana para visualização de métricas, logs e traces
   grafana:
+    <<: *shared-config
     image: grafana/grafana
-    container_name: grafana
     ports:
       - 3000:3000
     volumes:
@@ -89,27 +118,24 @@ services:
       - ./config/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
       - ./config/grafana/dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
       - ./config/grafana/dashboards:/var/lib/grafana/dashboards
-    networks:
-      - otel
   
   # Grafana Tempo para armaazenamento de traces
   tempo:
+    <<: *shared-config
     image: grafana/tempo:latest
-    container_name: tempo
     command: [ "-config.file=/etc/tempo.yaml" ]
     volumes:
       - ./config/grafana/tempo.yaml:/etc/tempo.yaml
     ports:
       - "3200:3200"
+      - "4319:4319" # otlp grpc
     depends_on:
       - grafana
-    networks:
-      - otel
   
   # Grafana Mimir para armazenamento de métricas
   mimir:
+    <<: *shared-config
     image: grafana/mimir:latest
-    container_name: mimir
     command: [ "-config.file=/etc/mimir.yaml" ]
     volumes:
       - ./config/grafana/mimir.yaml:/etc/mimir.yaml
@@ -117,13 +143,11 @@ services:
       - "9009:9009"
     depends_on:
       - grafana
-    networks:
-      - otel
   
   # Grafana Loki para armazenamento de logs
-  loki: 
+  loki:
+    <<: *shared-config
     image: grafana/loki:latest
-    container_name: loki
     command: [ "-config.file=/etc/loki/loki.yaml" ]
     volumes:
       - ./config/grafana/loki.yaml:/etc/loki/loki.yaml
@@ -132,15 +156,20 @@ services:
       - '7946:7946'
     depends_on:
       - grafana
-    networks:
-      - otel
   
   # Grafana K6 para gerar carga na aplicação
   ##########################################
   #### Adicione abaixo o serviço do K6 #####
   ##########################################
 
-x-default-logging: &logging
+x-default-shared-config: &shared-config
+  networks:
+    - otel
+  deploy:
+    resources:
+      limits:
+        cpus: "0.5"
+        memory: 256M
   driver: "json-file"
   options:
     max-size: "5m"

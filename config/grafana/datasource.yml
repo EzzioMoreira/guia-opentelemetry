@@ -9,6 +9,12 @@ datasources:
   basicAuth: false
   isDefault: true
   version: 1
+  jsonData:
+    httpMethod: GET
+    serviceMap:
+      datasourceUid: prometheus
+    streamingEnabled:
+      search: true
 - name: Prometheus
   type: prometheus
   access: proxy

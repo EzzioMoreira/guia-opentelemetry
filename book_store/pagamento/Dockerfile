@@ -15,8 +15,8 @@ COPY . .
 #### Adicione na linha abaixo o comando para instalar os pacotes necessário do OpenTelemetry Python ####
 
 # Expõe a porta
-EXPOSE 8080
+EXPOSE 8082
 
 ########################################################################################
 #### Adicione na linha abaixo o opentelemetry-instrument para instrumentar o código ####
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8082"]
