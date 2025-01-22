@@ -63,7 +63,3 @@ def lista_livros(db: Session = Depends(get_db)):
     except Exception as e:
         logger.error(f"Erro ao listar livros: {e}")
         raise HTTPException(status_code=500, detail="Erro ao listar livros")
-
-# Configuração para rodar o servidor 
-if __name__ == "__main__": 
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8080, reload=True)

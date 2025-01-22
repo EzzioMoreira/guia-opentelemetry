@@ -49,7 +49,3 @@ def lista_pagamentos(id_pagamento: int, db: Session = Depends(get_db)):
     if db_pagamento is None:
         raise HTTPException(status_code=404, detail="Pagamento não encontrado")
     return db_pagamento
-
-# Configura o servidor
-if __name__ == "__main__":
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8082, reload=True)

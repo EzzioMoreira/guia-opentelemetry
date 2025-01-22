@@ -80,7 +80,3 @@ def busca_ordem(id: int, db: Session = Depends(get_db)):
     except Exception as e:
         logger.error(f"Erro ao buscar ordem: {e}")
         raise HTTPException(status_code=500, detail="Erro ao buscar ordem")
-
-# Configura o servidor
-if __name__ == "__main__":
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8081, reload=True)
