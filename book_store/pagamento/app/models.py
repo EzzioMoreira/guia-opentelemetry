@@ -11,7 +11,7 @@ class PagamentoBase(BaseModel):
 class PagamentoCreate(PagamentoBase):
     pass
 
-# Define a clarro Pagamento
+# Define a classe Pagamento
 class Pagamento(PagamentoBase):
     id: int
     status: str
