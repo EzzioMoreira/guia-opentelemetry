@@ -1,33 +1,54 @@
 apiVersion: 1
-
 datasources:
+
 - name: Tempo
+  uid: tempo
   type: tempo
   access: proxy
-  orgId: 1
   url: http://tempo:3200
+  editable: true
   basicAuth: false
-  isDefault: true
-  version: 1
+  apiVersion: 1
   jsonData:
     httpMethod: GET
     serviceMap:
-      datasourceUid: prometheus
-    streamingEnabled:
-      search: true
+      datasourceUid: Prometheus
+    nodeGraph:
+      enabled: true
+    tracesToLogsV2:
+      customQuery: true
+      query: '{appname="grafana"} |~ "\\\\\"traceID\\\\\":\\\\\"$${__trace.traceId}\\\\"'
+      spanEndTimeShift: 1m
+      spanStartTimeShift: -1m
+      datasourceUid: Loki
+      filterByTraceID: false
+    lokiSearch:
+      datasourceUid: Loki
+
 - name: Prometheus
   type: prometheus
+  editable: true
   access: proxy
   orgId: 1
   url: http://mimir:9009/prometheus
   basicAuth: false
   version: 1
+  jsonData:
+    timeInterval: 60s
+    httpMethod: POST
+
 - name: Loki
   type: loki
   access: proxy
+  editable: true
   orgId: 1
   url: http://loki:3100
   jsonData:
-    httpHeaderName1: "X-Scope-OrgID"
+    derivedFields:
+      - datasourceUid: Tempo
+        matcherRegex: 'traceID\\":\\"([a-z0-9]+)\\"'
+        name: TraceID
+        url: $${__value.raw}
+        urlDisplayLabel: Find this trace in Tempo
   secureJsonData:
     httpHeaderValue1: "tenant1"
