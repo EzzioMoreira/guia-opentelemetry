@@ -15,19 +15,19 @@ receivers:
         - targets: ['127.0.0.1:8888']
 processors:
   batch:
-    send_batch_size: 512
+    send_batch_size: 100
     timeout: 5s
   memory_limiter:
     check_interval: 5s
-    limit_mib: 1800
-    spike_limit_mib: 500
+    limit_percentage: 75
+
   resourcedetection/system:
     detectors: [ "system", docker ]
     system:
       hostname_sources: [ "os" ]
 exporters:
   otlp:
-    endpoint: tempo:4319
+    endpoint: tempo:4317
     tls:
       insecure: true
   
@@ -36,10 +36,12 @@ exporters:
     resource_to_telemetry_conversion:
       enabled: true # Convert resource attributes to metric labels
 
-  loki:
-    endpoint: http://loki:3100/loki/api/v1/push
+  otlphttp:
+    endpoint: http://loki:3100/otlp
     tls:
       insecure: true
+  
+  debug:
 
 extensions:
   health_check:
@@ -48,11 +50,32 @@ extensions:
 
 service:
   extensions: [ pprof, zpages, health_check ]
+  # Doc. https://opentelemetry.io/docs/collector/internal-telemetry/
+  telemetry:
+    metrics:
+      address: 127.0.0.1:8888
+      level: detailed
+    logs:
+      level: DEBUG
+      encoding: json
+      processors:
+        - batch:
+            exporter:
+              otlp:
+                protocol: http/protobuf
+                endpoint: http://otelcollector:4318
+    traces:
+      processors:
+        - batch:
+            exporter:
+              otlp:
+                protocol: grpc/protobuf
+                endpoint: http://otelcollector:4317
   pipelines:
     logs:
       receivers: [ otlp ]
       processors: [ memory_limiter, resourcedetection/system, batch ]
-      exporters: [ loki ]
+      exporters: [ otlphttp ]
     traces:
       receivers: [ otlp ]
       processors: [ memory_limiter, resourcedetection/system, batch ]

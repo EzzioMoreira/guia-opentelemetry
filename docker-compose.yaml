@@ -1,18 +1,16 @@
-version: '3.8'
-name: treinamento-opentelemetry
+version: '3.9'
+
 services:
   # Microserviço de cadastro de livros
   cadastro_de_livros:
-    <<: *shared-config
     build: 
       context: ./book_store/cadastro_de_livros
-      args:
-        - BUILD_TAG=${BUILD_TAG}
-    image: cadastro_de_livros:${BUILD_TAG}
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     #####################################################################################################
     #### Adicione as variáveis de ambiente abaixo para configurar o envio de traces para o collector ####
     #####################################################################################################
@@ -21,26 +19,21 @@ services:
       - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
       - POSTGRES_DB=cadastro-livros
       - POSTGRES_HOST=$POSTGRES_HOST
-      - OTEL_SERVICE_NAME=cadastro-de-livros
-      - OTEL_RESOURCE_ATTRIBUTES=service.name=cadastro-de-livros,service.version=$BUILD_TAG,service.env=dev
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
-      - OTEL_EXPORTER_OTLP_INSECURE=true
-      - OTEL_PYTHON_LOG_CORRELATION=true
+    networks:
+      - otel
   
   # Microserviço Ordem de Compra
   ordem_de_compra:
-    <<: *shared-config
     build: 
       context: ./book_store/ordem_de_compra
-      args:
-        - BUILD_TAG=${BUILD_TAG}
-    image: ordem_de_compra:${BUILD_TAG}
-    container_name: ordem_de_compra
+      dockerfile: Dockerfile
     ports:
       - "8081:8081"
     depends_on:
-      - db
-      - cadastro_de_livros
+      db:
+        condition: service_healthy
+      cadastro_de_livros:
+        condition: service_started
     #######################################################################################################################
     #### Adicione as variáveis de ambiente abaixo para configurar o envio de telemetria para o OpenTelemetry collector ####
     #######################################################################################################################
@@ -51,21 +44,21 @@ services:
       - POSTGRES_HOST=$POSTGRES_HOST
       - BOOK_URL=$BOOK_URL
       - PAYMENT_URL=$PAYMENT_URL
+    networks:
+      - otel
   
   # Microserviço de Pagamento
   pagamento:
-    <<: *shared-config
     build: 
       context: ./book_store/pagamento
-      args:
-        - BUILD_TAG=${BUILD_TAG}
-    image: pagamento:${BUILD_TAG}
-    container_name: pagamento
+      dockerfile: Dockerfile
     ports:
       - "8082:8082"
     depends_on:
-      - db
-      - ordem_de_compra
+      db:
+        condition: service_healthy
+      ordem_de_compra:
+        connection: service_started
     #####################################################################################################
     #### Adicione as variáveis de ambiente abaixo para configurar o envio de traces para o collector ####
     #####################################################################################################
@@ -75,17 +68,18 @@ services:
       - POSTGRES_DB=pagamento
       - POSTGRES_HOST=$POSTGRES_HOST
       - ORDER_URL=$ORDER_URL
+    networks:
+      - otel
   
   # Banco de dados Postgres
   db:
-    <<: *shared-config
-    image: postgres:14
+    image: postgres:17.2
     environment:
       - POSTGRES_USER=$POSTGRES_USER
       - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
       - POSTGRES_DB=postgres
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "postgres"]
+      test: ["CMD", "pg_isready", "-U", "$POSTGRES_USER", "-d", "postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -93,10 +87,18 @@ services:
       - "5432:5432"
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
+    networks:
+      - otel
 
   # OpenTelemetry Collector
   otelcollector:
-    <<: *shared-config
+    networks:
+      - otel
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
     image: otel/opentelemetry-collector-contrib:0.118.0
     volumes:
       - ./config/collector/otelcol-config.yml:/etc/otel-collector-config.yml
@@ -109,8 +111,9 @@ services:
   
   # Grafana para visualização de métricas, logs e traces
   grafana:
-    <<: *shared-config
-    image: grafana/grafana
+    networks:
+      - otel
+    image: grafana/grafana:11.4.0
     ports:
       - 3000:3000
     volumes:
@@ -121,39 +124,34 @@ services:
   
   # Grafana Tempo para armaazenamento de traces
   tempo:
-    <<: *shared-config
-    image: grafana/tempo:latest
+    networks:
+      - otel
+    image: grafana/tempo:2.7.0
     command: [ "-config.file=/etc/tempo.yaml" ]
     volumes:
       - ./config/grafana/tempo.yaml:/etc/tempo.yaml
-    ports:
-      - "3200:3200"
-      - "4319:4319" # otlp grpc
     depends_on:
       - grafana
   
   # Grafana Mimir para armazenamento de métricas
   mimir:
-    <<: *shared-config
-    image: grafana/mimir:latest
+    networks:
+      - otel
+    image: grafana/mimir:2.15.0
     command: [ "-config.file=/etc/mimir.yaml" ]
     volumes:
       - ./config/grafana/mimir.yaml:/etc/mimir.yaml
-    ports:
-      - "9009:9009"
     depends_on:
       - grafana
   
   # Grafana Loki para armazenamento de logs
   loki:
-    <<: *shared-config
-    image: grafana/loki:latest
+    networks:
+      - otel
+    image: grafana/loki:3.3.2
     command: [ "-config.file=/etc/loki/loki.yaml" ]
     volumes:
       - ./config/grafana/loki.yaml:/etc/loki/loki.yaml
-    ports:
-      - "3100:3100"
-      - '7946:7946'
     depends_on:
       - grafana
   
@@ -162,21 +160,13 @@ services:
   #### Adicione abaixo o serviço do K6 #####
   ##########################################
 
-x-default-shared-config: &shared-config
-  networks:
-    - otel
-  deploy:
-    resources:
-      limits:
-        cpus: "0.5"
-        memory: 256M
+networks:
+  otel:
+    name: otel
+    driver: bridge
+logging:
   driver: "json-file"
   options:
     max-size: "5m"
     max-file: "2"
     tag: "{{.Name}}"
-
-networks:
-  otel:
-    name: otel
-    driver: bridge
