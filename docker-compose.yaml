@@ -19,18 +19,6 @@ services:
       - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
       - POSTGRES_DB=cadastro-livros
       - POSTGRES_HOST=$POSTGRES_HOST
-      - OTEL_SERVICE_NAME=cadastro-de-livros
-      - OTEL_RESOURCE_ATTRIBUTES=service.name=cadastro-de-livros,service.version=v0.0.1,service.env=dev
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
-      - OTEL_EXPORTER_OTLP_INSECURE=true
-      # - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otelcollector:4317
-      # - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://otelcollector:4317
-      # - OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=http://otelcollector:4317
-      #- OTEL_PYTHON_LOG_CORRELATION=true
-      - OTEL_LOGS_EXPORTER=otlp,console
-      - OTEL_METRICS_EXPORTER=otlp
-      - OTEL_TRACES_EXPORTER=otlp
-      # - OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true
     networks:
       - otel
   
