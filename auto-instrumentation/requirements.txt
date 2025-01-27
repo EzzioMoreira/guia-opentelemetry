@@ -1,0 +1,8 @@
+fastapi==0.109.1
+python-dotenv==0.19.0
+uvicorn==0.15.0
+requests==2.31.0
+opentelemetry-distro==0.43b0
+opentelemetry-exporter-otlp==1.22.0
+opentelemetry-instrumentation-fastapi==0.43b0
+python-logging-loki==0.3.1
