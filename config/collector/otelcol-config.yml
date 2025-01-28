@@ -38,7 +38,7 @@ processors:
   resource: # doc. https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourceprocessor
     attributes:
       - key: service.name
-        value: otel-collector
+        value: logs-otel-collector
         action: insert
 
 exporters:
