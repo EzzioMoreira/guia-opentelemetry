@@ -11,8 +11,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      logger: 
-        condition: service_started
     #####################################################################################################
     #### Adicione as variáveis de ambiente abaixo para configurar o envio de traces para o collector ####
     #####################################################################################################
@@ -29,10 +27,8 @@ services:
       # - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://otelcollector:4317
       # - OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=http://otelcollector:4317
       - OTEL_PYTHON_LOG_CORRELATION=true
-      - OTEL_LOGS_EXPORTER=otlp,console
-      - OTEL_METRICS_EXPORTER=otlp
-      - OTEL_TRACES_EXPORTER=otlp
-      - OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true
+      - OTEL_PYTHON_LOG_LEVEL=DEBUG
+      #- OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true
     networks:
       - otel
     logging:
@@ -78,7 +74,7 @@ services:
       db:
         condition: service_healthy
       ordem_de_compra:
-        connection: service_started
+        condition: service_started
     #####################################################################################################
     #### Adicione as variáveis de ambiente abaixo para configurar o envio de traces para o collector ####
     #####################################################################################################
@@ -112,22 +108,21 @@ services:
 
   # OpenTelemetry Collector
   otelcollector:
-    networks:
-      - otel
-    deploy:
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: 256M
+    privileged: true
+    user: 0:0
     image: otel/opentelemetry-collector-contrib:0.118.0
     volumes:
       - ./config/collector/otelcol-config.yml:/etc/otel-collector-config.yml
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/lib/docker/containers:/etc/log/
     command:
       - "--config=/etc/otel-collector-config.yml"
       - "--set=service.telemetry.logs.level=INFO"
     ports:
       - "4318:4318" # Porta OTLP HTTP
       - "4317:4317" # Porta OTLP gRPC
+    networks:
+      - otel
   
   # Grafana para visualização de métricas, logs e traces
   grafana:
@@ -184,9 +179,3 @@ networks:
   otel:
     name: otel
     driver: bridge
-logging:
-  driver: "json-file"
-  options:
-    max-size: "5m"
-    max-file: "2"
-    tag: "{{.Name}}"

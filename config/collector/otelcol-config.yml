@@ -1,10 +1,15 @@
 receivers:
-  otlp:
+  otlp: # doc. 
     protocols:
       grpc:
         endpoint: 0.0.0.0:4317
       http:
         endpoint: 0.0.0.0:4318
+  
+  filelog: # doc. https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/filelogreceiver/README.md
+    poll_interval: "200ms"
+    start_at: end
+    include: [/etc/log/*/*.log]
   
   prometheus:
     config:
@@ -25,6 +30,29 @@ processors:
     detectors: [ "system", docker ]
     system:
       hostname_sources: [ "os" ]
+  
+  transform/parse_json_body:
+    error_mode: ignore
+    log_statements:
+      - context: log
+        conditions:
+          - body != nil and Substring(body, 0, 2) == "{\""
+        statements:
+          - set(cache, ParseJSON(body))
+          - flatten(cache, "")
+          - merge_maps(attributes, cache, "upsert")
+          - set(severity_text, "TRACE") where attributes["Level"] == "Trace"
+          - set(severity_number, 1) where attributes["Level"] == "Trace"
+          - set(severity_text, "DEBUG") where attributes["Level"] == "Debug"
+          - set(severity_number, 5) where attributes["Level"] == "Debug"
+          - set(severity_text, "INFO") where attributes["Level"] == "Information"
+          - set(severity_number, 9) where attributes["Level"] == "Information"
+          - set(severity_text, "WARN") where attributes["Level"] == "Warning"
+          - set(severity_number, 13) where attributes["Level"] == "Warning"
+          - set(severity_text, "ERROR") where attributes["Level"] == "Error"
+          - set(severity_number, 17) where attributes["Level"] == "Error"
+          - set(severity_text, "FATAL") where attributes["Level"] == "Fatal"
+          - set(severity_number, 21) where attributes["Level"] == "Fatal"
 exporters:
   otlp:
     endpoint: tempo:4317
@@ -40,8 +68,6 @@ exporters:
     endpoint: http://loki:3100/otlp
     tls:
       insecure: true
-  
-  debug:
 
 extensions:
   health_check:
@@ -73,8 +99,8 @@ service:
                 endpoint: http://otelcollector:4317
   pipelines:
     logs:
-      receivers: [ otlp ]
-      processors: [ memory_limiter, resourcedetection/system, batch ]
+      receivers: [ otlp, filelog ]
+      processors: [ memory_limiter, transform/parse_json_body, resourcedetection/system, batch ]
       exporters: [ otlphttp ]
     traces:
       receivers: [ otlp ]

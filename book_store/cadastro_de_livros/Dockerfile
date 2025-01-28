@@ -13,8 +13,8 @@ COPY . .
 
 ########################################################################################################
 #### Adicione na linha abaixo o comando para instalar os pacotes necessário do OpenTelemetry Python ####
-RUN pip install -I "opentelemetry-distro=0.43b0" "opentelemetry-exporter-otlp=0.43b0" && \
-opentelemetry-bootstrap -a install
+#RUN pip install -I "opentelemetry-distro=0.43b0" "opentelemetry-exporter-otlp=0.43b0" && \
+RUN opentelemetry-bootstrap -a install
 
 # Expõe a porta
 EXPOSE 8080
