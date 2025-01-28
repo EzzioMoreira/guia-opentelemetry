@@ -1,5 +1,12 @@
 version: '3.9'
 
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "5m"
+    max-file: "2"
+    tag: "{{.Name}}"
+
 services:
   # Microserviço de cadastro de livros
   cadastro_de_livros:
@@ -19,9 +26,20 @@ services:
       - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
       - POSTGRES_DB=cadastro-livros
       - POSTGRES_HOST=$POSTGRES_HOST
+      - OTEL_SERVICE_NAME=cadastro-de-livros
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=cadastro-de-livros,service.version=v0.0.1,service.env=dev
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
+      - OTEL_EXPORTER_OTLP_INSECURE=true
+      # - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otelcollector:4317
+      # - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://otelcollector:4317
+      # - OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=http://otelcollector:4317
+      - OTEL_PYTHON_LOG_CORRELATION=true
+      - OTEL_PYTHON_LOG_LEVEL=DEBUG
+      #- OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true
     networks:
       - otel
-  
+    logging: *default-logging
+
   # Microserviço Ordem de Compra
   ordem_de_compra:
     build: 
@@ -46,6 +64,7 @@ services:
       - PAYMENT_URL=$PAYMENT_URL
     networks:
       - otel
+    logging: *default-logging
   
   # Microserviço de Pagamento
   pagamento:
@@ -58,7 +77,7 @@ services:
       db:
         condition: service_healthy
       ordem_de_compra:
-        connection: service_started
+        condition: service_started
     #####################################################################################################
     #### Adicione as variáveis de ambiente abaixo para configurar o envio de traces para o collector ####
     #####################################################################################################
@@ -70,6 +89,7 @@ services:
       - ORDER_URL=$ORDER_URL
     networks:
       - otel
+    logging: *default-logging
   
   # Banco de dados Postgres
   db:
@@ -89,30 +109,29 @@ services:
       - ./postgres_data:/var/lib/postgresql/data
     networks:
       - otel
+    logging: *default-logging
 
   # OpenTelemetry Collector
   otelcollector:
-    networks:
-      - otel
-    deploy:
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: 256M
+    privileged: true
+    user: 0:0
     image: otel/opentelemetry-collector-contrib:0.118.0
     volumes:
       - ./config/collector/otelcol-config.yml:/etc/otel-collector-config.yml
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/lib/docker/containers:/etc/log/
     command:
       - "--config=/etc/otel-collector-config.yml"
       - "--set=service.telemetry.logs.level=INFO"
     ports:
       - "4318:4318" # Porta OTLP HTTP
       - "4317:4317" # Porta OTLP gRPC
+    networks:
+      - otel
+    logging: *default-logging
   
   # Grafana para visualização de métricas, logs e traces
   grafana:
-    networks:
-      - otel
     image: grafana/grafana:11.4.0
     ports:
       - 3000:3000
@@ -121,39 +140,45 @@ services:
       - ./config/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
       - ./config/grafana/dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
       - ./config/grafana/dashboards:/var/lib/grafana/dashboards
+    networks:
+      - otel
+    logging: *default-logging
   
   # Grafana Tempo para armaazenamento de traces
   tempo:
-    networks:
-      - otel
     image: grafana/tempo:2.7.0
     command: [ "-config.file=/etc/tempo.yaml" ]
     volumes:
       - ./config/grafana/tempo.yaml:/etc/tempo.yaml
     depends_on:
       - grafana
+    networks:
+      - otel
+    logging: *default-logging
   
   # Grafana Mimir para armazenamento de métricas
   mimir:
-    networks:
-      - otel
     image: grafana/mimir:2.15.0
     command: [ "-config.file=/etc/mimir.yaml" ]
     volumes:
       - ./config/grafana/mimir.yaml:/etc/mimir.yaml
     depends_on:
       - grafana
+    networks:
+      - otel
+    logging: *default-logging
   
   # Grafana Loki para armazenamento de logs
   loki:
-    networks:
-      - otel
     image: grafana/loki:3.3.2
     command: [ "-config.file=/etc/loki/loki.yaml" ]
     volumes:
       - ./config/grafana/loki.yaml:/etc/loki/loki.yaml
     depends_on:
       - grafana
+    networks:
+      - otel
+    logging: *default-logging
   
   # Grafana K6 para gerar carga na aplicação
   ##########################################
@@ -164,9 +189,3 @@ networks:
   otel:
     name: otel
     driver: bridge
-logging:
-  driver: "json-file"
-  options:
-    max-size: "5m"
-    max-file: "2"
-    tag: "{{.Name}}"
