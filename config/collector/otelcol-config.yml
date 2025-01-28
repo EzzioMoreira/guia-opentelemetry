@@ -1,5 +1,5 @@
 receivers:
-  otlp: # doc. 
+  otlp: # doc. https://github.com/open-telemetry/opentelemetry-collector/tree/main/receiver/otlpreceiver
     protocols:
       grpc:
         endpoint: 0.0.0.0:4317
@@ -14,49 +14,50 @@ receivers:
       - type: json_parser
         parse_from: body
   
-  prometheus:
+  prometheus: # doc. https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/prometheusreceiver
     config:
       scrape_configs:
       - job_name: otel-collector-metrics
         scrape_interval: 30s
         static_configs:
         - targets: ['127.0.0.1:8888']
+
 processors:
-  batch:
+  batch: # doc. https://github.com/open-telemetry/opentelemetry-collector/tree/main/processor/batchprocessor
     send_batch_size: 100
     timeout: 5s
   memory_limiter:
     check_interval: 5s
     limit_percentage: 75
 
-  resourcedetection/system:
+  resourcedetection/system: # doc. https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourceprocessor
     detectors: [ "system", docker ]
     system:
       hostname_sources: [ "os" ]
   
-  resource:
+  resource: # doc. https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourceprocessor
     attributes:
       - key: service.name
         value: otel-collector
         action: insert
 
 exporters:
-  otlp:
+  otlp: # doc. https://github.com/open-telemetry/opentelemetry-collector/tree/main/exporter/otlpexporter
     endpoint: tempo:4317
     tls:
       insecure: true
   
-  prometheusremotewrite:
+  prometheusremotewrite: # doc. https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/prometheusexporter
     endpoint: http://mimir:9009/api/v1/push
     resource_to_telemetry_conversion:
       enabled: true # Convert resource attributes to metric labels
 
-  otlphttp:
+  otlphttp: # doc. https://github.com/open-telemetry/opentelemetry-collector/tree/main/exporter/otlphttpexporter
     endpoint: http://loki:3100/otlp
     tls:
       insecure: true
 
-extensions:
+extensions: # doc. https://github.com/open-telemetry/opentelemetry-collector/tree/main/extension
   health_check:
   pprof:
   zpages:
