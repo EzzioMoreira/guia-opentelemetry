@@ -67,7 +67,7 @@ O treinamento será dividido em módulos teóricos e práticos para garantir uma
   - [Sistema Bookstore](./docs/module-3/README.md#sistema-bookstore)
     - [Microserviços](./docs/module-3/README.md#microserviços)
     - [Diagrama de Arquitetura](./docs/module-3/README.md#diagrama-de-arquitetura)
-    - [Comunicação entre os serviços](./docs/module-3/README.md#comunicação-entre-os-serviços)
+    - [Diagrama de Sequência](./docs/module-3/README.md#diagrama-de-sequência)
   - [Diagrama Geral do Sistema e Stack de Observabilidade](./docs/module-3/README.md#diagrama-geral-do-sistema-e-stack-de-observabilidade)
   - [Instrumentação Sem Código](./docs/module-3/README.md#instrumentação-sem-código)
     - [Implementando Instrumentação Sem Código](./docs/module-3/README.md#implementando-instrumentação-sem-código)
