@@ -3,7 +3,6 @@ Função principal que cria a aplicação FastAPI
 """
 from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy.orm import Session
-import uvicorn
 from . import models
 from . import logger
 from .databases import engine, get_db
