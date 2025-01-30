@@ -61,10 +61,14 @@ O treinamento será dividido em módulos teóricos e práticos para garantir uma
   
 ## Módulo 3 - Instrumentação Sem Código
 
-- [Aplicação de Exemplo](./docs/module-3/README.md#aplicação-de-exemplo)
-  - [Microserviços](./docs/module-3/README.md#microserviços)
-  - [Diagrama de Arquitetura](./docs/module-3/README.md#diagrama-de-arquitetura)
-  - [Diagrama de Sequência](./docs/module-3/README.md#diagrama-de-sequência)
+- [Módulo 3](./docs/module-3/README.md)
+  - [Instrumentação Com e Sem Código](./docs/module-3/README.md#instrumentação-com-e-sem-código)
+  - [Requisitos](./docs/module-3/README.md#requisitos)
+  - [Sistema Bookstore](./docs/module-3/README.md#sistema-bookstore)
+    - [Microserviços](./docs/module-3/README.md#microserviços)
+    - [Diagrama de Arquitetura](./docs/module-3/README.md#diagrama-de-arquitetura)
+    - [Comunicação entre os serviços](./docs/module-3/README.md#comunicação-entre-os-serviços)
+  - [Diagrama Geral do Sistema e Stack de Observabilidade](./docs/module-3/README.md#diagrama-geral-do-sistema-e-stack-de-observabilidade)
 - [Instrumentação Sem Código](./docs/module-3/README.md#instrumentação-sem-código)
   - [Implementando Instrumentação Sem Código](./docs/module-3/README.md#implementando-instrumentação-sem-código)
   - [O que Esperar](./docs/module-3/README.md#o-que-esperar)
