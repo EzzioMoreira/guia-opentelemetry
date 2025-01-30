@@ -93,7 +93,7 @@ Agora, siga estes passos para implementar a instrumentação sem código na apli
     ```yaml
     environment:
       - OTEL_SERVICE_NAME=cadastro_de_livros
-      - OTEL_RESOURCE_ATTRIBUTES=service.name=cadastro_de_livros,service.version=v0.0.1,service.env=dev
+      - OTEL_RESOURCE_ATTRIBUTES=service.version=v0.0.1,service.env=dev
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
       - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
       - OTEL_EXPORTER_OTLP_INSECURE=true
@@ -141,6 +141,11 @@ Agora, siga estes passos para implementar a instrumentação sem código na apli
     curl -X GET http://localhost:8080/livros/
     ```
 
+    Dica: você pode utilizar o Swagger para testar os endpoints da aplicação. 
+    Acesse http://localhost:8080/docs para visualizar a documentação dos endpoints.
+
+    ![Swagger](./image/zero-code/zero-code-swagger.png)
+
 1. Acesse o Grafana para visualizar a telemetria gerada em http://localhost:3000.
 
     No menu `explorer` do Grafana, você pode visualizar as métricas, traces e logs. Selecione `service.name` = `cadastro-de-livros` para visualizar a telemetria gerada pela aplicação.
@@ -167,7 +172,6 @@ A imagem a seguir mostra um exemplo de logs gerados pela aplicação Python.
 
 ![Logs](./image/zero-code/zero-code-log.png)
 
-######### Parei Aqui #########
 ## Exercício
 
 Agora que você implementou a instrumentação sem código na aplicação Cadastro de Livros, implemente a instrumentação sem código nas aplicações [Ordem de Compra](../../book_store/ordem_de_compra/) e [Pagamento](../../book_store/pagamento/).
@@ -179,15 +183,13 @@ Agora que você implementou a instrumentação sem código na aplicação Cadast
 
 > Dica: Utilize o comando `docker-compose up --build` para reconstruir as imagens das aplicações `Ordem de Compra` e `Pagamento`.
 
-1. Acesse a dashboard para App Python no Grafana para visualizar a telemetria gerada [Dashboard App Python](http://localhost:3000/d/flask-monitoring/app-python?orgId=1&refresh=5s).
+### Resultado Esperado
 
-  A dashboard App Python contém as principais métricas para monitorar a aplicação.
+Após implementar a instrumentação sem código nas aplicações `Cadastro de Livros`, `Ordem de Compra` e `Pagamento`, você deve ser capaz de visualizar o trace gerado pelas aplicações no Grafana e seu ciclo de vida.
 
-  ![Dashboard App Python](./image/dashboard.png)
+A imagem a seguir mostra um exemplo do trace após criar uma ordem de compra e realizar o pagamento.
 
-## Conclusão
-
-Neste módulo, você aprendeu como implementar a instrumentação sem código em uma aplicação Python. A instrumentação sem código é uma maneira fácil e rápida de adicionar telemetria em aplicações sem a necessidade de alterar o código fonte.
+![Trace](./image/zero-code/zero-code-all-instrument.png)
 
 ## Saiba Mais
 
