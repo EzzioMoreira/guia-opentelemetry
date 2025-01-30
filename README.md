@@ -69,7 +69,7 @@ O treinamento será dividido em módulos teóricos e práticos para garantir uma
     - [Diagrama de Arquitetura](./docs/module-3/README.md#diagrama-de-arquitetura)
     - [Diagrama de Sequência](./docs/module-3/README.md#diagrama-de-sequência)
   - [Diagrama Geral do Sistema e Stack de Observabilidade](./docs/module-3/README.md#diagrama-geral-do-sistema-e-stack-de-observabilidade)
-  - [Instrumentação Sem Código](./docs/module-3/README.md#instrumentação-sem-código)
+  - [Instrumentação Sem Código](./docs/module-3/instrumentação-sem-código.md)
     - [Implementando Instrumentação Sem Código](./docs/module-3/README.md#implementando-instrumentação-sem-código)
     - [O que Esperar](./docs/module-3/README.md#o-que-esperar)
     - [Execerícios](./docs/module-3/README.md#exercício)
