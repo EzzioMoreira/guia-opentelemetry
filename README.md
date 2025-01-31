@@ -74,4 +74,5 @@ O treinamento será dividido em módulos teóricos e práticos para garantir uma
     - [O que Esperar?](./docs/module-3/instrumentação-sem-código.md#o-que-esperar)
     - [Exercício](./docs/module-3/instrumentação-sem-código.md#exercício)
     - [Resultado Esperado](./docs/module-3/instrumentação-sem-código.md#resultado-esperado)
+    - [Conclusão](./docs/module-3/instrumentação-sem-código.md#conclusão)
     - [Saiba Mais](./docs/module-3/instrumentação-sem-código.md#saiba-mais)
