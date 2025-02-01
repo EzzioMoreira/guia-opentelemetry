@@ -195,13 +195,13 @@ A imagem a seguir mostra um exemplo do trace após criar uma ordem de compra e r
 
 A instrumentação sem código é uma maneira fácil e rápida de adicionar telemetria em aplicações sem a necessidade de alterar o código fonte.
 
-A técnica utilizada para gerar a telemetria sem código é conhecida como Monkey Patching, onde as chamadas feitas pelo o aplicativo para as biblioteca são interceptadas e modificadas sem que o código original seja alterado. No caso do FastAPI, a biblioteca `opentelemetry-instrumentation-fastapi` aplica o Monkey Patching sobre as funções internas do framework. Isso permite gerar métricas e traces automaticamente antes que as requisições sejam processadas pelo FastAPI.
+A técnica utilizada para gerar a telemetria sem código é conhecida como Monkey Patching, onde as chamadas feitas pelo o aplicativo para as biblioteca são interceptadas sem que o código original seja alterado. No caso do FastAPI, a biblioteca `opentelemetry-instrumentation-fastapi` aplica o Monkey Patching sobre as funções internas do framework. Isso permite gerar métricas e traces automaticamente antes de chamar a biblioteca subjacente.
 
 | **FastAPI App Layer** (Requisição do Usuário) | **OpenTelemetry Instrumenting Layer** (Interceptação e Monitoramento) | **FastAPI Library Layer** (Execução Final) |
 |--------------------------------|--------------------------------------------------|------------------------------|
-| O usuário faz um request para `GET /livros/`. | OpenTelemetry intercepta a chamada e inicia um trace. | FastAPI processa a requisição. |
-| O código do FastAPI chama a rota correspondente. | OpenTelemetry injeta contexto de trace na requisição. | FastAPI executa a lógica da rota e retorna JSON. |
-| FastAPI retorna a resposta HTTP. | OpenTelemetry finaliza o span e exporta os dados de telemetria. | O cliente recebe a resposta da API. |
+| O usuário faz um request para `GET /livros/`. | OpenTelemetry intercepta a chamada e produz a telemetria. | FastAPI processa a requisição. |
+| O código do FastAPI chama a rota correspondente. | OpenTelemetry injeta contexto nas requisição. | FastAPI executa a lógica da rota e retorna JSON. |
+| FastAPI retorna a resposta HTTP. | OpenTelemetry finaliza e envia os dados de telemetria. | O cliente recebe a resposta da API. |
 
 ## Saiba Mais
 
