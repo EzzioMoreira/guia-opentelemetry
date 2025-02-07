@@ -59,11 +59,20 @@ O treinamento será dividido em módulos teóricos e práticos para garantir uma
     - [Instrumentação Manual](./docs/module-2/README)
   - [Saiba mais](./docs/module-2/README.md#saiba-mais)
   
-## Módulo 3 - Instrumentação
+## Módulo 3 - Instrumentação Sem Código
 
-- [Instrumentação Sem Código e Manual](./docs/module-3/README.md#instrumentação-sem-código-e-manual)
-  - [Implementando Instrumentação Sem Código](./docs/module-3/instrumentação-sem-código.md#implementando-instrumentação-sem-código)
-  - [O Que Esperar?](./docs/module-3/instrumentação-sem-código.md#o-que-esperar)
-  - [Gerando Trafego na Aplicação](./docs/module-3/instrumentação-sem-código.md#gerando-trafego-na-aplicação)
-  - [Conclusão](./docs/module-3/instrumentação-sem-código.md#conclusão)
-  - [Saiba Mais](./docs/module-3/instrumentação-sem-código.md#saiba-mais)
+- [Módulo 3](./docs/module-3/README.md)
+  - [Instrumentação Com e Sem Código](./docs/module-3/README.md#instrumentação-com-e-sem-código)
+  - [Requisitos](./docs/module-3/README.md#requisitos)
+  - [Sistema Bookstore](./docs/module-3/README.md#sistema-bookstore)
+    - [Microserviços](./docs/module-3/README.md#microserviços)
+    - [Diagrama de Arquitetura](./docs/module-3/README.md#diagrama-de-arquitetura)
+    - [Diagrama de Sequência](./docs/module-3/README.md#diagrama-de-sequência)
+    - [Diagrama Geral do Sistema e Stack de Observabilidade](./docs/module-3/README.md#diagrama-geral-do-sistema-e-stack-de-observabilidade)
+  - [Instrumentação Sem Código](./docs/module-3/instrumentação-sem-código.md)
+    - [Implementando Instrumentação Sem Código](./docs/module-3/instrumentação-sem-código.md#implementando-instrumentação-sem-código)
+    - [O que Esperar?](./docs/module-3/instrumentação-sem-código.md#o-que-esperar)
+    - [Exercício](./docs/module-3/instrumentação-sem-código.md#exercício)
+    - [Resultado Esperado](./docs/module-3/instrumentação-sem-código.md#resultado-esperado)
+    - [Conclusão](./docs/module-3/instrumentação-sem-código.md#conclusão)
+    - [Saiba Mais](./docs/module-3/instrumentação-sem-código.md#saiba-mais)

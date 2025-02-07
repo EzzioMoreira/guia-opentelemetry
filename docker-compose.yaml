@@ -1,5 +1,3 @@
-version: '3.9'
-
 x-logging: &default-logging
   driver: "json-file"
   options:
@@ -18,24 +16,15 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    #####################################################################################################
-    #### Adicione as variáveis de ambiente abaixo para configurar o envio de traces para o collector ####
-    #####################################################################################################
+    ######################################################################################################################
+    #### Adicione as variáveis de ambiente do OpenTelemetry abaixo para configurar o envio de traces para o collector ####
+    ######################################################################################################################
     environment:
       - POSTGRES_USER=$POSTGRES_USER
       - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
       - POSTGRES_DB=cadastro-livros
       - POSTGRES_HOST=$POSTGRES_HOST
-      - OTEL_SERVICE_NAME=cadastro-de-livros
-      - OTEL_RESOURCE_ATTRIBUTES=service.name=cadastro-de-livros,service.version=v0.0.1,service.env=dev
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
-      - OTEL_EXPORTER_OTLP_INSECURE=true
-      # - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otelcollector:4317
-      # - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://otelcollector:4317
-      # - OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=http://otelcollector:4317
-      - OTEL_PYTHON_LOG_CORRELATION=true
-      - OTEL_PYTHON_LOG_LEVEL=DEBUG
-      #- OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true
+      
     networks:
       - otel
     logging: *default-logging
@@ -52,9 +41,9 @@ services:
         condition: service_healthy
       cadastro_de_livros:
         condition: service_started
-    #######################################################################################################################
-    #### Adicione as variáveis de ambiente abaixo para configurar o envio de telemetria para o OpenTelemetry collector ####
-    #######################################################################################################################
+    ######################################################################################################################
+    #### Adicione as variáveis de ambiente do OpenTelemetry abaixo para configurar o envio de traces para o collector ####
+    ######################################################################################################################
     environment:
       - POSTGRES_USER=$POSTGRES_USER
       - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
@@ -78,9 +67,9 @@ services:
         condition: service_healthy
       ordem_de_compra:
         condition: service_started
-    #####################################################################################################
-    #### Adicione as variáveis de ambiente abaixo para configurar o envio de traces para o collector ####
-    #####################################################################################################
+    ######################################################################################################################
+    #### Adicione as variáveis de ambiente do OpenTelemetry abaixo para configurar o envio de traces para o collector ####
+    ######################################################################################################################
     environment:
       - POSTGRES_USER=$POSTGRES_USER
       - POSTGRES_PASSWORD=$POSTGRES_PASSWORD

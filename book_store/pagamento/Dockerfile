@@ -11,8 +11,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copia o código da aplicação para o contêiner 
 COPY . .
 
-########################################################################################################
-#### Adicione na linha abaixo o comando para instalar os pacotes necessário do OpenTelemetry Python ####
+###############################################################################################################################################
+#### Adicione na linha abaixo o comando RUN opentelemetry-bootstrap -a install para instalar os pacotes necessário do OpenTelemetry Python ####
 
 # Expõe a porta
 EXPOSE 8082

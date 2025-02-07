@@ -5,7 +5,6 @@ import os
 from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy.orm import Session
 import requests
-import uvicorn
 from . import models
 from .databases import engine, get_db
 from . import logger
