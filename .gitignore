@@ -1,3 +1,9 @@
+# ingore .vscode
 .vscode
+
+# ignora dados do banco de dados
 postgres_data
 ./postgres_data
+
+# Ignora todos os arquivos e diretórios gerados pelo comando python3 -m venv venv
+/venv/

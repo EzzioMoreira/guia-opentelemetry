@@ -78,13 +78,13 @@ service:
               otlp:
                 protocol: http/protobuf
                 endpoint: http://otelcollector:4318
-    traces:
-      processors:
-        - batch:
-            exporter:
-              otlp:
-                protocol: grpc/protobuf
-                endpoint: http://otelcollector:4317
+    # traces:
+    #   processors:
+    #     - batch:
+    #         exporter:
+    #           otlp:
+    #             protocol: grpc/protobuf
+    #             endpoint: http://otelcollector:4317
   pipelines:
     logs:
       receivers: [ otlp, filelog ]

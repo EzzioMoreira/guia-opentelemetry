@@ -76,3 +76,28 @@ O treinamento será dividido em módulos teóricos e práticos para garantir uma
     - [Resultado Esperado](./docs/module-3/instrumentação-sem-código.md#resultado-esperado)
     - [Conclusão](./docs/module-3/instrumentação-sem-código.md#conclusão)
     - [Saiba Mais](./docs/module-3/instrumentação-sem-código.md#saiba-mais)
+
+
+## To do
+
+[] Criar módulo trace.py
+  [] Adicionar pacotes necessários
+  [] Configurar o TracerProvider
+  [] Retornar um Tracer configurado
+[] Adicionar spans
+  [] Criar span na rota get livros
+    [] Adicionar evento ao span
+    [] Adicionar atributos ao span
+    [] Adicionar atributos semânticos ao span
+  [] Instrumentar SQL
+    [] Adicionar pacotes necessários
+    [] Instancia o sqlalchemy
+    [] Cria span inicializando a conexão
+  [] Cria span na rota get livro id
+    [] Adicionar evento ao span
+    [] Adicionar atributos ao span
+    [] Adicionar atributos semânticos ao span
+  [] Cria span na rota post livro
+    [] Adicionar evento ao span
+    [] Adicionar atributos ao span
+    [] Adicionar atributos semânticos ao span
