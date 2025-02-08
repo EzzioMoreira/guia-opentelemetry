@@ -9,6 +9,7 @@ from .databases import engine, get_db
 from .trace import configure_tracer
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.semconv.trace import SpanAttributes
+from opentelemetry.trace import Status, StatusCode
 
 # Cria as tabelas no banco de dados
 models.Base.metadata.create_all(bind=engine)
@@ -31,21 +32,30 @@ def cria_livro(request: Request, livro: models.LivroBase, db: Session = Depends(
     with tracer.start_as_current_span("criar_livro") as span:
         try:
             logger.info(f"Criando livro: {livro}")
+
+            # Cria um novo livro no banco de dados
             novo_livro = models.cria_livro(db=db, livro=livro)
             
             # Adiciona atributos semânticos e personalizados ao span
             span.set_attribute(SpanAttributes.HTTP_METHOD, request.method)
             span.set_attribute(SpanAttributes.HTTP_STATUS_CODE, 201)
             span.set_attribute(SpanAttributes.HTTP_URL, str(request.url))
-            span.set_attribute("livro.id", novo_livro.id)
-            span.set_attribute("livro.titulo", novo_livro.titulo)
             
+            # Substitui o atributo titulo do livro por evento e adiciona o estoque
+            span.add_event("Livro criado com sucesso", attributes={"id": novo_livro.id, "titulo": novo_livro.titulo, "estoque": novo_livro.estoque})
             logger.info(f"Livro criado com sucesso: {livro}")
+
+            # Define status para span
+            span.set_status(Status(StatusCode.OK), "Livro criado com sucesso")
             
-            return novo_livro       
+            return novo_livro
         
         except Exception as e:
             logger.error(f"Erro ao criar livro: {e}")
+
+            # Adiciona exceção ao span e define status de erro
+            span.record_exception(e)
+            span.set_status(Status(StatusCode.ERROR), f"Erro ao criar livro: {e}")
             raise HTTPException(status_code=500, detail="Erro ao criar livro")
 
 # Define a rota para listar livros por id
@@ -62,18 +72,23 @@ def busca_livro(request: Request, id: int, db: Session = Depends(get_db)):
             span.set_attribute(SpanAttributes.HTTP_METHOD, request.method)
             span.set_attribute(SpanAttributes.HTTP_STATUS_CODE, 200)
             span.set_attribute(SpanAttributes.HTTP_URL, str(request.url))
-            span.set_attribute("livro.titulo", livro.titulo)
             
-            if livro is None:
-                logger.warning(f"Livro com id {id} não encontrado")
-                raise HTTPException(status_code=404, detail="Livro não encontrado")
-            logger.info(f"Livro com ID: {id} encontrado com sucesso")
-            return livro
+            # Substitui o atributo titulo do livro por evento
+            span.add_event("Livro criado com sucesso", attributes={"id": id})
+
+            with tracer.start_as_current_span("verificar_livro") as span:
+                if livro is None:
+                    logger.warning(f"Livro com id {id} não encontrado")
+                    span.set_status(Status(StatusCode.ERROR), f"Livro com id {id} não encontrado")
+                    raise HTTPException(status_code=404, detail="Livro não encontrado")
+                logger.info(f"Livro com ID: {id} encontrado com sucesso")
+                return livro
         
         except HTTPException:
             raise
         except Exception as e:
             logger.error(f"Erro ao buscar livro: {e} ou livro não encontrado")
+            span.set_status(Status(StatusCode.ERROR), f"Erro ao buscar livro: {e}")
             raise HTTPException(status_code=500, detail="Erro ao buscar livro")
 
 # Define a rota para listar todos os livros

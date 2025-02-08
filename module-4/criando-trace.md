@@ -340,41 +340,95 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
 
 ## Adicionando Eventos ao Span
 
-1. Eventos são registros que ocorrem durante a execução de um span. São úteis para registrar informações adicionais sobre o span, como logs, exceções, mensagens de depuração, etc. 
+1. Eventos são registros que ocorrem durante a execução de um span. Eventos são úteis para registrar pontos significativos no ciclo de vida de um span. Por exemplo, você pode registrar eventos para indicar quando uma operação foi iniciada, quando uma operação foi concluída, quando ocorreu um erro.
+    
+    O método `add_event` só aceitam valores de tipo string. Adicione eventos nas funções que desejamos rastrear.
 
-    Adicione o seguinte trecho de código ao arquivo `app.py`:
+    - Substitua os atributos titulo e id do livro por eventos:
 
     ```python
-    def fetch_data_from_external_service():
-        with tracer.start_as_current_span("fetch_data_from_external_service") as span:
-            # Simula uma solicitação HTTP GET para um serviço externo
-            response = requests.get("http://httpbin.org/get")
-            span.set_attribute(SpanAttributes.HTTP_METHOD, "GET")
-            span.set_attribute(SpanAttributes.HTTP_FLAVOR, "1.1")
-            span.set_attribute(SpanAttributes.HTTP_ROUTE, "/get")
-            span.set_attribute(SpanAttributes.HTTP_URL, "http://httpbin.org")
-            span.set_attribute(SpanAttributes.HTTP_STATUS_CODE, response.status_code)
-            span.set_attribute("I_like", "rapadura")
-            span.add_event("a operação foi realizada com sucesso com:", {
-                "status_code": str(response.status_code),
-                "request_headers": str(response.request.headers),
-            })
-            sleep(latency)
-            logging.info(f"GET request to httpbin.org returned {response.status_code}")
-            return f"GET request to httpbin.org returned {response.status_code}"
-            span.end()
+    # Define a rota para criar um livro
+    @app.post("/livros/")
+    def cria_livro(request: Request, livro: models.LivroBase, db: Session = Depends(get_db)):
+        """
+        Rota para criar um livro
+        """
+        with tracer.start_as_current_span("criar_livro") as span:
+            try:
+                logger.info(f"Criando livro: {livro}")
+
+                # Cria um novo livro no banco de dados
+                novo_livro = models.cria_livro(db=db, livro=livro)
+                
+                # Adiciona atributos semânticos e personalizados ao span
+                span.set_attribute(SpanAttributes.HTTP_METHOD, request.method)
+                span.set_attribute(SpanAttributes.HTTP_STATUS_CODE, 201)
+                span.set_attribute(SpanAttributes.HTTP_URL, str(request.url))
+                
+                # Substitui o atributo titulo do livro por evento e adiciona o estoque
+                span.add_event("Livro criado com sucesso", attributes={"id": novo_livro.id, "titulo": novo_livro.titulo, "estoque": novo_livro.estoque})
+
+                logger.info(f"Livro criado com sucesso: {livro}")
+                
+                return novo_livro       
+            
+            except Exception as e:
+                logger.error(f"Erro ao criar livro: {e}")
+                raise HTTPException(status_code=500, detail="Erro ao criar livro")
+
+    # Define a rota para listar livros por id
+    @app.get("/livros/{id}")
+    def busca_livro(request: Request, id: int, db: Session = Depends(get_db)):
+        """
+        Rota para buscar um livro pelo id
+        """
+        with tracer.start_as_current_span("buscar_livro_por_id") as span:
+            try:
+                logger.info(f"Buscando livro com id: {id}")
+                livro = models.busca_livro(db, id)
+
+                span.set_attribute(SpanAttributes.HTTP_METHOD, request.method)
+                span.set_attribute(SpanAttributes.HTTP_STATUS_CODE, 200)
+                span.set_attribute(SpanAttributes.HTTP_URL, str(request.url))
+                span.set_attribute("livro.titulo", livro.titulo)
+                
+                # Substitui o atributo titulo do livro por evento
+                span.add_event("Livro criado com sucesso", attributes={"titulo": livro.titulo})
+
+                if livro is None:
+                    logger.warning(f"Livro com id {id} não encontrado")
+                    raise HTTPException(status_code=404, detail="Livro não encontrado")
+                logger.info(f"Livro com ID: {id} encontrado com sucesso")
+                return livro
+            
+            except HTTPException:
+                raise
+            except Exception as e:
+                logger.error(f"Erro ao buscar livro: {e} ou livro não encontrado")
+                raise HTTPException(status_code=500, detail="Erro ao buscar livro")
     ```
-    
-    O método `add_event` só aceitam valores de tipo string. Considere usar eventos para registrar pontos significativos no ciclo de vida de um span. Por exemplo, você pode registrar eventos para indicar quando uma operação foi iniciada, quando uma operação foi concluída, quando ocorreu um erro.
 
-    - Execute novamente a aplicação e acesse o endpoint [http://localhost:8080/fetch-data](http://localhost:8080/fetch-data) para gerar traces.
+    - Em seguida, execute o comando `docker-compose up --build cadastro_de_livros` para construir e iniciar o serviço `cadastro_de_livros`.
 
+    ```shell
+    docker-compose up --build cadastro_de_livros
+    ```
+
+    - Acessar os endpoints da aplicação: [http://localhost:8080/docs](http://localhost:8080/docs) para visualizar a documentação Swagger da aplicação. Execute as operações `GET /livros/`, `POST /livros/` e `GET /livros/{id}` para gerar traces.
     - Acesse o Grafana para visualizar a telemetria gerada [http://localhost:3000](http://localhost:3000).
 
-    Note que no Trace agora temos informações no Span Events.
+    Note que no Trace agora, temos informações no Span Events.
 
-    ![Trace-Span-Events](./image/trace-span-events.png)
+    ![Spans-Events](./image/with-code-span-events.png)
 
-## Adicionando Links ao Span
+## Definindo Status do Span
 
-1. Links são referências a outros spans. Links são úteis para correlacionar spans e rastrear o fluxo de execução. Por exemplo, você pode adicionar links para indicar que um span é filho de outro span, ou que um span é relacionado a outro span.
+1. Um Status pode ser definido em um Span, normalmente é utilizado para especificar que span foi concluído com sucesso ou falha. Por padrão, todos os spans são definidos com status `Unset`, signica que spans foi concluído sem erros. O `OK` é reservado quando desejamos marcar explicitamente um span como bem-sucedido. O `Error` é reservado para marcar um span como falha.
+
+O status pode ser definido em qualquer momento antes do span ser encerrado. 
+
+- Antes de adicionar o status ao span, importe os móduos `Status` e `StatusCode` no arquivo `trace.py`:
+
+```python
+from opentelemetry.trace import Status, StatusCode
+
