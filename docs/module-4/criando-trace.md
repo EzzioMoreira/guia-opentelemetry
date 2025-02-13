@@ -755,10 +755,6 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
 
     ![Spans-SQL](./image/with-code-span-databases-sql.png)
 
-## Conclusão
-
-Neste guia, você aprendeu como adicionar instrumentação manual na aplicação [Cadastro de Livro](../../book_store/cadastro_de_livros/) para rastrear o fluxo de execução. Adicionamos spans, atributos, eventos, status e spans aninhados.
-
 ## Exercícios
 
 1. Adicione spans, atributos, eventos, status e spans aninhados nos outros serviços da aplicação [Book Store](../../book_store/).
@@ -766,3 +762,7 @@ Neste guia, você aprendeu como adicionar instrumentação manual na aplicação
 1. Endpoints da aplicação [Pagamento](../../book_store/pagamento/): [http://localhost:8082/docs](http://localhost:8082/docs).
 1. Não esqueça de executar o comando `docker-compose up --build <nome-da-aplicação>` para construir e iniciar os serviços.
 1. Não esqueça de adicionar as variáveis de ambiente necessárias para o `OTLPSpanExporter` no arquivo `docker-compose.yml` de cada serviço.
+
+## Conclusão
+
+Neste guia, você aprendeu como adicionar instrumentação manual na aplicação [Cadastro de Livro](../../book_store/cadastro_de_livros/) para rastrear o fluxo de execução. Adicionamos spans, atributos, eventos, status e spans aninhados.
