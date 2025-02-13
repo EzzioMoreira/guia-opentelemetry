@@ -6,9 +6,7 @@ A instrumentação manual é o processo de adicionar código no código da aplic
 
 ## Pré-requisitos
 
-Antes de começar remova a instrumentação sem código do projeto, remova as bibliotecas OpenTelemetry do arquivo `requirements.txt` e remova as linhas `RUN opentelemetry-bootstrap -a install` e `opentelemetry-instrument` do arquivo `Dockerfile` dos microserviços.
-
-Ou, crie uma nova branch a partir da branch `main` para adicionar a instrumentação com código.
+Antes de começar remova a instrumentação sem código do projeto, remova as bibliotecas OpenTelemetry do arquivo `requirements.txt` e remova as linhas `RUN opentelemetry-bootstrap -a install` e `opentelemetry-instrument` do arquivo `Dockerfile` dos microserviços e crie uma nova branch a partir da branch `main` para adicionar a instrumentação com código.
 
 ```shell
 git checkout main
@@ -17,7 +15,7 @@ git ceckout -b feat/instrumentacao-manual
 
 ### Crianção de Trace
 
-1. Adicione a instrumentação manual nas aplicações de exemplo. Vamos inciar pela aplicação [Cadastro de Livro](../../book_store/cadastro_de_livros/) por ser uma aplicação simples. Para adicionar instrumentação manual, é necessário instalar os pacotes do OpenTelemetry.
+1. Vamos inciar instrumentando a aplicação [Cadastro de Livro](../../book_store/cadastro_de_livros/) por ser uma aplicação simples. Para adicionar instrumentação manual, é necessário instalar os pacotes do OpenTelemetry.
 
 Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadastro_de_livros/requirements.txt):
 
@@ -32,7 +30,7 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
 
    > Para saber mais sobre API e SDK do OpenTelemetry, consulte a [Espeficação](https://github.com/open-telemetry/opentelemetry-specification/tree/main/specification).
 
-1. Para iniciar a instrumentação, é necessário instanciar o `TracerProvider`, ele será nossa produtor de `Tracer`. Será necessário iniciar o `Resource` e o `Exporter`. O `Resource` contém os atributos chave-valor que contém informações sobre a origem dos dados de telemetria, como o nome do serviço, a versão do serviço, o ambiente de implantação, etc. O `Exporter` é responsável por enviar os dados de telemetria para o OpenTelemetry Collector.
+1. Para iniciar a instrumentação, é necessário instanciar o `TracerProvider`, o TraceProvider é nossa produtor de `Tracer`. Será necessário iniciar o `Resource` e o `Exporter` também. O `Resource` contém os atributos chave-valor que com informações sobre a origem dos dados de telemetria, como o nome do serviço, a versão do serviço, o ambiente de implantação, etc. O `Exporter` é responsável por enviar os dados de telemetria para o OpenTelemetry Collector.
 
     Para deixar a estrutura do projeto mais organizado, crie um arquivo `trace.py` no diretório `app` da aplicação [Cadastro de Livro](../../book_store/cadastro_de_livros/). Adicione o seguinte trecho de código ao arquivo `trace.py`:
 
@@ -66,19 +64,19 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
         })
         
         # Configura o TracerProvider
-        provider = TracerProvider(resource=resource)
-        processor = BatchSpanProcessor(exporter)
-        provider.add_span_processor(processor)
-        trace.set_tracer_provider(provider)
+        provider = TracerProvider(resource=resource) # Define o recurso
+        processor = BatchSpanProcessor(exporter)     # Define o exportador
+        provider.add_span_processor(processor)       # Adiciona o exportador ao provider
+        trace.set_tracer_provider(provider)          # Define o provider como o provider padrão
         
         # Retorna um tracer configurado
-        tracer = trace.get_tracer(__name__)
-        return tracer
+        tracer = trace.get_tracer(__name__)         # Obtém um Tracer
+        return tracer                               # Retorna o Tracer
     ```
 
 ## Adicionando Spans
 
-1. Com a pipeline de rastreamento configurada, podemos obter um Tracer. Podemos adicionar spans nas funções onde desejamos rastrear o fluxo de execução. Vamos iniciar adicionando spans na rota que cria livro. 
+1. Com a pipeline de rastreamento configurada, podemos obter um Tracer. Podemos adicionar spans nas funções Python que desejamos rastrear o fluxo de execução. Vamos iniciar adicionando spans na rota que cria livro. 
 
     Primeiro, importe o módulo `trace` no arquivo `main.py`. O modulo `trace` é responsável por configurar o rastreamento distribuído.
 
@@ -94,7 +92,7 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
     tracer = configure_tracer()
     ```
 
-    Isso irá configurar o rastreamento distribuído com OpenTelemetry e retornar o `Tracer` configurado que é nosso produtor de spans.
+    Isso irá configurar o rastreamento distribuído do OpenTelemetry e retornar o `Tracer` configurado que será nosso produtor de spans.
     
     Agora, podemos criar spans nas funções que desejamos rastrear. Na rota que cria um livro, adicione o seguinte trecho de código ao arquivo `main.py`:
 
@@ -165,7 +163,7 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
                 raise HTTPException(status_code=500, detail="Erro ao listar livros")
     ```
 
-1. Definia as configurações necessárias para `OTLPSpanExporter`. Adicione as seguintes variáveis de ambiente ao arquivo `docker-compose.yml` no serviço `cadastro_de_livros`:
+1. Defina as configurações necessárias para `OTLPSpanExporter`. Adicione as seguintes variáveis de ambiente ao arquivo `docker-compose.yml` no serviço `cadastro_de_livros`:
 
     ```yaml
     environment:
@@ -174,8 +172,9 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
       - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
       - OTEL_EXPORTER_OTLP_INSECURE=true
-      - OTEL_PYTHON_LOG_CORRELATION=true
     ```
+
+    As variáveis de ambiente acima são necessárias para configurar o exportador OTLP. A variável `OTEL_SERVICE_NAME` define o nome do serviço, a variável `OTEL_RESOURCE_ATTRIBUTES` define os atributos do recurso, a variável `OTEL_EXPORTER_OTLP_ENDPOINT` define o endpoint do coletor OpenTelemetry, a variável `OTEL_EXPORTER_OTLP_PROTOCOL` define o protocolo de comunicação, a variável `OTEL_EXPORTER_OTLP_INSECURE` define se a conexão é segura ou não com o coletor OpenTelemetry.
 
     - Em seguida, execute o comando `docker-compose up --build cadastro_de_livros` para construir e iniciar o serviço `cadastro_de_livros`.
 
@@ -186,7 +185,7 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
     - Acessar os endpoint: [http://localhost:8080/docs](http://localhost:8080/docs) para visualizar a documentação Swagger da aplicação. Execute as operações `GET /livros/`, `POST /livros/` e `GET /livros/{id}` para gerar traces.
     - Acesse o Grafana para visualizar a telemetria gerada [http://localhost:3000](http://localhost:3000).
 
-    Perceba que no Trace agora temos informações sobre o fluxo de execução da aplicação mas com pouco contexto sobre a requisição. A maioria dos spans não tem informações sobre a operação executada, como o método HTTP, a rota, o código de status, qual livro foi criado e qual é o sue ID, etc. Na maioria dos casos, essas informações são úteis para entender o comportamento da aplicação e identificar problemas. Isso ocorre porque não adicionamos atributos ao spans. 
+    Perceba que agora temos informações sobre o fluxo de execução da aplicação mas com pouco contexto sobre a requisição. A maioria dos spans não tem informações sobre a operação executada, como o método HTTP, a rota, o código de status da solicitação, qual livro foi criado e qual é o sue ID, etc. Na maioria dos casos, essas informações são úteis para entender o comportamento da aplicação e identificar problemas. Isso ocorre porque não adicionamos atributos ao spans. 
 
     ![Spans](./image/with-code-span.png)
 
@@ -208,9 +207,9 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
     from opentelemetry.semconv.trace import SpanAttributes
     ```
 
-    Antes de adicionar atributos ao Span como o método HTTP, qual URL foi acessada entre outros, importe o módulo `Request` do FastAPI para obter informações sobre a requisição. Isso nos permite adicionar informações sobre a requisição de forma dinâmica.
+    Antes de adicionar atributos ao Span como o método HTTP, qual URL foi acessada entre outros, importe o módulo `Request` do FastAPI para obter essas informações. Isso nos permite retornar os valores do atributo de forma dinâmica.
     
-    Adicione o `Request` na linha de importação do `FastAPI`:
+    - Adicione o `Request` na linha de importação do `FastAPI`:
 
     ```python
     from fastapi import FastAPI, HTTPException, Depends, Request
@@ -260,6 +259,8 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
                 span.set_attribute(SpanAttributes.HTTP_URL, str(request.url))
                 span.set_attribute(SpanAttributes.CLIENT_ADDRESS, str(request.client.host))
                 span.set_attribute(SpanAttributes.CLIENT_PORT, str(request.client.port  ))
+                span.set_attribute("livro.titulo", livro.titulo)
+                span.set_attribute("livro.id", livro.id)
                 
                 logger.info(f"Livro criado com sucesso: {livro}")
                 
@@ -287,6 +288,7 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
                 span.set_attribute(SpanAttributes.CLIENT_ADDRESS, str(request.client.host))
                 span.set_attribute(SpanAttributes.CLIENT_PORT, str(request.client.port  ))
                 span.set_attribute("livro.titulo", livro.titulo)
+                span.set_attribute("livro.id", livro.id)
                 
                 if livro is None:
                     logger.warning(f"Livro com id {id} não encontrado")
@@ -345,7 +347,7 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
 
 ## Adicionando Eventos ao Span
 
-1. Eventos são registros que ocorrem durante a execução de um span. Eventos são úteis para registrar pontos significativos no ciclo de vida de um span. Por exemplo, você pode registrar eventos para indicar quando uma operação foi iniciada, quando uma operação foi concluída, quando ocorreu um erro. Além disso é possível adicionar atributos aos eventos.
+1. Eventos são registros que ocorrem durante a execução de um span. Eventos são úteis para registrar pontos significativos no ciclo de vida de um span. Por exemplo, você pode registrar eventos para indicar quando uma operação foi iniciada, concluída ou quando ocorreu um erro. Além disso é possível adicionar atributos aos eventos.
     
     O método `add_event` só aceitam valores de tipo string. Adicione eventos nas funções que desejamos rastrear.
 
@@ -399,7 +401,7 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
                 span.set_attribute(SpanAttributes.HTTP_URL, str(request.url))
                 span.set_attribute("livro.titulo", livro.titulo)
                 span.set_attribute(SpanAttributes.CLIENT_ADDRESS, str(request.client.host))
-            span.set_attribute(SpanAttributes.CLIENT_PORT, str(request.client.port  ))
+                span.set_attribute(SpanAttributes.CLIENT_PORT, str(request.client.port  ))
                 
                 # Substitui o atributo titulo do livro por evento
                 span.add_event("Livro criado com sucesso", attributes={"titulo": livro.titulo})
