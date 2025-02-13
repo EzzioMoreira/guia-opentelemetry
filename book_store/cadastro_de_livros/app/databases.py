@@ -7,8 +7,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import database_exists, create_database
 from . import logger
-from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor
-
 
 # Obtém as credenciais do banco de dados das variáveis de ambiente
 DB_USER = os.getenv("POSTGRES_USER")
@@ -21,9 +19,6 @@ DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:5432/{DB_NAME}"
 
 # Cria a engine de conexão com o banco de dados
 engine = create_engine(DATABASE_URL)
-SQLAlchemyInstrumentor().instrument(
-    engine=engine,
-)
 
 # Verifica e cria o banco de dados, caso necessário
 def initialize_database():
