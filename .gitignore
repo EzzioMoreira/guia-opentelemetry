@@ -7,3 +7,4 @@ postgres_data
 
 # Ignora todos os arquivos e diretórios gerados pelo comando python3 -m venv venv
 /venv/
+__pycache__/
