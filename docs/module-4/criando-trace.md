@@ -15,25 +15,24 @@ git ceckout -b feat/instrumentacao-manual
 
 ### Crianção de Trace
 
-1. Vamos inciar instrumentando a aplicação [Cadastro de Livro](../../book_store/cadastro_de_livros/) por ser uma aplicação simples. Para adicionar instrumentação manual, é necessário instalar os pacotes do OpenTelemetry.
+1. Vamos inciar instrumentando a aplicação [Cadastro de Livro](../../book_store/cadastro_de_livros/). Para adicionar instrumentação manual, é necessário instalar os pacotes do OpenTelemetry.
 
-Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadastro_de_livros/requirements.txt):
+    Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadastro_de_livros/requirements.txt):
 
-   ```txt
-   opentelemetry-api==1.28.2
-   opentelemetry-sdk==1.28.2
-   opentelemetry-exporter-otlp==1.28.2
-   opentelemetry-instrumentation-sqlalchemy==0.49b2
-   ```
+    ```txt
+    opentelemetry-api==1.28.2
+    opentelemetry-sdk==1.28.2
+    opentelemetry-exporter-otlp==1.28.2
+    opentelemetry-instrumentation-sqlalchemy==0.49b2
+    ```
 
-   Os pacotes listados acima são necessários para configurar a instrumentação manual. O pacote `opentelemetry-api` contém a API do OpenTelemetry, que é uma interface para a instrumentação. O pacote `opentelemetry-sdk` contém a implementação da API para iniciar a instrumentação. O pacote `opentelemetry-exporter-otlp` contém o exportador OTLP, que é responsável por enviar os dados de telemetria para o OpenTelemetry Collector. O pacote `opentelemetry-instrumentation-sqlalchemy` contém a instrumentação para o SQLAlchemy para rastrear consultas SQL.
+    Os pacotes listados acima são necessários para configurar a instrumentação manual. O pacote `opentelemetry-api` contém a API do OpenTelemetry, que é uma interface para a instrumentação. O pacote `opentelemetry-sdk` contém a implementação da API para iniciar a instrumentação. O pacote `opentelemetry-exporter-otlp` contém o exportador OTLP, que é responsável por enviar os dados de telemetria para o OpenTelemetry Collector. O pacote `opentelemetry-instrumentation-sqlalchemy` contém a instrumentação para o SQLAlchemy para rastrear consultas SQL.
 
-   > Para saber mais sobre API e SDK do OpenTelemetry, consulte a [Espeficação](https://github.com/open-telemetry/opentelemetry-specification/tree/main/specification).
+    > Para saber mais sobre API e SDK do OpenTelemetry, consulte a [Espeficação](https://github.com/open-telemetry/opentelemetry-specification/tree/main/specification).
 
-1. Para iniciar a instrumentação, é necessário instanciar o `TracerProvider`, o TraceProvider é nossa produtor de `Tracer`. Será necessário iniciar o `Resource` e o `Exporter` também. O `Resource` contém os atributos chave-valor que com informações sobre a origem dos dados de telemetria, como o nome do serviço, a versão do serviço, o ambiente de implantação, etc. O `Exporter` é responsável por enviar os dados de telemetria para o OpenTelemetry Collector.
+1. Para iniciar a instrumentação, é necessário instanciar o `TracerProvider`, o TraceProvider é nosso produtor de `Tracer`. Será necessário iniciar o `Resource` e o `Exporter` também. O `Resource` contém os atributos chave-valor que contém informações sobre a origem dos dados de telemetria, como o nome do serviço, a versão do serviço, o ambiente de implantação entre outros. O `Exporter` é responsável por enviar os dados de telemetria para o OpenTelemetry Collector.
 
     Para deixar a estrutura do projeto mais organizado, crie um arquivo `trace.py` no diretório `app` da aplicação [Cadastro de Livro](../../book_store/cadastro_de_livros/). Adicione o seguinte trecho de código ao arquivo `trace.py`:
-
 
     ```python
     # trace.py
@@ -78,7 +77,7 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
 
 1. Com a pipeline de rastreamento configurada, podemos obter um Tracer. Podemos adicionar spans nas funções Python que desejamos rastrear o fluxo de execução. Vamos iniciar adicionando spans na rota que cria livro. 
 
-    Primeiro, importe o módulo `trace` no arquivo `main.py`. O modulo `trace` é responsável por configurar o rastreamento distribuído.
+    Primeiro, importe o módulo `trace` no arquivo `main.py`.
 
     ```python
     # main.py
@@ -94,7 +93,7 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
 
     Isso irá configurar o rastreamento distribuído do OpenTelemetry e retornar o `Tracer` configurado que será nosso produtor de spans.
     
-    Agora, podemos criar spans nas funções que desejamos rastrear. Na rota que cria um livro, adicione o seguinte trecho de código ao arquivo `main.py`:
+    Agora, podemos criar spans nas funções que desejamos rastrear. Na rota que cria um livro, adicione o seguinte trecho de código ao arquivo `main.py`. 
 
     ```python
     # Define a rota para criar um livro
@@ -113,6 +112,8 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
                 logger.error(f"Erro ao criar livro: {e}")
                 raise HTTPException(status_code=500, detail="Erro ao criar livro")
     ```
+
+    Perceba que o trecho de código ficará dentro do `with` e `tracer.start_as_current_span`, isso irá criar um novo span com nome `criar_livro.
 
     Quando definimos `start_as_current_span`, estamos criando um novo span e definindo-o como o span ativo. Isso significa que qualquer operação que ocorra dentro do bloco `with` será associada a esse span. Quando o bloco `with` é concluído, o span é encerrado automaticamente.
 
@@ -176,13 +177,22 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
 
     As variáveis de ambiente acima são necessárias para configurar o exportador OTLP. A variável `OTEL_SERVICE_NAME` define o nome do serviço, a variável `OTEL_RESOURCE_ATTRIBUTES` define os atributos do recurso, a variável `OTEL_EXPORTER_OTLP_ENDPOINT` define o endpoint do coletor OpenTelemetry, a variável `OTEL_EXPORTER_OTLP_PROTOCOL` define o protocolo de comunicação, a variável `OTEL_EXPORTER_OTLP_INSECURE` define se a conexão é segura ou não com o coletor OpenTelemetry.
 
-    - Em seguida, execute o comando `docker-compose up --build cadastro_de_livros` para construir e iniciar o serviço `cadastro_de_livros`.
+    Em seguida, execute o comando `docker compose up --build cadastro_de_livros` para construir e iniciar o serviço `cadastro_de_livros`.
 
     ```shell
-    docker-compose up --build cadastro_de_livros
+    docker compose up --build cadastro_de_livros
     ```
 
     - Acessar os endpoint: [http://localhost:8080/docs](http://localhost:8080/docs) para visualizar a documentação Swagger da aplicação. Execute as operações `GET /livros/`, `POST /livros/` e `GET /livros/{id}` para gerar traces.
+    - Quando dor criar um livro, utilize esse payload como exemplo:
+
+    ```json
+    {
+        "titulo": "Descomplicando o OpenTelemetry",
+        "estoque": 100
+    }
+    ```
+
     - Acesse o Grafana para visualizar a telemetria gerada [http://localhost:3000](http://localhost:3000).
 
     Perceba que agora temos informações sobre o fluxo de execução da aplicação mas com pouco contexto sobre a requisição. A maioria dos spans não tem informações sobre a operação executada, como o método HTTP, a rota, o código de status da solicitação, qual livro foi criado e qual é o sue ID, etc. Na maioria dos casos, essas informações são úteis para entender o comportamento da aplicação e identificar problemas. Isso ocorre porque não adicionamos atributos ao spans. 
@@ -201,7 +211,7 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
     opentelemetry-semantic-conventions==0.49b2
     ```
 
-    - Em seguida, importe o pacote no arquivo `main.py`:
+    Em seguida, importe o pacote no arquivo `main.py`:
 
     ```python
     from opentelemetry.semconv.trace import SpanAttributes
@@ -209,13 +219,13 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
 
     Antes de adicionar atributos ao Span como o método HTTP, qual URL foi acessada entre outros, importe o módulo `Request` do FastAPI para obter essas informações. Isso nos permite retornar os valores do atributo de forma dinâmica.
     
-    - Adicione o `Request` na linha de importação do `FastAPI`:
+    Adicione o `Request` na linha de importação do `FastAPI`:
 
     ```python
     from fastapi import FastAPI, HTTPException, Depends, Request
     ```
 
-    - Adicione o parâmetro `request: Request` nas funções que desejamos rastrear.
+    Adicione o parâmetro `request: Request` nas funções que desejamos rastrear.
 
     ```python
     ...
@@ -237,7 +247,7 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
     ...
     ```
     
-    - Adicione os atributos ao Span:
+    Adicione os atributos ao Span:
 
     ```python
     # Define a rota para criar um livro
@@ -332,10 +342,10 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
 
     Adicionamos atributos semânticos e personalizados ao span.
 
-    - Em seguida, execute o comando `docker-compose up --build cadastro_de_livros` para construir e iniciar o serviço `cadastro_de_livros`.
+    Em seguida, execute o comando `docker compose up --build cadastro_de_livros` para construir e iniciar o serviço `cadastro_de_livros`.
 
     ```shell
-    docker-compose up --build cadastro_de_livros
+    docker compose up --build cadastro_de_livros
     ```
 
     - Acessar os endpoints da aplicação: [http://localhost:8080/docs](http://localhost:8080/docs) para visualizar a documentação Swagger da aplicação. Execute as operações `GET /livros/`, `POST /livros/` e `GET /livros/{id}` para gerar traces.
@@ -347,11 +357,11 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
 
 ## Adicionando Eventos ao Span
 
-1. Eventos são registros que ocorrem durante a execução de um span. Eventos são úteis para registrar pontos significativos no ciclo de vida de um span. Por exemplo, você pode registrar eventos para indicar quando uma operação foi iniciada, concluída ou quando ocorreu um erro. Além disso é possível adicionar atributos aos eventos.
+1. Eventos são registros que ocorrem durante a execução de um span. Eventos são úteis para registrar pontos significativos no ciclo de vida de uma operação. Por exemplo, você pode registrar eventos para indicar quando uma operação foi iniciada, concluída ou quando ocorreu um erro. Além disso é possível adicionar atributos aos eventos.
     
-    O método `add_event` só aceitam valores de tipo string. Adicione eventos nas funções que desejamos rastrear.
+    O método `add_event` só aceitam valores de tipo string e aceita um dicionário de atributos Adicione eventos nas funções que desejamos rastrear.
 
-    - Substitua os atributos titulo e id do livro por eventos:
+    Substitua os atributos titulo e id do livro por eventos:
 
     ```python
     # Define a rota para criar um livro
@@ -419,10 +429,10 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
                 raise HTTPException(status_code=500, detail="Erro ao buscar livro")
     ```
 
-    - Em seguida, execute o comando `docker-compose up --build cadastro_de_livros` para construir e iniciar o serviço `cadastro_de_livros`.
+    - Em seguida, execute o comando `docker compose up --build cadastro_de_livros` para construir e iniciar o serviço `cadastro_de_livros`.
 
     ```shell
-    docker-compose up --build cadastro_de_livros
+    docker compose up --build cadastro_de_livros
     ```
 
     - Acessar os endpoints da aplicação: [http://localhost:8080/docs](http://localhost:8080/docs) para visualizar a documentação Swagger da aplicação. Execute as operações `GET /livros/`, `POST /livros/` e `GET /livros/{id}` para gerar traces.
@@ -434,17 +444,16 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
 
 ## Definindo Status do Span
 
-1. Um Status pode ser definido em um Span, normalmente é utilizado para especificar que span foi concluído com sucesso ou falha. Por padrão, todos os spans são definidos com status `Unset`, significa que spans foi concluído sem erros. O `OK` é reservado quando desejamos marcar explicitamente um span como bem-sucedido. O `Error` é reservado para marcar um span como falha.
+1. Um Status pode ser definido em um span, normalmente é utilizado para especificar que o span foi concluído com sucesso ou falha. Por padrão, todos os spans são definidos com status `Unset`, significa que a operação foi concluído sem erros. O `OK` é reservado quando desejamos marcar explicitamente um span como bem-sucedido. O `Error` é reservado para marcar um span como falha. O status pode ser definido em qualquer momento antes do span ser encerrado. 
 
-    O status pode ser definido em qualquer momento antes do span ser encerrado. 
-
-    - Antes de adicionar o status ao span, importe os módulos `Status` e `StatusCode` do OpenTelemetry no arquivo `main.py`:
+    - Antes de adicionar o status ao span, importe os módulos `Status` e `StatusCode` do OpenTelemetry no arquivo `main.py`. 
 
     ```python
     from opentelemetry.trace import Status, StatusCode
     ```
 
-    Vamos adicionar o status OK ao span quando a operação for bem-sucedida e Error quando ocorrer um erro.
+    Após definir o importe dos módulos, precisamos adicionar o `Request` como parâmetro nas funções. Isso vai permite acessar informações sobre a requisição, como o método HTTP, a URL entre outros. Em seguida definimos o status OK ao span quando a operação for bem-sucedida e Error quando ocorrer um erro.
+
     - Adicione o status ao span:
 
     ```python
@@ -526,6 +535,7 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
                 span.set_status(Status(StatusCode.ERROR))
 
                 raise HTTPException(status_code=500, detail="Erro ao buscar livro")
+    
     # Define a rota para listar todos os livros
     @app.get("/livros/")
     def lista_livros(request: Request, db: Session = Depends(get_db)):
@@ -558,10 +568,10 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
                 raise HTTPException(status_code=500, detail="Erro ao listar livros")
     ```
 
-- Em seguida, execute o comando `docker-compose up --build cadastro_de_livros` para construir e iniciar o serviço `cadastro_de_livros`.
+- Em seguida, execute o comando `docker compose up --build cadastro_de_livros` para construir e iniciar o serviço `cadastro_de_livros`.
 
     ```shell
-    docker-compose up --build cadastro_de_livros
+    docker compose up --build cadastro_de_livros
     ```
 
     - Acessar os endpoints da aplicação: [http://localhost:8080/docs](http://localhost:8080/docs) para visualizar a documentação Swagger da aplicação. Execute as operações `GET /livros/`, `POST /livros/` e `GET /livros/{id}` para gerar traces.
@@ -708,10 +718,10 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
                 raise HTTPException(status_code=500, detail="Erro ao listar livros")
     ```
 
-    - Em seguida, execute o comando `docker-compose up --build cadastro_de_livros` para construir e iniciar o serviço `cadastro_de_livros`.
+    - Em seguida, execute o comando `docker compose up --build cadastro_de_livros` para construir e iniciar o serviço `cadastro_de_livros`.
 
     ```shell
-    docker-compose up --build cadastro_de_livros
+    docker compose up --build cadastro_de_livros
     ```
 
     - Acessar os endpoints da aplicação: [http://localhost:8080/docs](http://localhost:8080/docs) para visualizar a documentação Swagger da aplicação. Execute as operações `GET /livros/`, `POST /livros/` e `GET /livros/{id}` para gerar traces.
@@ -723,7 +733,9 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
 
 ## Instrumentando Queries SQL
 
-1. Para rastrear as queries SQL executadas pelo SQLAlchemy, é necessário importar o módulo `opentelemetry-instrumentation-sqlalchemy`, a cada interação com o banco de dados será gerado um span. Adicione o pacote ao arquivo `requirements.txt` do sistema [Cadastro de Livro](../../book_store/cadastro_de_livros/requirements.txt):
+1. Para rastrear as queries SQL executadas pelo SQLAlchemy, é necessário importar o módulo `opentelemetry-instrumentation-sqlalchemy`, a cada interação com o banco de dados será gerado um span com informações sobre as operações executadas no banco de dados. 
+
+    - Adicione o pacote ao arquivo `requirements.txt` do sistema [Cadastro de Livro](../../book_store/cadastro_de_livros/requirements.txt):
 
     ```txt
     opentelemetry-instrumentation-sqlalchemy==0.49b2
@@ -735,7 +747,7 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
     from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor
     ```
 
-    Agora, é necessário configurar o instrumentador do SQLAlchemy. Adicione o seguinte trecho de código ao arquivo `databases.py`:
+    Agora, é necessário configurar o instrumentador do SQLAlchemy. Adicione o seguinte trecho de código ao arquivo `databases.py`, O SQLAlchemyInstrumentor recebe o engine do SQLAlchemy como parâmetro o engine é responsável por criar conexões com o banco de dados e executar queries SQL.
 
     ```python
     # Instrumenta o SQLAlchemy para rastrear as queries executadas
@@ -744,10 +756,10 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
     )
     ```
 
-    - Em seguida, execute o comando `docker-compose up --build cadastro_de_livros` para construir e iniciar o serviço `cadastro_de_livros`.
+    - Em seguida, execute o comando `docker compose up --build cadastro_de_livros` para construir e iniciar o serviço `cadastro_de_livros`.
 
     ```shell
-    docker-compose up --build cadastro_de_livros
+    docker compose up --build cadastro_de_livros
     ```
 
     - Acessar os endpoints da aplicação: [http://localhost:8080/docs](http://localhost:8080/docs) para visualizar a documentação Swagger da aplicação. Execute as operações `GET /livros/`, `POST /livros/` e `GET /livros/{id}` para gerar traces.
@@ -760,11 +772,12 @@ Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadast
 ## Exercícios
 
 1. Adicione spans, atributos, eventos, status e spans aninhados nos outros serviços da aplicação [Book Store](../../book_store/).
+1. Instrumente as queries SQL executadas pelo SQLAlchemy.
 1. Endpoints da aplicação [Ordem de Compra](../../book_store/ordem_de_compra/): [http://localhost:8081/docs](http://localhost:8081/docs).
 1. Endpoints da aplicação [Pagamento](../../book_store/pagamento/): [http://localhost:8082/docs](http://localhost:8082/docs).
-1. Não esqueça de executar o comando `docker-compose up --build <nome-da-aplicação>` para construir e iniciar os serviços.
-1. Não esqueça de adicionar as variáveis de ambiente necessárias para o `OTLPSpanExporter` no arquivo `docker-compose.yml` de cada serviço.
+1. Não esqueça de executar o comando `docker compose up --build <nome-da-aplicação>` para construir e iniciar os serviços.
+1. Não esqueça de adicionar as variáveis de ambiente necessárias para o `OTLPSpanExporter` no arquivo `docker compose.yml` de cada serviço.
 
 ## Conclusão
 
-Neste guia, você aprendeu como adicionar instrumentação manual na aplicação [Cadastro de Livro](../../book_store/cadastro_de_livros/) para rastrear o fluxo de execução. Adicionamos spans, atributos, eventos, status e spans aninhados.
+Neste guia, você aprendeu como adicionar instrumentação manual na aplicação [Cadastro de Livro](../../book_store/cadastro_de_livros/) para rastrear o fluxo de execução. Adicionamos spans, atributos, eventos, status, spans aninhados e instrumentamos as queries SQL executadas pelo SQLAlchemy.
