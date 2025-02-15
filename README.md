@@ -86,5 +86,5 @@ O treinamento será dividido em módulos teóricos e práticos para garantir uma
   - [Adicionando Status ao Span](./docs/module-4/criando-trace.md#adicionando-status-ao-span)
   - [Criando Span Aninhado](./docs/module-4/criando-trace.md#criando-span-aninhado)
   - [Instrumentando Queries SQL](./docs/module-4/criando-trace.md#instrumentando-queries-sql)
-  - [Exercício](./docs/module-4/criando-trace.md#exercício)
+  - [Exercício](./docs/module-4/criando-trace.md#exercícios)
   - [Conclusão](./docs/module-4/criando-trace.md#conclusão)
