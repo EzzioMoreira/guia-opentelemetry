@@ -4,6 +4,12 @@
 
 Capacitar pessoas nos conceitos básicos de monitoramento, observabilidade e telemetria, além de ensinar a implementar e operar os recursos do OpenTelemetry. O curso proporcionará habilidades práticas para gerar, coletar, processar e exportar telemetria (logs, métricas e traces). Ao final, os participantes estarão aptos a integrar as funcionalidades do OpenTelemetry em suas aplicações.
 
+## Agradecimentos
+
+Gostaria de agradecer imensamente ao [Lindemberg Barbosa](https://www.linkedin.com/in/lindemberg-barbosa/) e [Pedro Espíndula](https://www.linkedin.com/in/pedroespindula/) por revisarem e contribuírem com o conteúdo deste treinamento. Suas contribuições foram fundamentais para a melhoria da qualidade e clareza do material para treinamento.
+
+Obrigado, vocês são incríveis! ❤️
+
 ## Público-alvo
 
 Desenvolvedores, arquitetos de software, analistas de sistemas e profissionais de infraestrutura que desejam aprender sobre monitoramento, observabilidade, telemetria e OpenTelemetry.
