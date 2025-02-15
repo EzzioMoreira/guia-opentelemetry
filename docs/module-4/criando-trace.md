@@ -113,7 +113,7 @@ git ceckout -b feat/instrumentacao-manual
                 raise HTTPException(status_code=500, detail="Erro ao criar livro")
     ```
 
-    Perceba que o trecho de código ficará dentro do `with` e `tracer.start_as_current_span`, isso irá criar um novo span com nome `criar_livro.
+    Perceba que o trecho de código ficará dentro do `with` e `tracer.start_as_current_span`, isso irá criar um novo span com nome `criar_livro`.
 
     Quando definimos `start_as_current_span`, estamos criando um novo span e definindo-o como o span ativo. Isso significa que qualquer operação que ocorra dentro do bloco `with` será associada a esse span. Quando o bloco `with` é concluído, o span é encerrado automaticamente.
 
