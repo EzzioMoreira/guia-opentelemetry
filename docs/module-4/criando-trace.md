@@ -481,7 +481,7 @@ git ceckout -b feat/instrumentacao-manual
                 span.set_attribute(SpanAttributes.HTTP_STATUS_CODE, 201)
                 span.set_attribute(SpanAttributes.HTTP_URL, str(request.url))
                 span.set_attribute(SpanAttributes.CLIENT_ADDRESS, str(request.client.host))
-            span.set_attribute(SpanAttributes.CLIENT_PORT, str(request.client.port  ))
+                span.set_attribute(SpanAttributes.CLIENT_PORT, str(request.client.port))
                 
                 # Substitui o atributo titulo do livro por evento e adiciona o estoque
                 span.add_event("Livro criado com sucesso", attributes={"id": novo_livro.id, "titulo": novo_livro.titulo, "estoque": novo_livro.estoque})
@@ -517,7 +517,7 @@ git ceckout -b feat/instrumentacao-manual
                 span.set_attribute(SpanAttributes.HTTP_URL, str(request.url))
                 span.set_attribute("livro.titulo", livro.titulo)
                 span.set_attribute(SpanAttributes.CLIENT_ADDRESS, str(request.client.host))
-            span.set_attribute(SpanAttributes.CLIENT_PORT, str(request.client.port  ))
+                span.set_attribute(SpanAttributes.CLIENT_PORT, str(request.client.port))
                 
                 # Substitui o atributo titulo do livro por evento
                 span.add_event("Livro criado com sucesso", attributes={"titulo": livro.titulo})
@@ -589,7 +589,7 @@ git ceckout -b feat/instrumentacao-manual
 
 ## Criando Spans Aninhados
 
-1. Span aninhados são úteis para rastrear sub-operação distinta e que gostariamos de rastrear como parte de outra. Por exemplo, ao criar um livro, podemos rastrear a operação de criação do livro e a operação de resposta da requisição. 
+1. Spans aninhados são úteis para rastrear sub-operações distintas e operações em que desejamos rastrear como parte de outra. Por exemplo, ao criar um livro, podemos rastrear a operação de criação do livro e a operação de resposta da requisição.
 
     - Adicione spans aninhados nas funções que desejamos rastrear.
 
@@ -612,7 +612,7 @@ git ceckout -b feat/instrumentacao-manual
                 span.set_attribute(SpanAttributes.HTTP_STATUS_CODE, 201)
                 span.set_attribute(SpanAttributes.HTTP_URL, str(request.url))
                 span.set_attribute(SpanAttributes.CLIENT_ADDRESS, str(request.client.host))
-                span.set_attribute(SpanAttributes.CLIENT_PORT, str(request.client.port  ))
+                span.set_attribute(SpanAttributes.CLIENT_PORT, str(request.client.port))
                 
                 # Substitui o atributo titulo do livro por evento e adiciona o estoque
                 span.add_event("Livro criado com sucesso", attributes={"id": novo_livro.id, "titulo": novo_livro.titulo, "estoque": novo_livro.estoque})
@@ -733,7 +733,7 @@ git ceckout -b feat/instrumentacao-manual
     - Acesse o endpoint [http://localhost:8080/docs](http://localhost:8080/docs) para visualizar a documentação Swagger da aplicação. Execute as operações `GET /livros/`, `POST /livros/` e `GET /livros/{id}` para gerar traces.
     - Acesse o Grafana para visualizar a telemetria gerada [http://localhost:3000](http://localhost:3000).
 
-    Note que no Trace agora, existe spans para as respostas das requisições.
+    Note que no Trace agora inclue spans para as respostas das requisições.
 
     ![Spans-Nested](./image/with-code-span-aninhados.png)
 
@@ -753,7 +753,7 @@ git ceckout -b feat/instrumentacao-manual
     from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor
     ```
 
-    Agora, é necessário configurar o instrumentador do SQLAlchemy. Adicione o seguinte trecho de código ao arquivo `databases.py`, O SQLAlchemyInstrumentor recebe o engine do SQLAlchemy como parâmetro o engine é responsável por criar conexões com o banco de dados e executar queries SQL.
+    Agora, é necessário configurar o instrumentador do SQLAlchemy. Adicione o seguinte trecho de código ao arquivo `databases.py`. O SQLAlchemyInstrumentor recebe o engine do SQLAlchemy como parâmetro, que é responsável por criar conexões com o banco de dados e executar queries SQL.
 
     ```python
     # Instrumenta o SQLAlchemy para rastrear as queries executadas
@@ -768,7 +768,7 @@ git ceckout -b feat/instrumentacao-manual
     docker compose up --build cadastro_de_livros
     ```
 
-    - Acessar os endpoints da aplicação: [http://localhost:8080/docs](http://localhost:8080/docs) para visualizar a documentação Swagger da aplicação. Execute as operações `GET /livros/`, `POST /livros/` e `GET /livros/{id}` para gerar traces.
+    - Acesse o endpoint [http://localhost:8080/docs](http://localhost:8080/docs) para visualizar a documentação Swagger da aplicação. Execute as operações `GET /livros/`, `POST /livros/` e `GET /livros/{id}` para gerar traces.
     - Acesse o Grafana para visualizar a telemetria gerada [http://localhost:3000](http://localhost:3000).
 
     Note que no Trace agora inclue spans para as queries SQL executadas.
