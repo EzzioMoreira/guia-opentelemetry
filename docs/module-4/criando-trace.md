@@ -15,7 +15,7 @@ git ceckout -b feat/instrumentacao-manual
 
 ### Crianção de Trace
 
-1. Vamos inciar instrumentando a aplicação [Cadastro de Livro](../../book_store/cadastro_de_livros/). Para adicionar instrumentação manual, é necessário instalar os pacotes do OpenTelemetry.
+1. Vamos iniciar instrumentando a aplicação [Cadastro de Livro](../../book_store/cadastro_de_livros/). Para adicionar instrumentação manual, é necessário instalar os pacotes do OpenTelemetry.
 
     Adicione os seguintes pacotes ao arquivo [requirements.txt](../book_store/cadastro_de_livros/requirements.txt):
 
