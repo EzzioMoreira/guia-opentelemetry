@@ -137,8 +137,6 @@ git ceckout -b feat/instrumentacao-manual
                     raise HTTPException(status_code=404, detail="Livro não encontrado")
                 logger.info(f"Livro com ID: {id} encontrado com sucesso")
                 return livro
-            except HTTPException:
-                raise
             except Exception as e:
                 logger.error(f"Erro ao buscar livro: {e}")
             raise HTTPException(status_code=500, detail="Erro ao buscar livro")
@@ -310,9 +308,7 @@ git ceckout -b feat/instrumentacao-manual
                     raise HTTPException(status_code=404, detail="Livro não encontrado")
                 logger.info(f"Livro com ID: {id} encontrado com sucesso")
                 return livro
-            
-            except HTTPException:
-                raise
+
             except Exception as e:
                 logger.error(f"Erro ao buscar livro: {e} ou livro não encontrado")
                 raise HTTPException(status_code=500, detail="Erro ao buscar livro")
@@ -428,8 +424,6 @@ git ceckout -b feat/instrumentacao-manual
                 logger.info(f"Livro com ID: {id} encontrado com sucesso")
                 return livro
             
-            except HTTPException:
-                raise
             except Exception as e:
                 logger.error(f"Erro ao buscar livro: {e} ou livro não encontrado")
                 raise HTTPException(status_code=500, detail="Erro ao buscar livro")
@@ -531,9 +525,7 @@ git ceckout -b feat/instrumentacao-manual
                 span.set_status(Status(StatusCode.OK))
 
                 return livro
-            
-            except HTTPException:
-                raise
+
             except Exception as e:
                 logger.error(f"Erro ao buscar livro: {e} ou livro não encontrado")
 
@@ -676,9 +668,7 @@ git ceckout -b feat/instrumentacao-manual
                     span.set_status(Status(StatusCode.OK))
 
                     return response
-            
-            except HTTPException:
-                raise
+
             except Exception as e:
                 logger.error(f"Erro ao buscar livro: {e}")
                 span.set_status(Status(StatusCode.ERROR))

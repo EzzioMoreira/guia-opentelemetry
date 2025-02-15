@@ -42,8 +42,6 @@ def busca_livro(id: int, db: Session = Depends(get_db)):
             raise HTTPException(status_code=404, detail="Livro não encontrado")
         logger.info(f"Livro com ID: {id} encontrado com sucesso")
         return livro
-    except HTTPException:
-        raise
     except Exception as e:
         logger.error(f"Erro ao buscar livro: {e}")
         raise HTTPException(status_code=500, detail="Erro ao buscar livro")
