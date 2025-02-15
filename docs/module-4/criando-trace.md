@@ -575,7 +575,7 @@ git ceckout -b feat/instrumentacao-manual
     docker compose up --build cadastro_de_livros
     ```
 
-    - Acessar os endpoints da aplicação: [http://localhost:8080/docs](http://localhost:8080/docs) para visualizar a documentação Swagger da aplicação. Execute as operações `GET /livros/`, `POST /livros/` e `GET /livros/{id}` para gerar traces.
+    - Acesse o endpoint [http://localhost:8080/docs](http://localhost:8080/docs) para visualizar a documentação Swagger da aplicação. Execute as operações `GET /livros/`, `POST /livros/` e `GET /livros/{id}` para gerar traces.
     - Acesse o Grafana para visualizar a telemetria gerada [http://localhost:3000](http://localhost:3000).
 
     Note que no Trace agora, temos o status do Span.
