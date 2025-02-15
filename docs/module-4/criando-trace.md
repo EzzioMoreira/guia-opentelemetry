@@ -168,14 +168,19 @@ git ceckout -b feat/instrumentacao-manual
 
     ```yaml
     environment:
-      - OTEL_SERVICE_NAME=cadastro_de_livros
+      - OTEL_SERVICE_NAME=cadastro_de_livros                              
       - OTEL_RESOURCE_ATTRIBUTES=service.version=v0.0.1,service.env=dev
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
       - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
       - OTEL_EXPORTER_OTLP_INSECURE=true
     ```
 
-    As variáveis de ambiente acima são necessárias para configurar o exportador OTLP. A variável `OTEL_SERVICE_NAME` define o nome do serviço, a variável `OTEL_RESOURCE_ATTRIBUTES` define os atributos do recurso, a variável `OTEL_EXPORTER_OTLP_ENDPOINT` define o endpoint do coletor OpenTelemetry, a variável `OTEL_EXPORTER_OTLP_PROTOCOL` define o protocolo de comunicação, a variável `OTEL_EXPORTER_OTLP_INSECURE` define se a conexão é segura ou não com o coletor OpenTelemetry.
+    As variáveis de ambiente acima são necessárias para configurar o exportador OTLP: 
+      - `OTEL_SERVICE_NAME`: define o nome do serviço.
+      - `OTEL_RESOURCE_ATTRIBUTES`: define os atributos do recurso.
+      - `OTEL_EXPORTER_OTLP_ENDPOINT`: define o endpoint do coletor OpenTelemetry.
+      - `OTEL_EXPORTER_OTLP_PROTOCOL`: define o protocolo de comunicação.
+      - `OTEL_EXPORTER_OTLP_INSECURE`: define se a conexão é segura ou não com o coletor OpenTelemetry.
 
     Em seguida, execute o comando `docker compose up --build cadastro_de_livros` para construir e iniciar o serviço `cadastro_de_livros`.
 
