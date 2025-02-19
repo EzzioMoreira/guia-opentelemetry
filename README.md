@@ -4,6 +4,12 @@
 
 Capacitar pessoas nos conceitos básicos de monitoramento, observabilidade e telemetria, além de ensinar a implementar e operar os recursos do OpenTelemetry. O curso proporcionará habilidades práticas para gerar, coletar, processar e exportar telemetria (logs, métricas e traces). Ao final, os participantes estarão aptos a integrar as funcionalidades do OpenTelemetry em suas aplicações.
 
+## Agradecimentos
+
+Gostaria de agradecer imensamente ao [Lindemberg Barbosa](https://www.linkedin.com/in/lindemberg-barbosa/) e [Pedro Espíndula](https://www.linkedin.com/in/pedroespindula/) por revisarem e contribuírem com o conteúdo deste treinamento. Suas contribuições foram fundamentais para a melhoria da qualidade e clareza do material para treinamento.
+
+Obrigado, vocês são incríveis! ❤️
+
 ## Público-alvo
 
 Desenvolvedores, arquitetos de software, analistas de sistemas e profissionais de infraestrutura que desejam aprender sobre monitoramento, observabilidade, telemetria e OpenTelemetry.
@@ -76,3 +82,15 @@ O treinamento será dividido em módulos teóricos e práticos para garantir uma
     - [Resultado Esperado](./docs/module-3/instrumentação-sem-código.md#resultado-esperado)
     - [Conclusão](./docs/module-3/instrumentação-sem-código.md#conclusão)
     - [Saiba Mais](./docs/module-3/instrumentação-sem-código.md#saiba-mais)
+
+## Módulo 4 - Instrumentação Manual
+
+- [Criação de Trace](./docs/module-4/criando-trace.md)
+  - [Adicionando Spans](./docs/module-4/criando-trace.md#adicionando-spans)
+  - [Adicionando Atributos ao Span](./docs/module-4/criando-trace.md#adicionando-atributos-ao-span)
+  - [Adicionando Eventos ao Span](./docs/module-4/criando-trace.md#adicionando-eventos-ao-span)
+  - [Adicionando Status ao Span](./docs/module-4/criando-trace.md#adicionando-status-ao-span)
+  - [Criando Span Aninhado](./docs/module-4/criando-trace.md#criando-span-aninhado)
+  - [Instrumentando Queries SQL](./docs/module-4/criando-trace.md#instrumentando-queries-sql)
+  - [Exercício](./docs/module-4/criando-trace.md#exercícios)
+  - [Conclusão](./docs/module-4/criando-trace.md#conclusão)
