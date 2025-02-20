@@ -1,0 +1,12 @@
+fastapi==0.109.1
+uvicorn==0.15.0
+sqlalchemy==2.0.32
+sqlalchemy-utils==0.41.2
+psycopg2-binary==2.9.10
+requests==2.31.0
+opentelemetry-api==1.28.2
+opentelemetry-sdk==1.28.2
+opentelemetry-exporter-otlp==1.28.2
+opentelemetry-instrumentation-sqlalchemy==0.49b2
+opentelemetry-semantic-conventions==0.49b2
+opentelemetry-instrumentation-sqlalchemy==0.49b2

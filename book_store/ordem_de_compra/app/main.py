@@ -55,8 +55,6 @@ def cria_ordem(ordem: models.OrdemCreate, db: Session = Depends(get_db)):
         db.refresh(db_ordem)
         
         return db_ordem
-    except HTTPException:
-        raise
     except Exception as e:
         logger.error(f"Erro ao criar ordem: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Erro ao criar ordem {str(e)}")
@@ -74,8 +72,6 @@ def busca_ordem(id: int, db: Session = Depends(get_db)):
             logger.warning(f"Ordem com id {id} não encontrada")
             raise HTTPException(status_code=404, detail="Ordem não encontrada")
         return ordem
-    except HTTPException:
-        raise
     except Exception as e:
         logger.error(f"Erro ao buscar ordem: {e}")
         raise HTTPException(status_code=500, detail="Erro ao buscar ordem")
