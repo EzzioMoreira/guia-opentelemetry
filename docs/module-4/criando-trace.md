@@ -23,7 +23,6 @@ git ceckout -b feat/instrumentacao-manual
     opentelemetry-api==1.28.2
     opentelemetry-sdk==1.28.2
     opentelemetry-exporter-otlp==1.28.2
-    opentelemetry-instrumentation-sqlalchemy==0.49b2
     ```
 
     Os pacotes listados acima são necessários para configurar a instrumentação manual. O pacote `opentelemetry-api` contém a API do OpenTelemetry, que é uma interface para a instrumentação. O pacote `opentelemetry-sdk` contém a implementação da API para iniciar a instrumentação. O pacote `opentelemetry-exporter-otlp` contém o exportador OTLP, que é responsável por enviar os dados de telemetria para o OpenTelemetry Collector. O pacote `opentelemetry-instrumentation-sqlalchemy` contém a instrumentação para o SQLAlchemy para rastrear consultas SQL.
@@ -261,11 +260,10 @@ git ceckout -b feat/instrumentacao-manual
         """
         with tracer.start_as_current_span("criar_livro") as span:
             try:
+                # Adiciona um novo livro no banco de dados
                 logger.info(f"Criando livro: {livro}")
-
-                # Cria um novo livro no banco de dados
                 novo_livro = models.cria_livro(db=db, livro=livro)
-                
+
                 # Adiciona atributos semânticos e personalizados ao span
                 span.set_attribute(SpanAttributes.HTTP_METHOD, request.method)
                 span.set_attribute(SpanAttributes.HTTP_STATUS_CODE, 201)
@@ -274,10 +272,10 @@ git ceckout -b feat/instrumentacao-manual
                 span.set_attribute(SpanAttributes.CLIENT_PORT, str(request.client.port  ))
                 span.set_attribute("livro.titulo", livro.titulo)
                 span.set_attribute("livro.id", livro.id)
-                
+
                 logger.info(f"Livro criado com sucesso: {livro}")
-                
-                return novo_livro       
+
+                return novo_livro
             
             except Exception as e:
                 logger.error(f"Erro ao criar livro: {e}")
@@ -291,9 +289,10 @@ git ceckout -b feat/instrumentacao-manual
         """
         with tracer.start_as_current_span("buscar_livro_por_id") as span:
             try:
+                # Busca um livro no banco de dados
                 logger.info(f"Buscando livro com id: {id}")
                 livro = models.busca_livro(db, id)
-
+                
                 # Adiciona atributos semânticos e personalizados ao span
                 span.set_attribute(SpanAttributes.HTTP_METHOD, request.method)
                 span.set_attribute(SpanAttributes.HTTP_STATUS_CODE, 200)
@@ -302,15 +301,16 @@ git ceckout -b feat/instrumentacao-manual
                 span.set_attribute(SpanAttributes.CLIENT_PORT, str(request.client.port  ))
                 span.set_attribute("livro.titulo", livro.titulo)
                 span.set_attribute("livro.id", livro.id)
-                
+
                 if livro is None:
                     logger.warning(f"Livro com id {id} não encontrado")
                     raise HTTPException(status_code=404, detail="Livro não encontrado")
                 logger.info(f"Livro com ID: {id} encontrado com sucesso")
+                
                 return livro
-
+            
             except Exception as e:
-                logger.error(f"Erro ao buscar livro: {e} ou livro não encontrado")
+                logger.error(f"Erro ao buscar livro: {e}")
                 raise HTTPException(status_code=500, detail="Erro ao buscar livro")
 
     # Define a rota para listar todos os livros
@@ -321,8 +321,10 @@ git ceckout -b feat/instrumentacao-manual
         """
         with tracer.start_as_current_span("listar_todos_os_livros") as span:
             try:
+                # Lista todos os livros no banco de dados
                 logger.info("Listando todos os livros")
                 livros = models.lista_livros(db)
+                logger.info(f"{len(livros)} livros encontrados")
 
                 # Adiciona atributos semânticos e personalizados ao span
                 span.set_attribute(SpanAttributes.HTTP_METHOD, request.method)
@@ -331,14 +333,13 @@ git ceckout -b feat/instrumentacao-manual
                 span.set_attribute("livros", len(livros))
                 span.set_attribute(SpanAttributes.CLIENT_ADDRESS, str(request.client.host))
                 span.set_attribute(SpanAttributes.CLIENT_PORT, str(request.client.port  ))
-
-                logger.info(f"{len(livros)} livros encontrados")
                 
                 return livros
             
             except Exception as e:
                 logger.error(f"Erro ao listar livros: {e}")
                 raise HTTPException(status_code=500, detail="Erro ao listar livros")
+
     ```
 
     Adicionamos atributos semânticos e personalizados ao span.
@@ -373,25 +374,23 @@ git ceckout -b feat/instrumentacao-manual
         """
         with tracer.start_as_current_span("criar_livro") as span:
             try:
+                # Adiciona um novo livro no banco de dados
                 logger.info(f"Criando livro: {livro}")
-
-                # Cria um novo livro no banco de dados
                 novo_livro = models.cria_livro(db=db, livro=livro)
-                
+
                 # Adiciona atributos semânticos e personalizados ao span
                 span.set_attribute(SpanAttributes.HTTP_METHOD, request.method)
                 span.set_attribute(SpanAttributes.HTTP_STATUS_CODE, 201)
                 span.set_attribute(SpanAttributes.HTTP_URL, str(request.url))
                 span.set_attribute(SpanAttributes.CLIENT_ADDRESS, str(request.client.host))
-                span.set_attribute(SpanAttributes.CLIENT_PORT, str(request.client.port))
-``
+                span.set_attribute(SpanAttributes.CLIENT_PORT, str(request.client.port  ))
                 
-                # Substitui o atributo titulo do livro por evento e adiciona o estoque
+                # Substitui os atributos id e titulo do livro por evento e adiciona o estoque
                 span.add_event("Livro criado com sucesso", attributes={"id": novo_livro.id, "titulo": novo_livro.titulo, "estoque": novo_livro.estoque})
 
                 logger.info(f"Livro criado com sucesso: {livro}")
-                
-                return novo_livro       
+
+                return novo_livro
             
             except Exception as e:
                 logger.error(f"Erro ao criar livro: {e}")
@@ -405,27 +404,29 @@ git ceckout -b feat/instrumentacao-manual
         """
         with tracer.start_as_current_span("buscar_livro_por_id") as span:
             try:
+                # Busca um livro no banco de dados
                 logger.info(f"Buscando livro com id: {id}")
                 livro = models.busca_livro(db, id)
-
+                
+                # Adiciona atributos semânticos e personalizados ao span
                 span.set_attribute(SpanAttributes.HTTP_METHOD, request.method)
                 span.set_attribute(SpanAttributes.HTTP_STATUS_CODE, 200)
                 span.set_attribute(SpanAttributes.HTTP_URL, str(request.url))
-                span.set_attribute("livro.titulo", livro.titulo)
                 span.set_attribute(SpanAttributes.CLIENT_ADDRESS, str(request.client.host))
                 span.set_attribute(SpanAttributes.CLIENT_PORT, str(request.client.port  ))
                 
-                # Substitui o atributo titulo do livro por evento
-                span.add_event("Livro criado com sucesso", attributes={"titulo": livro.titulo})
+                # Substitui os atributos id e titulo do livro por evento e adiciona o estoque
+                span.add_event("Livro encontrado com sucesso", attributes={"id": livro.id, "titulo": livro.titulo})
 
                 if livro is None:
                     logger.warning(f"Livro com id {id} não encontrado")
                     raise HTTPException(status_code=404, detail="Livro não encontrado")
                 logger.info(f"Livro com ID: {id} encontrado com sucesso")
+                
                 return livro
             
             except Exception as e:
-                logger.error(f"Erro ao buscar livro: {e} ou livro não encontrado")
+                logger.error(f"Erro ao buscar livro: {e}")
                 raise HTTPException(status_code=500, detail="Erro ao buscar livro")
     ```
 
@@ -463,19 +464,18 @@ git ceckout -b feat/instrumentacao-manual
         """
         Rota para criar um livro
         """
-        with tracer.start_as_current_span("criar_livro") as span:
+        with tracer.start_as_current_span("cria_livro") as span:
             try:
+                # Adiciona um novo livro no banco de dados
                 logger.info(f"Criando livro: {livro}")
-
-                # Cria um novo livro no banco de dados
                 novo_livro = models.cria_livro(db=db, livro=livro)
-                
+
                 # Adiciona atributos semânticos e personalizados ao span
                 span.set_attribute(SpanAttributes.HTTP_METHOD, request.method)
                 span.set_attribute(SpanAttributes.HTTP_STATUS_CODE, 201)
                 span.set_attribute(SpanAttributes.HTTP_URL, str(request.url))
                 span.set_attribute(SpanAttributes.CLIENT_ADDRESS, str(request.client.host))
-                span.set_attribute(SpanAttributes.CLIENT_PORT, str(request.client.port))
+                span.set_attribute(SpanAttributes.CLIENT_PORT, str(request.client.port  ))
                 
                 # Substitui o atributo titulo do livro por evento e adiciona o estoque
                 span.add_event("Livro criado com sucesso", attributes={"id": novo_livro.id, "titulo": novo_livro.titulo, "estoque": novo_livro.estoque})
@@ -484,15 +484,15 @@ git ceckout -b feat/instrumentacao-manual
 
                 # Define o status OK ao span
                 span.set_status(Status(StatusCode.OK))
-                
-                return novo_livro       
+
+                return novo_livro
             
             except Exception as e:
                 logger.error(f"Erro ao criar livro: {e}")
-                
+
                 # Define o status Error ao span
                 span.set_status(Status(StatusCode.ERROR))
-                
+
                 raise HTTPException(status_code=500, detail="Erro ao criar livro")
 
     # Define a rota para listar livros por id
@@ -501,56 +501,60 @@ git ceckout -b feat/instrumentacao-manual
         """
         Rota para buscar um livro pelo id
         """
-        with tracer.start_as_current_span("buscar_livro_por_id") as span:
+        with tracer.start_as_current_span("busca_livro") as span:
             try:
+                # Busca um livro no banco de dados
                 logger.info(f"Buscando livro com id: {id}")
                 livro = models.busca_livro(db, id)
-
+                
+                # Adiciona atributos semânticos e personalizados ao span
                 span.set_attribute(SpanAttributes.HTTP_METHOD, request.method)
                 span.set_attribute(SpanAttributes.HTTP_STATUS_CODE, 200)
                 span.set_attribute(SpanAttributes.HTTP_URL, str(request.url))
-                span.set_attribute("livro.titulo", livro.titulo)
                 span.set_attribute(SpanAttributes.CLIENT_ADDRESS, str(request.client.host))
-                span.set_attribute(SpanAttributes.CLIENT_PORT, str(request.client.port))
+                span.set_attribute(SpanAttributes.CLIENT_PORT, str(request.client.port  ))
                 
                 # Substitui o atributo titulo do livro por evento
-                span.add_event("Livro criado com sucesso", attributes={"titulo": livro.titulo})
+                span.add_event("Livro encontrado com sucesso", attributes={"id": livro.id, "titulo": livro.titulo})
+
+                # Define o status OK ao span
+                span.set_status(Status(StatusCode.OK))
 
                 if livro is None:
                     logger.warning(f"Livro com id {id} não encontrado")
                     raise HTTPException(status_code=404, detail="Livro não encontrado")
                 logger.info(f"Livro com ID: {id} encontrado com sucesso")
-
-                # Define o status OK ao span
-                span.set_status(Status(StatusCode.OK))
-
+                
                 return livro
-
+            
             except Exception as e:
-                logger.error(f"Erro ao buscar livro: {e} ou livro não encontrado")
+                logger.error(f"Erro ao buscar livro: {e}")
 
                 # Define o status Error ao span
                 span.set_status(Status(StatusCode.ERROR))
 
                 raise HTTPException(status_code=500, detail="Erro ao buscar livro")
-    
+
     # Define a rota para listar todos os livros
     @app.get("/livros/")
     def lista_livros(request: Request, db: Session = Depends(get_db)):
         """
         Rota para listar todos os livros
         """
-        with tracer.start_as_current_span("listar_todos_os_livros") as span:
+        with tracer.start_as_current_span("lista_todos_os_livros") as span:
             try:
+                # Lista todos os livros no banco de dados
                 logger.info("Listando todos os livros")
                 livros = models.lista_livros(db)
+                logger.info(f"{len(livros)} livros encontrados")
 
+                # Adiciona atributos semânticos e personalizados ao span
                 span.set_attribute(SpanAttributes.HTTP_METHOD, request.method)
                 span.set_attribute(SpanAttributes.HTTP_STATUS_CODE, 200)
                 span.set_attribute(SpanAttributes.HTTP_URL, str(request.url))
                 span.set_attribute("livros", len(livros))
-
-                logger.info(f"{len(livros)} livros encontrados")
+                span.set_attribute(SpanAttributes.CLIENT_ADDRESS, str(request.client.host))
+                span.set_attribute(SpanAttributes.CLIENT_PORT, str(request.client.port))
 
                 # Define o status OK ao span
                 span.set_status(Status(StatusCode.OK))
@@ -562,7 +566,7 @@ git ceckout -b feat/instrumentacao-manual
 
                 # Define o status Error ao span
                 span.set_status(Status(StatusCode.ERROR))
-
+                
                 raise HTTPException(status_code=500, detail="Erro ao listar livros")
     ```
 
@@ -621,6 +625,7 @@ git ceckout -b feat/instrumentacao-manual
                     
                     # Define status para span
                     span.set_status(Status(StatusCode.OK))
+
                     return response
             
             except Exception as e:
