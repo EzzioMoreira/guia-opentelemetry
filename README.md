@@ -94,3 +94,5 @@ O treinamento será dividido em módulos teóricos e práticos para garantir uma
   - [Instrumentando Queries SQL](./docs/module-4/criando-trace.md#instrumentando-queries-sql)
   - [Exercício](./docs/module-4/criando-trace.md#exercícios)
   - [Conclusão](./docs/module-4/criando-trace.md#conclusão)
+- [Solução do Exercício](./docs/module-4/solucao-exercicio/README.md)
+  - [Criando Trace](./docs/module-4/solucao-exercicio/criando-trace/)
