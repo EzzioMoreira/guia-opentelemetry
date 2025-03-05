@@ -6,6 +6,10 @@ from sqlalchemy.orm import Session
 from . import models
 from . import logger
 from .databases import engine, get_db
+from .metrics import configure_meter
+
+# Configura o medidor para métricas
+#meter = configure_meter()
 
 # Cria as tabelas no banco de dados
 models.Base.metadata.create_all(bind=engine)
