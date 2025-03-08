@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from .databases import Base
 from . import logger
-from .metrics import livros_cadastrados
+from .metrics import livros_cadastrados, estoque_livros
 
 # Modelo Pydantic para para entrada livre de dados
 class LivroBase(BaseModel):
@@ -33,11 +33,35 @@ def cria_livro(db: Session, livro: LivroBase):
         db.add(db_livro)
         db.commit()
         db.refresh(db_livro)
+        
         # Incrementa a métrica total_livros_cadastrados
-        livros_cadastrados.add(1)
+        livros_cadastrados.add(1, {"titulo": livro.titulo, "estoque": livro.estoque})
+
+        # Incrementa a métrica estoque_livros
+        estoque_livros.set(db.query(Livros).count())
+        
         return db_livro
     except Exception as e:
         logger.error(f"Erro ao criar livro no banco de dados: {e}")
+        raise
+
+# Função que remove um livro do banco de dados
+def remove_livro(db: Session, livro_id: int):
+    """
+    Função que remove um livro do banco de dados
+    """
+    try:
+        db_livro = db.query(Livros).filter(Livros.id == livro_id).first()
+        if db_livro:
+            db.delete(db_livro)
+            db.commit()
+
+            # Decrementa a métrica total_livros_cadastrados
+            estoque_livros.set(db.query(Livros).count())
+
+            return db_livro
+    except Exception as e:
+        logger.error(f"Erro ao deletar livro com id {livro_id}: {e}")
         raise
 
 # Função que retorna todos os livros do banco de dados

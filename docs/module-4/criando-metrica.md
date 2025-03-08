@@ -137,3 +137,4 @@ Muitos sistemas de banco de dados não conseguem lidar com eficiência com o vol
 
     ![Métrica total de livros cadastrados](../module-4/image/with-metrics-livros-cadastrados.png)
 
+1. Agora, vamos criar uma métrica do tipo `histogram` que mede o duração que um pagamento é processado. No diretório `app` do sistema [pagamento](../../) crie um arquivo chamado `metrics.py` no diretório apps do serviço
