@@ -112,3 +112,4 @@ O treinamento será dividido em módulos teóricos e práticos para garantir uma
   - [Criando Métricas Gauge](./docs/module-5/criando-metrica.md#criando-métricas-gauge)
 - [Exercício](./docs/module-5/criando-metrica.md#exercício)
 - [Conclusão](./docs/module-5/criando-metrica.md#conclusão)
+- [Solução do Exercício](./docs/module-5/solucao-exercicio/criando-metrica/)
