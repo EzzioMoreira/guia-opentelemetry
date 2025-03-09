@@ -88,7 +88,7 @@ Cardinalidade se refere ao número de valores possíveis que uma métrica pode a
     Definição das métricas do sistema cadastrador de livros
     """
     livros_cadastrados = configure_meter().create_counter(
-        "bookstore.livros.cadastrados",
+        name="bookstore.livros.cadastrados",
         description="Total de livros cadastrados",
         unit="number",
     )
@@ -213,7 +213,7 @@ Cardinalidade se refere ao número de valores possíveis que uma métrica pode a
     Definição das métricas do sistema de pagamento
     """
     duracao_pagamento = configure_meter().create_histogram(
-        "bookstore.duracao.pagamento",
+        name="bookstore.duracao.pagamento",
         description="Duração do pagamento",
         unit="ms",
     )
@@ -294,7 +294,7 @@ Cardinalidade se refere ao número de valores possíveis que uma métrica pode a
 
     ```python
     estoque_livros = configure_meter().create_gauge(
-        "bookstore.estoque.livros",
+        name="bookstore.estoque.livros",
         description="Quantidade de livros em estoque",
         unit="number",
     )
@@ -388,4 +388,4 @@ Cardinalidade se refere ao número de valores possíveis que uma métrica pode a
 
 ### Conclusão
 
-Neste módulo, aprendemos a criar métricas no sistema Bookstore utilizando o OpenTelemetry. 
+Neste módulo, aprendemos a criar métricas no sistema Bookstore utilizando o OpenTelemetry.
