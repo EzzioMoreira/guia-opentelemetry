@@ -96,3 +96,12 @@ O treinamento será dividido em módulos teóricos e práticos para garantir uma
   - [Conclusão](./docs/module-4/criando-trace.md#conclusão)
 - [Solução do Exercício](./docs/module-4/solucao-exercicio/README.md)
   - [Criando Trace](./docs/module-4/solucao-exercicio/criando-trace/)
+
+## Módulo 5 - Criando Métricas
+
+- [Criando Métricas](./docs/module-5/criando-metrica.md)
+  - [Criando Métricas Counter](./docs/module-5/criando-metrica.md#criando-métricas-counter)
+  - [Criando Métricas Histogram](./docs/module-5/criando-metrica.md#criando-métricas-histogram)
+  - [Criando Métricas Gauge](./docs/module-5/criando-metrica.md#criando-métricas-gauge)
+- [Exercício](./docs/module-5/criando-metrica.md#exercício)
+- [Conclusão](./docs/module-5/criando-metrica.md#conclusão)

@@ -386,6 +386,6 @@ Cardinalidade se refere ao número de valores possíveis que uma métrica pode a
 2. Crie uma métrica do tipo `histogram` com agregação por `status` para medir a duração que uma ordem de compra é processada no serviço de Ordem de Compra.
   - Lembre de importar o modulo `time` para medir a duração da ordem de compra.
 
-### Conclusão
+## Conclusão
 
 Neste módulo, aprendemos a criar métricas no sistema Bookstore utilizando o OpenTelemetry.
