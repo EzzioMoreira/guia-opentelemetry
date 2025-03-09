@@ -113,3 +113,12 @@ O treinamento será dividido em módulos teóricos e práticos para garantir uma
 - [Exercício](./docs/module-5/criando-metrica.md#exercício)
 - [Conclusão](./docs/module-5/criando-metrica.md#conclusão)
 - [Solução do Exercício](./docs/module-5/solucao-exercicio/criando-metrica/)
+
+## Módulo 6 - Instrumentando Logs
+
+- [Instrumentando Logs](./docs/module-6/instrumentando-logs.md)
+  - [Configurando Logs OpenTelemetry no Cadastro de Livros](./docs/module-6/instrumentando-logs.md#configurando-logs-opentelemetry-no-cadastro-de-livros)
+  - [Configurando Logs OpenTelemetry no Ordem de Compra](./docs/module-6/instrumentando-logs.md#configurando-logs-opentelemetry-no-ordem-de-compra)
+- [Exercício](./docs/module-6/instrumentando-logs.md#exercício)
+- [Conclusão](./docs/module-6/instrumentando-logs.md#conclusão)
+- [Solução do Exercício](./docs/module-6/solucao-exercicio/instrumentando-logs/)
