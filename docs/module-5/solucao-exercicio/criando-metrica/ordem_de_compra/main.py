@@ -59,8 +59,8 @@ def cria_ordem(ordem: models.OrdemCreate, db: Session = Depends(get_db)):
         db.commit()
         db.refresh(db_ordem)
 
-        # Calcula a duração da ordem
-        duracao = time.time() - start_time
+        # Calcula a duração da ordem em milissegundos
+        duracao = (time.time() - start_time * 1000)
         # Registra a duração da ordem
         duracao_ordem.record(duracao, {"status": db_ordem.status})
         

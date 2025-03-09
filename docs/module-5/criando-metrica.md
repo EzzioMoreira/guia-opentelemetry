@@ -261,8 +261,8 @@ Cardinalidade se refere ao número de valores possíveis que uma métrica pode a
             # Cria o pagamento no banco
             db_pagamento = models.processar_pagamento(db=db, pagamento=pagamento, status=status)
             
-            # Calcula a duração do pagamento
-            duracao = time.time() - start_time
+            # Calcula a duração do pagamento em milissegundos
+            duracao = (time.time() - start_time ) * 1000
             # Registra a duração do pagamento
             duracao_pagamento.record(duracao, {"status": status})
             
