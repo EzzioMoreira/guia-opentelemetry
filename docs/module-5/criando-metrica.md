@@ -357,8 +357,7 @@ Cardinalidade se refere ao número de valores possíveis que uma métrica pode a
                 
                 return db_livro
             else:
-                raise HTTPException(status_code=404, detail="
-                Livro não encontrado")
+                raise HTTPException(status_code=404, detail="Livro não encontrado")
         except Exception as e:
             logger.error(f"Erro ao remover livro do banco de dados: {e}")
             raise

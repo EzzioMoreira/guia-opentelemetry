@@ -43,7 +43,7 @@ Definição das métricas do sistema de pagamento
 
 # Cria a métrica para contar a quantidade de ordens de compra
 ordem_compra = configure_meter().create_counter(
-    name="bookstore.orden.compra",
+    name="bookstore.ordem.compra",
     description="Quantidade de ordens de compra",
     unit="number",
 )
