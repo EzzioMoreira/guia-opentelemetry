@@ -156,8 +156,7 @@ Para este módulo, utilize o Book_Store instrumentado com `traces` e `metrics` d
     - Acesso o endpoint [http://localhost:8081/docs](http://localhost:8081/docs) execute algumas operações para gerar logs.
     - Acesse o Grafana para visualizar a telemetria gerada [http://localhost:3000](http://localhost:3000).
 
-    Note que os logs gerados pelo serviço Ordem de Compra estão sendo exportados para Grafana Loki no formato OTLP. O log contém os mesmos atributos de contexto que as métricas e traces. Além dis
-    so, o log é associado ao trace ID e span ID correspondentes.
+    Note que os logs gerados pelo serviço Ordem de Compra estão sendo exportados para Grafana Loki no formato OTLP. O log contém os mesmos atributos de contexto que as métricas e traces. Além disso, o log é associado ao trace ID e span ID correspondentes.
 
     ![Logs Ordem de Compra](../module-6/image/with-logs-ordem-compras.png)
 
