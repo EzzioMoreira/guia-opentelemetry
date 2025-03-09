@@ -8,19 +8,19 @@ from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.resources import Resource
 
-# Configura o exportador de logs (mesmo endpoint do coletor)
+# Configura o exportador de logs
 exporter = OTLPLogExporter(
     endpoint="http://otelcollector:4318/v1/logs"
 )
 
-# Configura recursos (mesmo usado nas métricas/traces)
+# Define os atributos do recurso
 resource = Resource.create({
     "service.name": "pagamento",
     "service.version": "0.1.0",
     "deployment.environment": "dev",
 })
 
-# Configura o LoggerProvider
+# Cria e configura o provedor de logs
 provider = LoggerProvider(resource=resource)
 provider.add_log_record_processor(BatchLogRecordProcessor(exporter))
 set_logger_provider(provider)
