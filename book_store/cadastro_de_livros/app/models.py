@@ -49,9 +49,6 @@ def remove_livro(db: Session, livro_id: int):
             db.delete(db_livro)
             db.commit()
 
-            # Decrementa a métrica total_livros_cadastrados
-            estoque_livros.set(db.query(Livros).count())
-
             return db_livro
     except Exception as e:
         logger.error(f"Erro ao deletar livro com id {livro_id}: {e}")

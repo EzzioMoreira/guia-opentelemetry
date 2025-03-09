@@ -48,6 +48,7 @@ ordem_compra = configure_meter().create_counter(
     unit="number",
 )
 
+# Cria a métrica para medir o tempo de processamento de uma ordem de compra
 duracao_ordem = configure_meter().create_histogram(
     name="bookstore.duracao.ordem",
     description="Tempo de processamento de uma ordem de compra",
