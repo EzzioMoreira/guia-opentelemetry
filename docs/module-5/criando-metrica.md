@@ -333,8 +333,6 @@ Cardinalidade se refere ao número de valores possíveis que uma métrica pode a
             db.commit()
             db.refresh(db_livro)
             
-            # Incrementa a métrica total_livros_cadastrados
-            livros_cadastrados.add(1)
             # Atualiza a métrica estoque_livros
             estoque_livros.set(db.query(Livros).count())
             
@@ -354,8 +352,6 @@ Cardinalidade se refere ao número de valores possíveis que uma métrica pode a
                 db.delete(db_livro)
                 db.commit()
                 
-                # Atualiza a métrica total_livros_cadastrados
-                livros_cadastrados.add(-1)
                 # Atualiza a métrica estoque_livros
                 estoque_livros.set(db.query(Livros).count())
                 
