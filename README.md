@@ -112,7 +112,7 @@ O treinamento será dividido em módulos teóricos e práticos para garantir uma
   - [Criando Métricas Gauge](./docs/module-5/criando-metrica.md#criando-métricas-gauge)
 - [Exercício](./docs/module-5/criando-metrica.md#exercício)
 - [Conclusão](./docs/module-5/criando-metrica.md#conclusão)
-- [Solução do Exercício](./docs/module-5/solucao-exercicio/criando-metrica/)
+- [Solução do Exercício](./docs/module-5/solucao-exercicio/README.md)
 
 ## Módulo 6 - Instrumentando Logs
 
@@ -121,4 +121,4 @@ O treinamento será dividido em módulos teóricos e práticos para garantir uma
   - [Configurando Logs OpenTelemetry no Ordem de Compra](./docs/module-6/instrumentando-logs.md#configurando-logs-opentelemetry-no-ordem-de-compra)
 - [Exercício](./docs/module-6/instrumentando-logs.md#exercício)
 - [Conclusão](./docs/module-6/instrumentando-logs.md#conclusão)
-- [Solução do Exercício](./docs/module-6/solucao-exercicio/instrumentando-logs/)
+- [Solução do Exercício](./docs/module-6/solucao-exercicio/REAMDE.md)
