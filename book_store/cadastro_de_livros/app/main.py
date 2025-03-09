@@ -28,6 +28,23 @@ def cria_livro(livro: models.LivroBase, db: Session = Depends(get_db)):
         logger.error(f"Erro ao criar livro: {e}")
         raise HTTPException(status_code=500, detail="Erro ao criar livro")
 
+@app.delete("/livros/{id}")
+def deleta_livro(id: int, db: Session = Depends(get_db)):
+    """
+    Rota para deletar um livro pelo id
+    """
+    try:
+        logger.info(f"Deletando livro com id: {id}")
+        del_livro = models.remove_livro(db, id)
+        if del_livro is None:
+            logger.warning(f"Livro com id {id} não encontrado")
+            raise HTTPException(status_code=404, detail="Livro não encontrado")
+        logger.info(f"Livro com ID: {id} deletado com sucesso")
+        return del_livro
+    except Exception as e:
+        logger.error(f"Erro ao deletar livro: {e}")
+        raise HTTPException(status_code=500, detail="Erro ao deletar livro")
+
 # Define a rota para listar livros por id
 @app.get("/livros/{id}")
 def busca_livro(id: int, db: Session = Depends(get_db)):

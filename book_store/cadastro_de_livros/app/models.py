@@ -32,9 +32,26 @@ def cria_livro(db: Session, livro: LivroBase):
         db.add(db_livro)
         db.commit()
         db.refresh(db_livro)
+        
         return db_livro
     except Exception as e:
         logger.error(f"Erro ao criar livro no banco de dados: {e}")
+        raise
+
+# Função que remove um livro do banco de dados
+def remove_livro(db: Session, livro_id: int):
+    """
+    Função que remove um livro do banco de dados
+    """
+    try:
+        db_livro = db.query(Livros).filter(Livros.id == livro_id).first()
+        if db_livro:
+            db.delete(db_livro)
+            db.commit()
+
+            return db_livro
+    except Exception as e:
+        logger.error(f"Erro ao deletar livro com id {livro_id}: {e}")
         raise
 
 # Função que retorna todos os livros do banco de dados
