@@ -14,7 +14,7 @@ from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapProp
 # Configura o rastreamento distribuído com OpenTelemetry
 tracer = configure_tracer()
 
-# Obetem url dos serviços ordem de compra
+# Obtém url dos serviços ordem de compra
 ORDER_URL = os.getenv("ORDER_URL", "http://ordem_de_compra:8081")
 
 # Cria as tabelas no banco de dados

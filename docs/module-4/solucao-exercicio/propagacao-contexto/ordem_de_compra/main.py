@@ -16,7 +16,7 @@ from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapProp
 # Configura o rastreamento distribuído com OpenTelemetry
 tracer = configure_tracer()
 
-# Obetem url dos serviços pagamento e cadastro de livros
+# Obtém url dos serviços pagamento e cadastro de livros
 PAYMENT_URL = os.getenv("PAYMENT_URL", "http://pagamento:8082")
 BOOK_URL = os.getenv("BOOK_URL", "http://cadastro_de_livros:8080")
 
