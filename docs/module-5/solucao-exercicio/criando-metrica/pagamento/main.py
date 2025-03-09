@@ -6,6 +6,8 @@ import os
 from . import models
 from .databases import engine, get_db
 from . import logger
+from .metrics import duracao_pagamento
+import time
 
 # Obetem url dos serviços ordem de compra
 ORDER_URL = os.getenv("ORDER_URL", "http://ordem_de_compra:8081")
@@ -23,6 +25,9 @@ def processar_pagamento(pagamento: models.PagamentoCreate, db: Session = Depends
     Processa um pagamento para a ordem especificada
     """
     try:
+        # Inicia o contador de tempo
+        start_time = time.time()
+
         # Valida se a ordem de compra existe
         ordem_response = requests.get(f"{ORDER_URL}/ordens/{pagamento.id_ordem}")
         if ordem_response.status_code != 200:
@@ -33,6 +38,11 @@ def processar_pagamento(pagamento: models.PagamentoCreate, db: Session = Depends
         
         # Cria o pagamento no banco
         db_pagamento = models.processar_pagamento(db=db, pagamento=pagamento, status=status)
+        
+        # Calcula a duração do pagamento
+        duracao = time.time() - start_time
+        # Registra a duração do pagamento
+        duracao_pagamento.record(duracao, {"status": status})
         
         return db_pagamento
     except Exception as e:

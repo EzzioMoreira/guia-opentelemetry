@@ -22,7 +22,7 @@ def configure_meter():
 
     # Define os atributos do recurso
     resource = Resource.create({
-        "service.name": "pagamento",
+        "service.name": "ordem-de-compra",
         "service.version": "1.0.0",
         "deployment.environment": "dev",
     })
@@ -37,14 +37,19 @@ def configure_meter():
     # Retorna o medidor para criar métricas
     return metrics.get_meter(__name__)
 
-duracao_pagamento = configure_meter().create_histogram(
-    "bookstore.duracao.pagamento",
-    description="Duração do pagamento",
-    unit="ms",
+"""
+Definição das métricas do sistema de pagamento
+"""
+
+# Cria a métrica para contar a quantidade de ordens de compra
+ordem_compra = configure_meter().create_counter(
+    name="bookstore.orden.compra",
+    description="Quantidade de ordens de compra",
+    unit="number",
 )
 
-tamanho_pool = configure_meter().create_gauge(
-    name="database.pool.size",
-    description="Tamanho total da pool de conexões",
-    unit="1",
+duracao_ordem = configure_meter().create_histogram(
+    name="bookstore.duracao.ordem",
+    description="Tempo de processamento de uma ordem de compra",
+    unit="ms"
 )

@@ -147,7 +147,7 @@ Cardinalidade se refere ao número de valores possíveis que uma métrica pode a
     
     > O exporter do OpenTelemetry Collector altera o nome da métrica substituindo os pontos por `_` e adicionando o sufixo `_total` para seguir a convenção do Prometheus.
 
-    ![Métrica total de livros cadastrados](../module-5/image/with-metrics-livros-cadastrados.png)
+    ![Métrica total de livros cadastrados](../module-5/image/with-metrics-counter-livros-cadastrados.png)
 
 ### Criando Métrica Histogram
 
@@ -286,7 +286,7 @@ Cardinalidade se refere ao número de valores possíveis que uma métrica pode a
     - A métrica `bookstore_duracao_pagamento_sum` contém a soma da duração dos pagamentos.
     - A métrica `bookstore_duracao_pagamento_milliseconds_bucket` contém o valor em milissegundos da duração do pagamento.
 
-    ![Métrica duração do pagamento](../module-5/image/with-metrics-duracao-pagamento.png)
+    ![Métrica duração do pagamento](../module-5/image/with-metrics-histogram-duracao-pagamento.png)
 
 ### Criando Métrica Gauge
 
@@ -382,6 +382,8 @@ Cardinalidade se refere ao número de valores possíveis que uma métrica pode a
 ## Exercício
 
 1. Crie uma métrica do tipo `counter` para contar a quantidade de ordens processadas no serviço de Ordem de Compra.
+  - Lembre de importar os pacotes necessários no arquivo `requirements.txt`.
+  - Lembre de criar o `MeterProvider` e o `MetricReader` no arquivo `metrics.py`.
 2. Crie uma métrica do tipo `histogram` para medir a duração que uma ordem de compra é processada no serviço de Ordem de Compra.
 
 ### Conclusão

@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from .databases import Base
 from . import logger
+from .metrics import livros_cadastrados, estoque_livros
 
 # Modelo Pydantic para para entrada livre de dados
 class LivroBase(BaseModel):
@@ -32,6 +33,12 @@ def cria_livro(db: Session, livro: LivroBase):
         db.add(db_livro)
         db.commit()
         db.refresh(db_livro)
+        
+        # Incrementa a métrica total_livros_cadastrados
+        livros_cadastrados.add(1, {"titulo": livro.titulo, "estoque": livro.estoque})
+
+        # Incrementa a métrica estoque_livros
+        estoque_livros.set(db.query(Livros).count())
         
         return db_livro
     except Exception as e:

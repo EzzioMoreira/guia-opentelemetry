@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from .databases import Base
 from . import logger
+from .metrics import ordem_compra
 
 # Define o atributo comum a todas as classes
 class OrdemBase(BaseModel):
@@ -42,6 +43,9 @@ def cria_ordem(db: Session, ordem: OrdemCreate):
     db.add(db_ordem)
     db.commit()
     db.refresh(db_ordem)
+
+    # Incrementa a métrica de ordem de compra
+    ordem_compra.add(1, {"status": db_ordem.status})
 
     return db_ordem
 
