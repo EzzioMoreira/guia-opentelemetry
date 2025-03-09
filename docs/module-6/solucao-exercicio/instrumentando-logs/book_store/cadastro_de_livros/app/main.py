@@ -36,8 +36,7 @@ def cria_livro(request: Request, livro: models.LivroBase, db: Session = Depends(
             span.set_attribute(SpanAttributes.HTTP_STATUS_CODE, 201)
             span.set_attribute(SpanAttributes.HTTP_URL, str(request.url))
             span.set_attribute(SpanAttributes.CLIENT_ADDRESS, str(request.client.host))
-            span.set_attribute(SpanAttributes.CLIENT_PORT, str(request.client.port  ))
-            
+            span.set_attribute(SpanAttributes.CLIENT_PORT, str(request.client.port))
             # Substitui o atributo titulo do livro por evento e adiciona o estoque
             span.add_event("Livro criado com sucesso", attributes={"id": novo_livro.id, "titulo": novo_livro.titulo, "estoque": novo_livro.estoque})
 
