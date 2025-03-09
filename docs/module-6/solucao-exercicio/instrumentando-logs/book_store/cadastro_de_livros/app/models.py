@@ -60,8 +60,6 @@ def remove_livro(db: Session, livro_id: int):
             estoque_livros.set(db.query(Livros).count())
             
             return db_livro
-        else:
-            raise HTTPException(status_code=404, detail="Livro não encontrado")
     except Exception as e:
         logger.error(f"Erro ao remover livro do banco de dados: {e}")
         raise
