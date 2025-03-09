@@ -102,6 +102,7 @@ O treinamento será dividido em módulos teóricos e práticos para garantir uma
   - [Conclusão](./docs/module-4/propagacao-contexto.md#conclusão)
 - [Solução do Exercício](./docs/module-4/solucao-exercicio/README.md)
   - [Criando Trace](./docs/module-4/solucao-exercicio/criando-trace/)
+  - [Propagação de Contexto](./docs/module-4/solucao-exercicio/propagacao-contexto/)
 
 ## Módulo 5 - Criando Métricas
 
