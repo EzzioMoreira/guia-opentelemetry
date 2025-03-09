@@ -6,7 +6,7 @@ Para este módulo, utilize o Book_Store instrumentado com `traces` e `metrics` d
 
 ## Configurando Logs OpenTelemetry no Cadastro de Livros
 
-1. Seguindo a estrutura do projeto, crie um arquivo `logs.py` no diretório [`app/`](../../book_store/cadastro_de_livros/app/) do serviço Cadastro de Livros.
+1. Seguindo a estrutura do projeto, crie um arquivo `logs.py` no diretório [`app`](../../book_store/cadastro_de_livros/app/) do serviço Cadastro de Livros.
 
     Adicione o seguinte conteúdo ao arquivo `logs.py`:
 
@@ -21,19 +21,19 @@ Para este módulo, utilize o Book_Store instrumentado com `traces` e `metrics` d
     from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
     from opentelemetry.sdk.resources import Resource
 
-    # Configura o exportador de logs (mesmo endpoint do coletor)
+    # Configura o exportador de logs
     exporter = OTLPLogExporter(
         endpoint="http://otelcollector:4318/v1/logs"
     )
 
-    # Configura recursos (mesmo usado nas métricas/traces)
+    # Define o recurso
     resource = Resource.create({
         "service.name": "cadastro-de-livros",
         "service.version": "0.1.0",
         "deployment.environment": "dev",
     })
 
-    # Configura o LoggerProvider
+    # Cria e configura o provedor de logs
     provider = LoggerProvider(resource=resource)
     provider.add_log_record_processor(BatchLogRecordProcessor(exporter))
     set_logger_provider(provider)
@@ -46,9 +46,7 @@ Para este módulo, utilize o Book_Store instrumentado com `traces` e `metrics` d
     logger = logging.getLogger(__name__)
     ```
 
-    O `LoggerProvider` é configurado com um `BatchLogRecordProcessor` que envia logs para o exportador `OTLPLogExporter`. O `Resource` é configurado com as mesmas informações de serviço e ambiente usadas para métricas e traces.
-
-    Por fim, configuramos o `LoggingHandler` para ser o handler padrão do `logging` e criamos um logger global.
+    Neste arquivo, configuramos o `OTLPLogExporter` para exportar logs para o OpenTelemetry Collector. Em seguida, configuramos o provedor de logs do OpenTelemetry com o recurso e o exportador definidos. Por fim, configuramos o `LoggingHandler` para ser o handler padrão do `logging` e criamos um logger global.
 
 1. Próximo passo será importar o módulo `logs` no arquivo `main.py` do serviço Cadastro de Livros.
 
@@ -61,7 +59,7 @@ Para este módulo, utilize o Book_Store instrumentado com `traces` e `metrics` d
 
     Faça o mesmo para outros arquivos [`models.py`](../../book_store/cadastro_de_livros/app/models.py) e [`database.py`](../../book_store/cadastro_de_livros/app/databases.py) do serviço Cadastro de Livros.
 
-1. Agora, remova o conteúdo do arquivo `__init__.py` do diretório [`app/`](../../book_store/cadastro_de_livros/app/) do serviço Cadastro de Livros.
+1. Agora, remova o conteúdo do arquivo `__init__.py` do diretório [`app`](../../book_store/cadastro_de_livros/app/) do serviço Cadastro de Livros.
 
     ```python
     # __init__.py
@@ -102,19 +100,19 @@ Para este módulo, utilize o Book_Store instrumentado com `traces` e `metrics` d
     from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
     from opentelemetry.sdk.resources import Resource
 
-    # Configura o exportador de logs (mesmo endpoint do coletor)
+    # Configura o exportador de logs
     exporter = OTLPLogExporter(
         endpoint="http://otelcollector:4318/v1/logs"
     )
 
-    # Configura recursos (mesmo usado nas métricas/traces)
+    # Define o recurso
     resource = Resource.create({
         "service.name": "ordem-de-compra",
         "service.version": "0.1.0",
         "deployment.environment": "dev",
     })
 
-    # Configura o LoggerProvider
+    # Criar e configura o provedor de logs
     provider = LoggerProvider(resource=resource)
     provider.add_log_record_processor(BatchLogRecordProcessor(exporter))
     set_logger_provider(provider)
