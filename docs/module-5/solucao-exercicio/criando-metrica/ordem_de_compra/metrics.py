@@ -12,7 +12,7 @@ def configure_meter():
     """
     Configura medidor com OpenTelemetry.
     """
-    # Configura o exportador de métricas (correção da porta)
+    # Configura o exportador de métricas
     exporter = OTLPMetricExporter(
         endpoint="http://otelcollector:4318/v1/metrics",               
     )
@@ -23,7 +23,7 @@ def configure_meter():
     # Define os atributos do recurso
     resource = Resource.create({
         "service.name": "ordem-de-compra",
-        "service.version": "1.0.0",
+        "service.version": "0.1.0",
         "deployment.environment": "dev",
     })
 

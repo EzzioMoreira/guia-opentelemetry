@@ -34,7 +34,7 @@ Cardinalidade se refere ao número de valores possíveis que uma métrica pode a
 
 1. Para criar métricas no OpenTelemetry, é necessário configurar o `MeterProvider` que é responsável por criar e gerenciar as métricas. O `MetricReader` é responsável por exportar as métricas para o OpenTelemetry Collector e o `Resource` contém os atributos do serviço. Vamos iniciar a criação das métricas no serviço de Cadastro de Livros. Para deixar a estrutura do projeto mais organizado, crie um arquivo chamado `metrics.py` no diretório apps do serviço [Cadastro de Livros](../../book_store/cadastro_de_livros/app/).
     
-    Crie um arquivo chamado `metrics.py` no diretório `app` da aplicação Cadastro de Livros.
+    Crie um arquivo chamado `metrics.py` no diretório `app` do serviço Cadastro de Livros.
 
     ```python
     # metrics.py
@@ -51,7 +51,7 @@ Cardinalidade se refere ao número de valores possíveis que uma métrica pode a
         """
         Configura medidor com OpenTelemetry.
         """
-        # Configura o exportador de métricas (correção da porta)
+        # Configura o exportador de métricas
         exporter = OTLPMetricExporter(
             endpoint="http://otelcollector:4318/v1/metrics",               
         )
@@ -62,7 +62,7 @@ Cardinalidade se refere ao número de valores possíveis que uma métrica pode a
         # Define os atributos do recurso
         resource = Resource.create({
             "service.name": "cadastro-de-livros",
-            "service.version": "1.0.0",
+            "service.version": "0.1.0",
             "deployment.environment": "dev",
         })
 
@@ -85,7 +85,7 @@ Cardinalidade se refere ao número de valores possíveis que uma métrica pode a
 
     ```python
     """
-    Definição das métricas do sistema cadastrador de livros
+    Definição das métricas do serviço
     """
     livros_cadastrados = configure_meter().create_counter(
         name="bookstore.livros.cadastrados",
@@ -95,7 +95,7 @@ Cardinalidade se refere ao número de valores possíveis que uma métrica pode a
     ```
 
     - bookstore.livros.cadastrados: é o nome da métrica, é uma boa prática usar um `namespace` para as métricas. Neste caso, `bookstore` é o namespace, `livros.cadastrados` é o nome da métrica.
-    - create_counter: cria um contador
+    - create_counter: cria um contador.
     - description: é a descrição da métrica.
     - unit: é a unidade de medida da métrica, neste caso, número.
 
@@ -159,7 +159,7 @@ Cardinalidade se refere ao número de valores possíveis que uma métrica pode a
     opentelemetry-exporter-otlp==1.28.2
     ```
 
-1. Agora, vamos criar uma métrica do tipo `histogram` para medir a duração que um pagamento é processada. No diretório `app` do serviço [pagamento](../../book_store/pagamento/app/) crie um arquivo chamado `metrics.py`.
+1. Agora, vamos criar uma métrica do tipo `histogram` para medir a duração que um pagamento é processado. No diretório `app` do serviço [pagamento](../../book_store/pagamento/app/) crie um arquivo chamado `metrics.py`.
 
     Crie um arquivo chamado `metrics.py` no diretório `app` da aplicação Pagamento.
 
@@ -178,7 +178,7 @@ Cardinalidade se refere ao número de valores possíveis que uma métrica pode a
         """
         Configura medidor com OpenTelemetry.
         """
-        # Configura o exportador de métricas (correção da porta)
+        # Configura o exportador de métricas
         exporter = OTLPMetricExporter(
             endpoint="http://otelcollector:4318/v1/metrics",               
         )
@@ -189,7 +189,7 @@ Cardinalidade se refere ao número de valores possíveis que uma métrica pode a
         # Define os atributos do recurso
         resource = Resource.create({
             "service.name": "cadastro-de-livros",
-            "service.version": "1.0.0",
+            "service.version": "0.1.0",
             "deployment.environment": "dev",
         })
 
@@ -206,11 +206,13 @@ Cardinalidade se refere ao número de valores possíveis que uma métrica pode a
         return metrics.get_meter(__name__)
     ```
 
-1. No arquivo [metrics.py](../../book_store/pagamento/app/metrics.py) do serviço Pagamento, crie a definição da métrica `duracao_pagamento`.
+1. No arquivo [metrics.py](../../book_store/pagamento/app/metrics.py) do serviço Pagamento, crie a definição da métrica `duracao_pagamento`. Essa métrica é importante para monitorar o tempo que um pagamento é processado.
+
+    No arquivo [metrics.py](../../book_store/pagamento/app/metrics.py) crie a definição da métrica `duracao_pagamento`.
 
     ```python
     """
-    Definição das métricas do sistema de pagamento
+    Definição das métricas do serviço
     """
     duracao_pagamento = configure_meter().create_histogram(
         name="bookstore.duracao.pagamento",
@@ -219,7 +221,7 @@ Cardinalidade se refere ao número de valores possíveis que uma métrica pode a
     )
     ```
 
-    - bookstore.duracao.pagamento: é o namespace e nome da métrica.
+    - bookstore.duracao.pagamento: é o namespace e o nome da métrica.
     - create_histogram: cria um histograma.
     - description: é a descrição da métrica.
     - unit: é a unidade de medida da métrica, neste caso, milissegundos.
@@ -270,8 +272,8 @@ Cardinalidade se refere ao número de valores possíveis que uma métrica pode a
             raise HTTPException(status_code=500, detail=f"Erro ao processar pagamento: {str(e)}")
     ```
 
-    Importamos estamos utilizando o `time` para medir a duração do pagamento, foi utilizado o método `time.time()` para obter o tempo atual em segundos em seguinda foi calculado a duração do pagamento. Por fim, registramos a duração do pagamento no histograma `duracao_pagamento` adicionando também o status do pagamento como atributo da métrica.
-
+    Estamos utilizando o `time` para medir a duração do pagamento, estamos registrando o tempo inicial em segundos `start_time` e calculando a duração do pagamento em segundos `duracao`. Em seguida, registramos a duração do pagamento no histograma `duracao_pagamento` adicionando também o status do pagamento como atributo da métrica.
+    
     Em seguida, execute o comando `docker compose up --build pagamento` para construir e iniciar o serviço `pagamento`.
 
     ```shell
@@ -282,8 +284,8 @@ Cardinalidade se refere ao número de valores possíveis que uma métrica pode a
     - Acesse o Grafana para visualizar a telemetria gerada [http://localhost:3000](http://localhost:3000).
 
     Note que no Grafana aparece três métricas:
-    - A métrica `bookstore_duracao_pagamento_count` contém a quantidade de pagamentos processados.
-    - A métrica `bookstore_duracao_pagamento_sum` contém a soma da duração dos pagamentos.
+    - A métrica `bookstore_duracao_pagamento_count` contém a quantidade de valores no histograma.
+    - A métrica `bookstore_duracao_pagamento_sum` contém a soma dos valores no histograma.
     - A métrica `bookstore_duracao_pagamento_milliseconds_bucket` contém o valor em milissegundos da duração do pagamento.
 
     ![Métrica duração do pagamento](../module-5/image/with-metrics-histogram-duracao-pagamento.png)
@@ -291,6 +293,8 @@ Cardinalidade se refere ao número de valores possíveis que uma métrica pode a
 ### Criando Métrica Gauge
 
 1. Vamos criar uma métrica do tipo `gauge` para medir a quantidade de livros em estoque. Essa métrica é importante para monitorar a quantidade de livros disponíveis para venda. Primeiro, crie a definição da métrica `estoque_livros` no arquivo [metrics.py](../../book_store/cadastro_de_livros/app/metrics.py) do serviço Cadastro de Livros.
+
+    No arquivo [metrics.py](../../book_store/cadastro_de_livros/app/metrics.py) crie a definição da métrica `estoque_livros`.
 
     ```python
     estoque_livros = configure_meter().create_gauge(
@@ -381,10 +385,11 @@ Cardinalidade se refere ao número de valores possíveis que uma métrica pode a
 
 ## Exercício
 
-1. Crie uma métrica do tipo `counter` para contar a quantidade de ordens processadas no serviço de Ordem de Compra.
+1. Crie uma métrica do tipo `counter` com agregação por `status` para medir a quantidade de ordens de compra processadas no serviço de Ordem de Compra.
   - Lembre de importar os pacotes necessários no arquivo `requirements.txt`.
   - Lembre de criar o `MeterProvider` e o `MetricReader` no arquivo `metrics.py`.
-2. Crie uma métrica do tipo `histogram` para medir a duração que uma ordem de compra é processada no serviço de Ordem de Compra.
+2. Crie uma métrica do tipo `histogram` com agregação por `status` para medir a duração que uma ordem de compra é processada no serviço de Ordem de Compra.
+  - Lembre de importar o modulo `time` para medir a duração da ordem de compra.
 
 ### Conclusão
 
