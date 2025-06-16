@@ -11,7 +11,7 @@ O OpenTelemetry oferece duas maneiras de instrumentar aplicações: com e sem c�
 
 ## Sistema Bookstore
 
-Durante o treinamento de OpenTelemetry, vamos utilizar um sistema de exemplo chamado Bookstore. O sistema Bookstore é formado por microserviços que são responsáveis por gerenciar cadastro de livros, ordem de compras e pagamento.
+Nos próximos passos vamos utilizar um sistema de exemplo chamado Bookstore. O sistema Bookstore é formado por microserviços que são responsáveis por gerenciar cadastro de livros, ordem de compras e pagamento.
 
 O sistema foi projetado para simular um cenário real de microserviços, proporcionando uma experiência prática para instrumentação de aplicações com OpenTelemetry.
 

@@ -15,10 +15,10 @@ Agora, siga estes passos para implementar a instrumentação sem código na apli
 1. Clonar o repositório e acessar o diretório do módulo:
 
    ```bash
-    git clone https://github.com/EzzioMoreira/treinamento-opentelemetry.git && cd treinamento-opentelemetry
+    git clone https://github.com/EzzioMoreira/guia-opentelemetry.git && cd guia-opentelemetry
     ```
 
-    Dentro do diretório `treinamento-opentelemetry`, existe o diretório [book_store](../../book_store/) que contém a aplicação de exemplo.
+    Dentro do diretório `guia-opentelemetry`, existe o diretório [book_store](../../book_store/) que contém a aplicação de exemplo.
 
     - [Cadastro de Livros](../../book_store/cadastro_de_livros/).
     - [Ordem de Compra](../../book_store/ordem_de_compra/).

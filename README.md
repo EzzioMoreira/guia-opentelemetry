@@ -6,9 +6,29 @@ Apresentar os conceitos fundamentais de monitoramento, observabilidade e telemet
 
 ## Agradecimentos
 
-Gostaria de agradecer imensamente ao [Lindemberg Barbosa](https://www.linkedin.com/in/lindemberg-barbosa/) e [Pedro Espíndula](https://www.linkedin.com/in/pedroespindula/) por revisarem e contribuírem com o conteúdo deste guia. Suas contribuições foram fundamentais.
+Este guia não seria possível sem o apoio e contribuição de pessoas especiais:
 
-Obrigado, vocês são incríveis! ❤️
+Um agradecimento especial ao [Juraci Paixão Kröhling](https://www.linkedin.com/in/jpkroehling/), que não só me apresentou ao mundo do OpenTelemetry como também me proporcionou inúmeras oportunidades para aprender e crescer nesta jornada. Sua mentoria foi fundamental!
+
+[Lindemberg Barbosa](https://www.linkedin.com/in/lindemberg-barbosa/) e [Pedro Espíndula](https://www.linkedin.com/in/pedroespindula/) pelo incrível trabalho de revisão e contribuições técnicas ao conteúdo deste guia. Suas percepções foram valiosíssimas!
+
+Obrigado, vocês são incríveis! ❤️❤️❤️❤️
+
+## Sobre o Autor
+
+Olá! Sou **Ezzio Moreira**, membro do projeto OpenTelemetry, atuo como SRE e criei este guia para compartilhar conhecimentos práticos que gostaria de ter tido quando comecei minha jornada em observabilidade.
+
+**Por que este guia?**  
+- Combina fundamentos teóricos com implementações reais
+- Foca em cenários práticos do dia a dia
+- Apresenta decisões de arquitetura baseadas em experiências reais
+- Ofrece exercícios hands-on para fixação do aprendizado
+
+**Minha filosofia:**  
+> "Observabilidade deve ser acessível, prática e agregar valor real aos times de desenvolvimento"
+
+Conecte-se comigo:  
+[🔗 LinkedIn](seu_link) | [🐙 GitHub](seu_link) | [✉️ Email](mailto:seu@email)
 
 ## Público-alvo
 
@@ -23,9 +43,9 @@ Conhecimento básico em desenvolvimento de software, infraestrutura e Kubernetes
 - [Docker](https://docs.docker.com/get-docker/) 🐳
 - [Docker Compose](https://docs.docker.com/compose/install/) 🐳
 
-## Estrutura do treinamento
+## Estrutura do Guia OpenTelemetry
 
-O treinamento será dividido em módulos teóricos e práticos para garantir uma compreensão abrangente dos conceitos e habilidades necessárias para implementar e manter o OpenTelemetry. Cada módulo combinará teoria com exercícios práticos e serão armazenados no GitHub.
+Este guia será dividido em módulos teóricos e práticos para garantir uma compreensão abrangente dos conceitos e habilidades necessárias para implementar e manter o OpenTelemetry. Cada módulo combinará teoria com exercícios práticos e serão armazenados no GitHub.
 
 - **Conceitos Básicos**: Iniciar com a introdução aos princípios de monitoramento, observabilidade e telemetria, instrumentação e projeto OpenTelemetry.
 - **Instrumentação**: Explorar a instrumentação manual e automática de aplicações usando SDK e API OpenTelemetry.
@@ -119,6 +139,9 @@ O treinamento será dividido em módulos teóricos e práticos para garantir uma
 - [Exercício](./docs/module-6/instrumentando-logs.md#exercício)
 - [Conclusão](./docs/module-6/instrumentando-logs.md#conclusão)
 - [Solução do Exercício](./docs/module-6/solucao-exercicio/REAMDE.md)
+
+## Módulo 7 - OpenTelemetry Collector
+- Em desenvolvimento...
 
 ## 🛠️ Como Contribuir
 
