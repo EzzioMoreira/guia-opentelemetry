@@ -4,16 +4,3 @@ baseurl: ""
 url: "https://ezziomoreira.github.io/guia-opentelemetry/"
 
 theme: jekyll-theme-minimal
-
-plugins:
-  - jekyll-relative-links
-
-relative_links:
-  enabled: true
-  collections: true
-
-defaults:
-  - scope:
-      path: ""
-    values:
-      layout: default
