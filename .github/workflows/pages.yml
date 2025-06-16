@@ -20,7 +20,7 @@ jobs:
           bundler-cache: true
           
       - name: Setup Pages
-        uses: actions/configure-pages@v3
+        uses: actions/configure-pages@v5
         
       - name: Build with Jekyll
         run: bundle exec jekyll build --baseurl "${{ github.base_ref }}/${{ github.event.repository.name }}"
