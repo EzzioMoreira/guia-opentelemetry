@@ -1,6 +1,3 @@
 title: Guia Prático OpenTelemetry
 description: Guia completo de implementação do OpenTelemetry
-baseurl: "" 
-url: "https://ezziomoreira.github.io/guia-opentelemetry/"
-
 theme: jekyll-theme-minimal

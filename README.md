@@ -1,7 +1,3 @@
----
-layout: default
-redirect_from: /home/
----
 
 # Guia Prático OpenTelemetry
 
