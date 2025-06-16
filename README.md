@@ -29,7 +29,7 @@ Olá! Sou **Ezzio Moreira**, membro do projeto OpenTelemetry, atuo como SRE e cr
 > "Observabilidade deve ser acessível, prática e agregar valor real aos times de desenvolvimento"
 
 Conecte-se comigo:  
-[🔗 LinkedIn](seu_link) | [🐙 GitHub](seu_link) | [✉️ Email](mailto:seu@email)
+[🔗 LinkedIn](https://www.linkedin.com/in/ezzio-moreira/) | [🐙 GitHub](https://github.com/EzzioMoreira) | [✉️ Email](mailto:enzziom@gmail.com)
 
 ## Público-alvo
 
