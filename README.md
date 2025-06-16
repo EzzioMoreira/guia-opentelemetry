@@ -1,12 +1,12 @@
-# Treinamento OpenTelemetry
+# Guia Prático OpenTelemetry
 
 ## Objetivo
 
-Capacitar pessoas nos conceitos básicos de monitoramento, observabilidade e telemetria, além de ensinar a implementar e operar os recursos do OpenTelemetry. O curso proporcionará habilidades práticas para gerar, coletar, processar e exportar telemetria (logs, métricas e traces). Ao final, os participantes estarão aptos a integrar as funcionalidades do OpenTelemetry em suas aplicações.
+Apresentar os conceitos fundamentais de monitoramento, observabilidade e telemetria, além de fornecer um passo a passo prático para implementar e operar os recursos do OpenTelemetry. Este guia oferece habilidades práticas para gerar, coletar, processar e exportar telemetria logs, métricas e traces. Ao final da leitura, você estará apto a integrar as funcionalidades do OpenTelemetry em suas aplicações de forma eficiente.
 
 ## Agradecimentos
 
-Gostaria de agradecer imensamente ao [Lindemberg Barbosa](https://www.linkedin.com/in/lindemberg-barbosa/) e [Pedro Espíndula](https://www.linkedin.com/in/pedroespindula/) por revisarem e contribuírem com o conteúdo deste treinamento. Suas contribuições foram fundamentais para a melhoria da qualidade e clareza do material para treinamento.
+Gostaria de agradecer imensamente ao [Lindemberg Barbosa](https://www.linkedin.com/in/lindemberg-barbosa/) e [Pedro Espíndula](https://www.linkedin.com/in/pedroespindula/) por revisarem e contribuírem com o conteúdo deste guia. Suas contribuições foram fundamentais.
 
 Obrigado, vocês são incríveis! ❤️
 
@@ -22,9 +22,6 @@ Conhecimento básico em desenvolvimento de software, infraestrutura e Kubernetes
 
 - [Docker](https://docs.docker.com/get-docker/) 🐳
 - [Docker Compose](https://docs.docker.com/compose/install/) 🐳
-- [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) ☸️
-- [Helm](https://helm.sh/docs/intro/install/) ⛵
-- [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/) 📦
 
 ## Estrutura do treinamento
 
@@ -122,3 +119,9 @@ O treinamento será dividido em módulos teóricos e práticos para garantir uma
 - [Exercício](./docs/module-6/instrumentando-logs.md#exercício)
 - [Conclusão](./docs/module-6/instrumentando-logs.md#conclusão)
 - [Solução do Exercício](./docs/module-6/solucao-exercicio/REAMDE.md)
+
+## 🛠️ Como Contribuir
+
+Contribuições são muito bem-vindas! Este material é um projeto colaborativo, e toda ajuda é valiosa para torná-lo mais completo e acessível para a comunidade.
+
+- [Vaja como contribuir.](CONTRIBUTING.md)
